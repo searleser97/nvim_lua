@@ -15,14 +15,17 @@ vim.keymap.set('i', '<cr>', '<space><c-g>u', { noremap = true })
 
 if not vim.g.vscode then
   local telescope_builtin = require('telescope.builtin')
+
   vim.keymap.set('n', '<leader>ff', telescope_builtin.find_files, {})
   vim.keymap.set('n', '<leader>fg', telescope_builtin.live_grep, {})
   vim.keymap.set('n', '<leader>fb', telescope_builtin.buffers, {})
   vim.keymap.set('n', '<leader>fh', telescope_builtin.help_tags, {})
 
   local harpoon_ui = require("harpoon.ui")
+  require("telescope").load_extension('harpoon')
   vim.keymap.set('n', '<leader>ha', require("harpoon.mark").add_file, {})
-  vim.keymap.set('n', '<leader>ht', harpoon_ui.toggle_quick_menu, {})
+  -- vim.keymap.set('n', '<leader>ht', harpoon_ui.toggle_quick_menu, {})
+  vim.keymap.set('n', '<leader>ht', ":Telescope harpoon marks<cr>", {})
   vim.keymap.set('n', '<leader>hn', harpoon_ui.nav_next, {})
   vim.keymap.set('n', '<leader>hp', harpoon_ui.nav_prev, {})
   vim.keymap.set('n', '<leader>1', function() harpoon_ui.nav_file(1) end, {})
