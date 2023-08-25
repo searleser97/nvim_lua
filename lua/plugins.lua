@@ -12,10 +12,6 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
-  --  {
-  --    "https://github.com/ggandor/leap.nvim",
-  --    dependencies = {"https://github.com/tpope/vim-repeat"},
-  --  },
   {
     "https://github.com/ggandor/flit.nvim",
     dependencies = {
@@ -41,9 +37,19 @@ require("lazy").setup({
       {'hrsh7th/nvim-cmp'},     -- Required
       {'hrsh7th/cmp-nvim-lsp'}, -- Required
       {'L3MON4D3/LuaSnip'},     -- Required
-    }
+    },
+    cond = not vim.g.vscode
   },
   {
     "https://github.com/mbbill/undotree"
+  },
+  {
+    "https://github.com/tpope/vim-fugitive",
+    cond = not vim.g.vscode
+  },
+  {
+    "https://github.com/nvim-treesitter/nvim-treesitter",
+    build = ":TSUpdate",
+    cond = not vim.g.vscode
   }
 })
