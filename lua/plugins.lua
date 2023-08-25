@@ -72,11 +72,5 @@ require("lazy").setup({
       "https://github.com/nvim-lua/plenary.nvim"
     },
     cond = not vim.g.vscode
-  },
-  {
-    "https://github.com/ThePrimeagen/harpoon",
-    dependencies = {
-      "https://github.com/nvim-lua/plenary.nvim"
-    }
   }
 })
