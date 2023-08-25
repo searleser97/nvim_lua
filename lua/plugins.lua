@@ -51,5 +51,32 @@ require("lazy").setup({
     "https://github.com/nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
     cond = not vim.g.vscode
+  },
+  {
+    "https://github.com/ThePrimeagen/harpoon",
+    dependencies = {
+      "https://github.com/nvim-lua/plenary.nvim"
+    },
+    cond = not vim.g.vscode
+  },
+  {
+    "https://github.com/nvim-telescope/telescope.nvim",
+    dependencies = {
+      "https://github.com/nvim-lua/plenary.nvim"
+    },
+    cond = not vim.g.vscode
+  },
+  {
+    "https://github.com/lewis6991/gitsigns.nvim",
+    dependencies = {
+      "https://github.com/nvim-lua/plenary.nvim"
+    },
+    cond = not vim.g.vscode
+  },
+  {
+    "https://github.com/ThePrimeagen/harpoon",
+    dependencies = {
+      "https://github.com/nvim-lua/plenary.nvim"
+    }
   }
 })
