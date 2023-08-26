@@ -7,13 +7,14 @@ vim.keymap.set({'n', 'x'}, '<C-b>', '<C-v>', { noremap = true })
 vim.keymap.set({'x', 'n'}, 'p', '"0p', { noremap = true })
 vim.keymap.set({'n', 'x', 'o'}, '[', '""p', { noremap = true })
 vim.keymap.set('n', '<cr>', 'i<cr><esc>', { noremap = true })
--- fine-grained undo
-vim.keymap.set('i', '<space>', '<space><c-g>u', { noremap = true })
-vim.keymap.set('i', '<tab>', '<space><c-g>u', { noremap = true })
-vim.keymap.set('i', '<cr>', '<space><c-g>u', { noremap = true })
--- end fine-grained undo
 
 if not vim.g.vscode then
+  -- fine-grained undo
+  vim.keymap.set('i', '<space>', '<space><c-g>u', { noremap = true })
+  vim.keymap.set('i', '<tab>', '<space><c-g>u', { noremap = true })
+  vim.keymap.set('i', '<cr>', '<space><c-g>u', { noremap = true })
+  -- end fine-grained undo
+
   local telescope_builtin = require('telescope.builtin')
 
   vim.keymap.set('n', '<leader>ff', telescope_builtin.find_files, { noremap = true })
