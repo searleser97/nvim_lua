@@ -24,8 +24,7 @@ if not vim.g.vscode then
   local harpoon_ui = require("harpoon.ui")
   require("telescope").load_extension('harpoon')
   vim.keymap.set('n', '<leader>ha', require("harpoon.mark").add_file, { noremap = true })
-  -- vim.keymap.set('n', '<leader>ht', harpoon_ui.toggle_quick_menu, { noremap = true })
-  vim.keymap.set('n', '<leader>ht', ":Telescope harpoon marks<cr>", { noremap = true })
+  vim.keymap.set('n', '<leader>hl', ":Telescope harpoon marks<cr>", { noremap = true })
   vim.keymap.set('n', '<leader>hn', harpoon_ui.nav_next, { noremap = true })
   vim.keymap.set('n', '<leader>hp', harpoon_ui.nav_prev, { noremap = true })
   vim.keymap.set('n', '<leader>1', function() harpoon_ui.nav_file(1) end, { noremap = true })
@@ -35,5 +34,11 @@ if not vim.g.vscode then
 else
   vim.keymap.set('n', 'u', '<cmd>call VSCodeNotify("undo")<cr>', { noremap = true })
   vim.keymap.set('n', '<c-r>', '<cmd>call VSCodeNotify("redo")<cr>', { noremap = true })
-  -- pending TODO: add mappings for vscode-harpoon
+  vim.keymap.set('n', '<leader>ha', '<cmd>call VSCodeNotify("vscode-harpoon.addEditor")<cr>', { noremap = true })
+  vim.keymap.set('n', '<leader>hl', '<cmd>call VSCodeNotify("vscode-harpoon.editorQuickPick")<cr>', { noremap = true })
+  vim.keymap.set('n', '<leader>he', '<cmd>call VSCodeNotify("vscode-harpoon.editEditors")<cr>', { noremap = true })
+  vim.keymap.set('n', '<leader>1', '<cmd>call VSCodeNotify("vscode-harpoon.gotoEditor1")<cr>', { noremap = true })
+  vim.keymap.set('n', '<leader>2', '<cmd>call VSCodeNotify("vscode-harpoon.gotoEditor2")<cr>', { noremap = true })
+  vim.keymap.set('n', '<leader>3', '<cmd>call VSCodeNotify("vscode-harpoon.gotoEditor3")<cr>', { noremap = true })
+  vim.keymap.set('n', '<leader>4', '<cmd>call VSCodeNotify("vscode-harpoon.gotoEditor4")<cr>', { noremap = true })
 end
