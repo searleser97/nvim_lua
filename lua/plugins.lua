@@ -72,5 +72,19 @@ require("lazy").setup({
       "https://github.com/nvim-lua/plenary.nvim"
     },
     cond = not vim.g.vscode
+  },
+  {
+    "hrsh7th/nvim-cmp",
+    dependencies = {
+      "https://github.com/FelipeLema/cmp-async-path"
+    },
+    config = function()
+      require("cmp").setup({
+        sources = {
+          { name = 'async_path' }
+        }
+      })
+    end
   }
 })
+
