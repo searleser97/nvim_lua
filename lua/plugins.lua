@@ -81,7 +81,9 @@ require("lazy").setup({
     config = function()
       require("cmp").setup({
         sources = {
-          { name = 'async_path' }
+          { name = 'async_path' },
+          { name = 'nvim_lsp' },
+          { name = 'buffer' },
         }
       })
     end
