@@ -76,14 +76,25 @@ require("lazy").setup({
   {
     "hrsh7th/nvim-cmp",
     dependencies = {
-      "https://github.com/FelipeLema/cmp-async-path"
+      "https://github.com/FelipeLema/cmp-async-path",
+      "https://github.com/hrsh7th/cmp-nvim-lua",
+      "https://github.com/hrsh7th/cmp-buffer"
     },
     config = function()
-      require("cmp").setup({
+      local cmp = require("cmp")
+      cmp.setup({
         sources = {
           { name = 'async_path' },
           { name = 'nvim_lsp' },
           { name = 'buffer' },
+          { name = 'nvim_lua' },
+        },
+        preselect = 'item',
+        completion = {
+          completeopt = 'menu,menuone,noinsert'
+        },
+        mapping = {
+          ['<CR>'] = cmp.mapping.confirm({select = true}),
         }
       })
     end
