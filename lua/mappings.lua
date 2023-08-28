@@ -15,8 +15,8 @@ vim.keymap.set('n', '<cr>', 'i<cr><esc>', { noremap = true })
 if not vim.g.vscode then
   -- fine-grained undo
   vim.keymap.set('i', '<space>', '<space><c-g>u', { noremap = true })
-  vim.keymap.set('i', '<tab>', '<space><c-g>u', { noremap = true })
-  vim.keymap.set('i', '<cr>', '<space><c-g>u', { noremap = true })
+  vim.keymap.set('i', '<tab>', '<tab><c-g>u', { noremap = true })
+  vim.keymap.set('i', '<cr>', '<cr><c-g>u', { noremap = true })
   -- end fine-grained undo
 
   local telescope_builtin = require('telescope.builtin')
