@@ -50,7 +50,12 @@ require("lazy").setup({
   {
     "https://github.com/nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
-    cond = not vim.g.vscode
+    cond = not vim.g.vscode,
+    config = function()
+      require("nvim-treesitter.configs").setup({
+        ensure_installed = { "bash", "lua", "vim", "vimdoc", "query" }
+      })
+    end
   },
   {
     "https://github.com/ThePrimeagen/harpoon",
