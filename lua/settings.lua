@@ -7,7 +7,7 @@ vim.opt.expandtab = true
 vim.opt.wrap = false
 vim.opt.swapfile = false
 vim.opt.backup = false
-if package.config:sub(1,1) == "\\" then
+if package.config:sub(1,1) == "\\" then -- is windows
   vim.opt.undodir = os.getenv("UserProfile") .. "/.vim/undodir"
 else
   vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
@@ -26,3 +26,9 @@ vim.opt.isfname:append("@-@")
 vim.opt.updatetime = 50
 vim.opt.colorcolumn = "80"
 
+vim.api.nvim_create_autocmd("BufEnter", {
+  desc = "Disable automatic comment insertion",
+  callback = function()
+    vim.opt_local.formatoptions:remove({ "c", "r", "o" })
+  end,
+})
