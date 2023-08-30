@@ -41,7 +41,7 @@ require("lazy").setup({
     cond = not vim.g.vscode
   },
   {
-    "https://github.com/mbbill/undotree"
+    "https://github.com/mbbill/undotree",
   },
   {
     "https://github.com/tpope/vim-fugitive",
@@ -85,6 +85,7 @@ require("lazy").setup({
       "https://github.com/hrsh7th/cmp-nvim-lua",
       "https://github.com/hrsh7th/cmp-buffer"
     },
+    cond = not vim.g.vscode,
     config = function()
       local cmp = require("cmp")
       cmp.setup({
@@ -108,12 +109,20 @@ require("lazy").setup({
     "folke/tokyonight.nvim",
     lazy = false,
     priority = 1000,
-    opts = {},
+    cond = not vim.g.vscode
   },
   {
     "catppuccin/nvim",
     name = "catppuccin",
-    priority = 1000
+    priority = 1000,
+    cond = not vim.g.vscode
+  },
+  {
+    'numToStr/Comment.nvim',
+    lazy = false,
+    config = function()
+      require("Comment").setup()
+    end
   }
 })
 
