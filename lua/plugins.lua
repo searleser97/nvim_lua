@@ -53,7 +53,7 @@ require("lazy").setup({
     cond = not vim.g.vscode,
     config = function()
       require("nvim-treesitter.configs").setup({
-        ensure_installed = { "bash", "lua", "vim", "vimdoc", "query" }
+        ensure_installed = { "bash", "lua", "vim", "vimdoc", "query", "lua" }
       })
     end
   },
@@ -103,6 +103,17 @@ require("lazy").setup({
         }
       })
     end
+  },
+  {
+    "folke/tokyonight.nvim",
+    lazy = false,
+    priority = 1000,
+    opts = {},
+  },
+  {
+    "catppuccin/nvim",
+    name = "catppuccin",
+    priority = 1000
   }
 })
 
