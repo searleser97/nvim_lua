@@ -21,7 +21,7 @@ if not vim.g.vscode then
 
   local telescope_builtin = require('telescope.builtin')
 
-  vim.keymap.set('n', '<leader>ff', telescope_builtin.find_files, { noremap = true })
+  vim.keymap.set('n', '<c-p>', telescope_builtin.find_files, { noremap = true })
   vim.keymap.set('n', '<leader>fg', telescope_builtin.live_grep, { noremap = true })
   vim.keymap.set('n', '<leader>fb', telescope_builtin.buffers, { noremap = true })
   vim.keymap.set('n', '<leader>fh', telescope_builtin.help_tags, { noremap = true })
@@ -36,6 +36,18 @@ if not vim.g.vscode then
   vim.keymap.set('n', '<leader>2', function() harpoon_ui.nav_file(2) end, { noremap = true })
   vim.keymap.set('n', '<leader>3', function() harpoon_ui.nav_file(3) end, { noremap = true })
   vim.keymap.set('n', '<leader>4', function() harpoon_ui.nav_file(4) end, { noremap = true })
+
+
+  vim.keymap.set('n', '<c-t>', "<cmd>TermSelect<CR>1<cr><cr>i", { noremap = true })
+  function _G.set_terminal_keymaps()
+    local opts = {buffer = 0}
+    vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], opts)
+    vim.keymap.set('t', '<c-t>', [[<C-\><C-n><cmd>ToggleTerm<cr>]], opts)
+  end
+
+  -- if you only want these mappings for toggle term use term://*toggleterm#* instead
+  vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
+
 else
   vim.keymap.set('n', 'u', '<cmd>call VSCodeNotify("undo")<cr>', { noremap = true })
   vim.keymap.set('n', '<c-r>', '<cmd>call VSCodeNotify("redo")<cr>', { noremap = true })

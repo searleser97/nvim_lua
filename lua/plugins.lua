@@ -130,6 +130,13 @@ require("lazy").setup({
     config = function()
       require("stay-centered").setup()
     end
+  },
+  {
+    "akinsho/toggleterm.nvim",
+    version = "*",
+    config = function()
+      require("toggleterm").setup()
+    end
   }
 })
 
