@@ -123,6 +123,13 @@ require("lazy").setup({
     config = function()
       require("Comment").setup()
     end
+  },
+  {
+    "arnamak/stay-centered.nvim",
+    lazy = false,
+    config = function()
+      require("stay-centered").setup()
+    end
   }
 })
 
