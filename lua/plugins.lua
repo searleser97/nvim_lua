@@ -137,6 +137,17 @@ require("lazy").setup({
     config = function()
       require("toggleterm").setup()
     end
+  },
+  {
+    "notjedi/nvim-rooter.lua",
+    config = function()
+      require("nvim-rooter").setup()
+    end,
+    cond = not vim.g.vscode
+  },
+  {
+    "https://github.com/nvim-treesitter/nvim-treesitter-context",
+    cond = not vim.g.vscode
   }
 })
 
