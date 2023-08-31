@@ -39,6 +39,7 @@ if not vim.g.vscode then
 
 
   vim.keymap.set('n', '<c-t>', "<cmd>TermSelect<CR>1<cr><cr>i", { noremap = true })
+  vim.keymap.set('n', '<leader>t', "<cmd>ToggleTerm<cr>", { noremap = true })
   function _G.set_terminal_keymaps()
     local opts = {buffer = 0}
     vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], opts)
