@@ -75,15 +75,23 @@ require("lazy").setup({
     },
     cond = not vim.g.vscode,
     config = function()
-      require("telescope").setup({
+      local telescope = require("telescope");
+      local actions = require("telescope.actions");
+      telescope.setup({
         extensions = {
           frecency = {
             use_sqlite = false,
             workspaces = {
               ["sss"] = "~/Projects/sss",
               ["nvim"] = "~/.config/nvim",
-              ["wd"] = "./",
               [":"] = "./"
+            }
+          }
+        },
+        pickers = {
+          git_branches = {
+            mappings = {
+              i = { ["<cr>"] = actions.git_switch_branch },
             }
           }
         }
