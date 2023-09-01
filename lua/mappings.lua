@@ -32,7 +32,7 @@ if not vim.g.vscode then
   vim.keymap.set('n', '<leader>b', telescope_builtin.git_branches, { noremap = true })
   vim.keymap.set('n', '<leader>s', telescope_builtin.git_status, { noremap = true })
   -- file history
-  vim.keymap.set('n', '<leader>gs', telescope_builtin.git_branches, { noremap = true })
+  vim.keymap.set('n', '<leader>gs', telescope_builtin.git_stash, { noremap = true })
   vim.keymap.set('n', '<leader>ts', telescope_builtin.treesitter, { noremap = true })
 
 
