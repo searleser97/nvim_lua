@@ -60,16 +60,35 @@ require("lazy").setup({
   {
     "https://github.com/ThePrimeagen/harpoon",
     dependencies = {
-      "https://github.com/nvim-lua/plenary.nvim"
+      "https://github.com/nvim-lua/plenary.nvim",
+      "nvim-telescope/telescope.nvim"
     },
-    cond = not vim.g.vscode
+    cond = not vim.g.vscode,
+    config = function()
+      require("telescope").load_extension('harpoon')
+    end
   },
   {
-    "https://github.com/nvim-telescope/telescope.nvim",
+    "nvim-telescope/telescope.nvim",
     dependencies = {
       "https://github.com/nvim-lua/plenary.nvim"
     },
-    cond = not vim.g.vscode
+    cond = not vim.g.vscode,
+    config = function()
+      require("telescope").setup({
+        extensions = {
+          frecency = {
+            use_sqlite = false,
+            workspaces = {
+              ["sss"] = "~/Projects/sss",
+              ["nvim"] = "~/.config/nvim",
+              ["wd"] = "./",
+              [":"] = "./"
+            }
+          }
+        }
+      });
+    end
   },
   {
     "https://github.com/lewis6991/gitsigns.nvim",
@@ -148,6 +167,13 @@ require("lazy").setup({
   {
     "https://github.com/nvim-treesitter/nvim-treesitter-context",
     cond = not vim.g.vscode
+  },
+  {
+    "nvim-telescope/telescope-frecency.nvim",
+    config = function()
+      require("telescope").load_extension("frecency")
+    end,
+    dependencies = { "nvim-telescope/telescope.nvim" }
   }
 })
 

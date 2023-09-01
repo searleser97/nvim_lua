@@ -21,13 +21,13 @@ if not vim.g.vscode then
 
   local telescope_builtin = require('telescope.builtin')
 
-  vim.keymap.set('n', '<c-p>', telescope_builtin.find_files, { noremap = true })
+  vim.keymap.set('n', '<leader>ff', telescope_builtin.find_files, { noremap = true })
   vim.keymap.set('n', '<leader>fg', telescope_builtin.live_grep, { noremap = true })
+  vim.keymap.set('n', '<leader>fr', ':Telescope frecency<cr>', { noremap = true })
   vim.keymap.set('n', '<leader>fb', telescope_builtin.buffers, { noremap = true })
   vim.keymap.set('n', '<leader>fh', telescope_builtin.help_tags, { noremap = true })
 
   local harpoon_ui = require("harpoon.ui")
-  require("telescope").load_extension('harpoon')
   vim.keymap.set('n', '<leader>ha', require("harpoon.mark").add_file, { noremap = true })
   vim.keymap.set('n', '<leader>hl', ":Telescope harpoon marks<cr>", { noremap = true })
   vim.keymap.set('n', '<leader>hn', harpoon_ui.nav_next, { noremap = true })
