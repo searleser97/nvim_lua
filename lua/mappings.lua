@@ -38,14 +38,26 @@ if not vim.g.vscode then
   vim.keymap.set('n', '<leader>4', function() harpoon_ui.nav_file(4) end, { noremap = true })
 
 
-  vim.keymap.set('n', '<c-t>', "<cmd>TermSelect<CR>1<cr><cr>i", { noremap = true })
-  vim.keymap.set('n', '<leader>t', "<cmd>ToggleTerm<cr>", { noremap = true })
   function _G.set_terminal_keymaps()
     local opts = {buffer = 0}
     vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], opts)
     vim.keymap.set('t', '<c-t>', [[<C-\><C-n><cmd>ToggleTerm<cr>]], opts)
   end
 
+  function IsToggleTermOpen()
+    local maxBufferIndex = vim.fn.bufnr("$")
+    local toggleTermBuffers = vim.fn.filter(vim.fn.range(1, maxBufferIndex), 'bufname(v:val) =~ ".*toggleterm.*"')
+    return #toggleTermBuffers > 0;
+  end
+
+  function ToggleIntegratedTerminal()
+    if (IsToggleTermOpen()) then
+      return "<cmd>TermSelect<cr>1<cr>i";
+    else
+      return "<cmd>ToggleTerm<cr>";
+    end
+  end
+  vim.keymap.set('n', '<c-t>', ToggleIntegratedTerminal, { noremap = true, expr = true, replace_keycodes = true })
   -- if you only want these mappings for toggle term use term://*toggleterm#* instead
   vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
 
