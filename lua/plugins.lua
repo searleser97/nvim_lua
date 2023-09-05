@@ -19,6 +19,10 @@ require("lazy").setup({
       "https://github.com/tpope/vim-repeat"
     },
     config = function()
+      local leap = require("leap")
+      -- remove lower case `s`
+      table.remove(leap.opts.safe_labels, 1)
+      table.remove(leap.opts.labels, 1)
       require("flit").setup({
         labeled_modes = "nv"
       })
