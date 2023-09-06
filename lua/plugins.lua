@@ -83,7 +83,7 @@ require("lazy").setup({
       local actions = require("telescope.actions");
       telescope.setup({
         defaults = {
-          path_display = "truncate"
+          path_display = {"truncate"}
         },
         extensions = {
           frecency = {
