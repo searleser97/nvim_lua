@@ -82,6 +82,9 @@ require("lazy").setup({
       local telescope = require("telescope");
       local actions = require("telescope.actions");
       telescope.setup({
+        defaults = {
+          path_display = "truncate"
+        },
         extensions = {
           frecency = {
             use_sqlite = false,
