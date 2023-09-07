@@ -52,7 +52,7 @@ require("lazy").setup({
     cond = not vim.g.vscode
   },
   {
-    "https://github.com/nvim-treesitter/nvim-treesitter",
+    "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
     cond = not vim.g.vscode,
     config = function()
@@ -189,6 +189,14 @@ require("lazy").setup({
       require("telescope").load_extension("frecency")
     end,
     dependencies = { "nvim-telescope/telescope.nvim" }
+  },
+  {
+    'Wansmer/treesj',
+    keys = { '<space>m', '<space>j', '<space>s' },
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    config = function()
+      require('treesj').setup()
+    end,
   }
 })
 

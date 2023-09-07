@@ -21,19 +21,18 @@ if not vim.g.vscode then
 
   local telescope_builtin = require('telescope.builtin')
 
-  vim.keymap.set('n', '<leader>ff', telescope_builtin.find_files, { noremap = true })
-  vim.keymap.set('n', '<leader>fg', telescope_builtin.live_grep, { noremap = true })
-  vim.keymap.set('n', '<leader>fr', ':Telescope frecency<cr>', { noremap = true })
-  vim.keymap.set('n', '<leader>fb', telescope_builtin.buffers, { noremap = true })
+  vim.keymap.set('n', '<leader>sf', telescope_builtin.find_files, { noremap = true })
+  vim.keymap.set('n', '<leader>sw', telescope_builtin.live_grep, { noremap = true })
+  vim.keymap.set('n', '<leader>ff', ':Telescope frecency<cr>', { noremap = true })
+  vim.keymap.set('n', '<leader>sb', telescope_builtin.buffers, { noremap = true })
   vim.keymap.set('n', '<F1>', telescope_builtin.help_tags, { noremap = true })
-  vim.keymap.set('n', '<leader>c', telescope_builtin.git_commits, { noremap = true })
-  vim.keymap.set('n', '<leader>fh', telescope_builtin.git_bcommits, { noremap = true })
-  vim.keymap.set('n', '<leader>b', telescope_builtin.git_branches, { noremap = true })
-  vim.keymap.set('n', '<leader>s', telescope_builtin.git_status, { noremap = true })
-  -- file history
+  vim.keymap.set('n', 'gc', telescope_builtin.git_commits, { noremap = true })
+  -- git history
+  vim.keymap.set('n', 'gh', telescope_builtin.git_bcommits, { noremap = true })
+  vim.keymap.set('n', 'gb', telescope_builtin.git_branches, { noremap = true })
+  vim.keymap.set('n', 'gs', telescope_builtin.git_status, { noremap = true })
   vim.keymap.set('n', '<leader>gs', telescope_builtin.git_stash, { noremap = true })
   vim.keymap.set('n', '<leader>ts', telescope_builtin.treesitter, { noremap = true })
-
 
   local harpoon_ui = require("harpoon.ui")
   vim.keymap.set('n', '<leader>ha', require("harpoon.mark").add_file, { noremap = true })
