@@ -155,7 +155,12 @@ require("lazy").setup({
     'numToStr/Comment.nvim',
     lazy = false,
     config = function()
-      require("Comment").setup()
+      require("Comment").setup({
+        mappings = {
+          basic = false,
+          extra = false
+        }
+      })
     end
   },
   {
@@ -192,10 +197,11 @@ require("lazy").setup({
   },
   {
     'Wansmer/treesj',
-    keys = { '<space>m', '<space>j', '<space>s' },
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
     config = function()
-      require('treesj').setup()
+      require('treesj').setup({
+        use_default_keymaps = false
+      })
     end,
   }
 })

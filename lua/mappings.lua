@@ -1,4 +1,3 @@
-vim.g.mapleader = " "
 vim.cmd("unmap [%")
 
 if package.config:sub(1,1) == "\\" then
@@ -21,18 +20,18 @@ if not vim.g.vscode then
 
   local telescope_builtin = require('telescope.builtin')
 
-  vim.keymap.set('n', '<leader>sf', telescope_builtin.find_files, { noremap = true })
-  vim.keymap.set('n', '<leader>sw', telescope_builtin.live_grep, { noremap = true })
-  vim.keymap.set('n', '<leader>ff', ':Telescope frecency<cr>', { noremap = true })
-  vim.keymap.set('n', '<leader>sb', telescope_builtin.buffers, { noremap = true })
+  vim.keymap.set('n', '<leader>ff', telescope_builtin.find_files, { noremap = true, desc = "find files" })
+  vim.keymap.set('n', '<leader>fw', telescope_builtin.live_grep, { noremap = true, desc = "find words" })
+  vim.keymap.set('n', '<leader>fr', ':Telescope frecency<cr>', { noremap = true, desc = "find recent" })
+  vim.keymap.set('n', '<leader>fb', telescope_builtin.buffers, { noremap = true, desc = "find buffers" })
   vim.keymap.set('n', '<F1>', telescope_builtin.help_tags, { noremap = true })
-  vim.keymap.set('n', 'gc', telescope_builtin.git_commits, { noremap = true })
+  vim.keymap.set('n', 'gc', telescope_builtin.git_commits, { noremap = true, desc = "git commits" })
   -- git history
-  vim.keymap.set('n', 'gh', telescope_builtin.git_bcommits, { noremap = true })
-  vim.keymap.set('n', 'gb', telescope_builtin.git_branches, { noremap = true })
-  vim.keymap.set('n', 'gs', telescope_builtin.git_status, { noremap = true })
-  vim.keymap.set('n', '<leader>gs', telescope_builtin.git_stash, { noremap = true })
-  vim.keymap.set('n', '<leader>ts', telescope_builtin.treesitter, { noremap = true })
+  vim.keymap.set('n', 'gh', telescope_builtin.git_bcommits, { noremap = true, desc = "git history" })
+  vim.keymap.set('n', 'gb', telescope_builtin.git_branches, { noremap = true, desc = "git branches" })
+  vim.keymap.set('n', 'gs', telescope_builtin.git_status, { noremap = true, desc = "git status" })
+  vim.keymap.set('n', '<leader>gs', telescope_builtin.git_stash, { noremap = true, desc = "git stash" })
+  vim.keymap.set('n', '<leader>fs', telescope_builtin.treesitter, { noremap = true, desc = "find symbols" })
 
   local harpoon_ui = require("harpoon.ui")
   vim.keymap.set('n', '<leader>ha', require("harpoon.mark").add_file, { noremap = true })
@@ -44,6 +43,16 @@ if not vim.g.vscode then
   vim.keymap.set('n', '<leader>3', function() harpoon_ui.nav_file(3) end, { noremap = true })
   vim.keymap.set('n', '<leader>4', function() harpoon_ui.nav_file(4) end, { noremap = true })
 
+  vim.keymap.set('n', '<leader>ts', function() require('treesj').toggle({ split = { recursive = true } }) end, { noremap = true, desc = "toggle split"})
+  vim.keymap.set('x', '<leader>c', function()
+    local mode = vim.fn.mode()
+    if  mode == 'V' then
+      return "<Plug>(comment_toggle_linewise_visual)"
+    elseif mode == 'v' then
+      return "<Plug>(comment_toggle_blockwise_visual)"
+    end
+  end, { noremap = true, expr = true, replace_keycodes = true})
+  vim.keymap.set('n', '<leader>c', '<Plug>(comment_toggle_linewise_current)', { noremap = true })
 
   function _G.set_terminal_keymaps()
     local opts = {buffer = 0}
