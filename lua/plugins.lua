@@ -193,7 +193,8 @@ require("lazy").setup({
     config = function()
       require("telescope").load_extension("frecency")
     end,
-    dependencies = { "nvim-telescope/telescope.nvim" }
+    dependencies = { "nvim-telescope/telescope.nvim" },
+    cond = not vim.g.vscode
   },
   {
     'Wansmer/treesj',
@@ -203,6 +204,18 @@ require("lazy").setup({
         use_default_keymaps = false
       })
     end,
+  },
+  {
+    'akinsho/flutter-tools.nvim',
+    lazy = false,
+    dependencies = {
+        'https://github.com/nvim-lua/plenary.nvim',
+        'stevearc/dressing.nvim', -- optional for vim.ui.select
+    },
+    config = function ()
+      require("flutter-tools").setup()
+    end,
+    cond = not vim.g.vscode
   }
 })
 
