@@ -57,7 +57,7 @@ require("lazy").setup({
     cond = not vim.g.vscode,
     config = function()
       require("nvim-treesitter.configs").setup({
-        ensure_installed = { "bash", "lua", "vim", "vimdoc", "query", "lua" }
+        ensure_installed = { "bash", "lua", "vim", "vimdoc", "query", "lua", "dart", "typescript", "javascript", "json" }
       })
     end
   },
@@ -180,7 +180,9 @@ require("lazy").setup({
   {
     "notjedi/nvim-rooter.lua",
     config = function()
-      require("nvim-rooter").setup()
+      require("nvim-rooter").setup({
+        rooter_patterns = { 'pubspec.yaml', 'package.json', '*.csproj', '*.sln', '.git', '.hg', '.svn' }
+      })
     end,
     cond = not vim.g.vscode
   },
@@ -210,12 +212,33 @@ require("lazy").setup({
     lazy = false,
     dependencies = {
         'https://github.com/nvim-lua/plenary.nvim',
-        'stevearc/dressing.nvim', -- optional for vim.ui.select
+        -- 'stevearc/dressing.nvim', -- optional for vim.ui.select
     },
     config = function ()
       require("flutter-tools").setup()
     end,
     cond = not vim.g.vscode
+  },
+  {
+    "nvim-neotest/neotest",
+    dependencies = {
+      "https://github.com/nvim-lua/plenary.nvim",
+      "nvim-treesitter/nvim-treesitter",
+      -- "antoinemadec/FixCursorHold.nvim",
+      "sidlatau/neotest-dart"
+    },
+    lazy = false,
+    cond = not vim.g.vscode,
+    config = function ()
+      require("neotest").setup({
+        adapters = {
+          require("neotest-dart") {
+            command = "flutter",
+            use_lsp = true
+          }
+        }
+      })
+    end
   }
 })
 

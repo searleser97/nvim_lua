@@ -32,6 +32,8 @@ if not vim.g.vscode then
   vim.keymap.set('n', 'gs', telescope_builtin.git_status, { noremap = true, desc = "git status" })
   vim.keymap.set('n', '<leader>gs', telescope_builtin.git_stash, { noremap = true, desc = "git stash" })
   vim.keymap.set('n', '<leader>fs', telescope_builtin.treesitter, { noremap = true, desc = "find symbols" })
+  vim.keymap.set('n', 'gd', telescope_builtin.lsp_definitions, { noremap = true, desc = "go to definition" })
+  vim.keymap.set('n', 'gr', telescope_builtin.lsp_references, { noremap = true, desc = "go to references" })
 
   local harpoon_ui = require("harpoon.ui")
   vim.keymap.set('n', '<leader>ha', require("harpoon.mark").add_file, { noremap = true })
