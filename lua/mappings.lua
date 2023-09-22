@@ -19,11 +19,13 @@ if not vim.g.vscode then
   -- end fine-grained undo
 
   local telescope_builtin = require('telescope.builtin')
+  local telescope = require("telescope")
+  local live_grep_args_shortcuts = require("telescope-live-grep-args.shortcuts")
 
-  vim.keymap.set('n', '<leader>ff', telescope_builtin.find_files, { noremap = true, desc = "find files" })
-  vim.keymap.set('n', '<leader>fw', telescope_builtin.live_grep, { noremap = true, desc = "find words" })
-  vim.keymap.set('n', '<leader>fr', ':Telescope frecency<cr>', { noremap = true, desc = "find recent" })
-  vim.keymap.set('n', '<leader>fb', telescope_builtin.buffers, { noremap = true, desc = "find buffers" })
+  vim.keymap.set('n', '<leader>f', telescope_builtin.find_files, { noremap = true, desc = "files" })
+  vim.keymap.set('n', '<leader>rf', telescope.extensions.recent_files.pick, { noremap = true, desc = "recent files" })
+  vim.keymap.set('x', '<leader>sp', live_grep_args_shortcuts.grep_visual_selection, { noremap = true, desc = "search pattern" })
+  vim.keymap.set('n', '<leader>sp', telescope.extensions.live_grep_args.live_grep_args, { noremap = true, desc = "search pattern" })
   vim.keymap.set('n', '<F1>', telescope_builtin.help_tags, { noremap = true })
   vim.keymap.set('n', 'gc', telescope_builtin.git_commits, { noremap = true, desc = "git commits" })
   -- git history
@@ -31,7 +33,7 @@ if not vim.g.vscode then
   vim.keymap.set('n', 'gb', telescope_builtin.git_branches, { noremap = true, desc = "git branches" })
   vim.keymap.set('n', 'gs', telescope_builtin.git_status, { noremap = true, desc = "git status" })
   vim.keymap.set('n', '<leader>gs', telescope_builtin.git_stash, { noremap = true, desc = "git stash" })
-  vim.keymap.set('n', '<leader>fs', telescope_builtin.treesitter, { noremap = true, desc = "find symbols" })
+  vim.keymap.set('n', '<leader>ss', telescope_builtin.treesitter, { noremap = true, desc = "show symbols" })
   vim.keymap.set('n', 'gd', telescope_builtin.lsp_definitions, { noremap = true, desc = "go to definition" })
   vim.keymap.set('n', 'gr', telescope_builtin.lsp_references, { noremap = true, desc = "go to references" })
 

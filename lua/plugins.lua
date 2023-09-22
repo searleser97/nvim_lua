@@ -86,14 +86,6 @@ require("lazy").setup({
           path_display = {"truncate"}
         },
         extensions = {
-          frecency = {
-            use_sqlite = false,
-            workspaces = {
-              ["sss"] = "~/Projects/sss",
-              ["nvim"] = "~/.config/nvim",
-              [":"] = "./"
-            }
-          }
         },
         pickers = {
           git_branches = {
@@ -191,9 +183,9 @@ require("lazy").setup({
     cond = not vim.g.vscode
   },
   {
-    "nvim-telescope/telescope-frecency.nvim",
+    "smartpde/telescope-recent-files",
     config = function()
-      require("telescope").load_extension("frecency")
+      require("telescope").load_extension("recent_files")
     end,
     dependencies = { "nvim-telescope/telescope.nvim" },
     cond = not vim.g.vscode
@@ -239,6 +231,21 @@ require("lazy").setup({
         }
       })
     end
-  }
+  },
+  {
+    "lukas-reineke/indent-blankline.nvim",
+    cond = not vim.g.vscode,
+    config = function ()
+      require("indent_blankline").setup()
+    end
+  },
+  {
+    "nvim-telescope/telescope-live-grep-args.nvim",
+    config = function()
+      require("telescope").load_extension("live_grep_args")
+    end,
+    dependencies = { "nvim-telescope/telescope.nvim" },
+    cond = not vim.g.vscode
+  },
 })
 
