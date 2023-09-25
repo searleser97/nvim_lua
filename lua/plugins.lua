@@ -247,5 +247,9 @@ require("lazy").setup({
     dependencies = { "nvim-telescope/telescope.nvim" },
     cond = not vim.g.vscode
   },
+  {
+    "sindrets/diffview.nvim",
+    cond = not vim.g.vscode
+  }
 })
 
