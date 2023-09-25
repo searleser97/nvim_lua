@@ -21,7 +21,6 @@ if not vim.g.vscode then
   local telescope_builtin = require('telescope.builtin')
   local telescope = require("telescope")
   local live_grep_args_shortcuts = require("telescope-live-grep-args.shortcuts")
-  local live_grep_args_actions = require("telescope-live-grep-args.actions")
 
   vim.keymap.set('n', '<leader>f', telescope_builtin.find_files, { noremap = true, desc = "files" })
   vim.keymap.set('n', '<leader>rf', telescope.extensions.recent_files.pick, { noremap = true, desc = "recent files" })
