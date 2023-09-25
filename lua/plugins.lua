@@ -318,6 +318,13 @@ require("lazy").setup({
         end
       }
     end
+  },
+  {
+    "ruifm/gitlinker.nvim",
+    cond = not vim.g.vscode,
+    config = function ()
+      require("gitlinker").setup()
+    end
   }
 })
 
