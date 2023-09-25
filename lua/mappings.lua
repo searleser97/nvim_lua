@@ -19,6 +19,12 @@ if not vim.g.vscode then
   vim.keymap.set('i', '<cr>', '<cr><c-g>u', { noremap = true })
   -- end fine-grained undo
 
+  -- window mappings
+  vim.keymap.set({'i', 'x', 'n', 't'}, '<C-Up>', '<C-w><Up>', { noremap = true })
+  vim.keymap.set({'i', 'x', 'n', 't'}, '<C-Down>', '<C-w><Down>', { noremap = true })
+  vim.keymap.set({'i', 'x', 'n', 't'}, '<C-Right>', '<C-w><Right>', { noremap = true })
+  vim.keymap.set({'i', 'x', 'n', 't'}, '<C-Left>', '<C-w><Left>', { noremap = true })
+
   local telescope_builtin = require('telescope.builtin')
   local telescope = require("telescope")
   local live_grep_args_shortcuts = require("telescope-live-grep-args.shortcuts")

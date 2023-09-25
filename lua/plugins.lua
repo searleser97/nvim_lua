@@ -64,7 +64,7 @@ require("lazy").setup({
   {
     "https://github.com/ThePrimeagen/harpoon",
     dependencies = {
-      "https://github.com/nvim-lua/plenary.nvim",
+      "nvim-lua/plenary.nvim",
       "nvim-telescope/telescope.nvim"
     },
     cond = not vim.g.vscode,
@@ -75,7 +75,7 @@ require("lazy").setup({
   {
     "nvim-telescope/telescope.nvim",
     dependencies = {
-      "https://github.com/nvim-lua/plenary.nvim"
+      "nvim-lua/plenary.nvim"
     },
     cond = not vim.g.vscode,
     config = function()
@@ -100,7 +100,7 @@ require("lazy").setup({
   {
     "https://github.com/lewis6991/gitsigns.nvim",
     dependencies = {
-      "https://github.com/nvim-lua/plenary.nvim"
+      "nvim-lua/plenary.nvim"
     },
     cond = not vim.g.vscode
   },
@@ -203,7 +203,7 @@ require("lazy").setup({
     'akinsho/flutter-tools.nvim',
     lazy = false,
     dependencies = {
-        'https://github.com/nvim-lua/plenary.nvim',
+        'nvim-lua/plenary.nvim',
         -- 'stevearc/dressing.nvim', -- optional for vim.ui.select
     },
     config = function ()
@@ -214,7 +214,7 @@ require("lazy").setup({
   {
     "nvim-neotest/neotest",
     dependencies = {
-      "https://github.com/nvim-lua/plenary.nvim",
+      "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
       -- "antoinemadec/FixCursorHold.nvim",
       "sidlatau/neotest-dart"
@@ -249,6 +249,33 @@ require("lazy").setup({
   },
   {
     "sindrets/diffview.nvim",
+    cond = not vim.g.vscode,
+    config = function ()
+      require("diffview").setup({
+        enhanced_diff_hl = true,
+        use_icons = true,
+      })
+    end
+  },
+  {
+    "NeogitOrg/neogit",
+    dependencies = {
+      "nvim-lua/plenary.nvim",         -- required
+      "nvim-telescope/telescope.nvim", -- optional
+      "sindrets/diffview.nvim",        -- optional
+    },
+    config = function ()
+      require("neogit").setup({
+        integrations = {
+          telescope = true,
+          diffview = true,
+        }
+      })
+    end,
+    cond = not vim.g.vscode
+  },
+  {
+    "nvim-tree/nvim-web-devicons",
     cond = not vim.g.vscode
   }
 })
