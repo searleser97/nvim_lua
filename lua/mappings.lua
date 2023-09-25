@@ -21,11 +21,17 @@ if not vim.g.vscode then
   local telescope_builtin = require('telescope.builtin')
   local telescope = require("telescope")
   local live_grep_args_shortcuts = require("telescope-live-grep-args.shortcuts")
+  local live_grep_args_actions = require("telescope-live-grep-args.actions")
 
   vim.keymap.set('n', '<leader>f', telescope_builtin.find_files, { noremap = true, desc = "files" })
   vim.keymap.set('n', '<leader>rf', telescope.extensions.recent_files.pick, { noremap = true, desc = "recent files" })
-  vim.keymap.set('x', '<leader>sp', live_grep_args_shortcuts.grep_visual_selection, { noremap = true, desc = "search pattern" })
-  vim.keymap.set('n', '<leader>sp', telescope.extensions.live_grep_args.live_grep_args, { noremap = true, desc = "search pattern" })
+  vim.keymap.set('x', '<leader>sp', function ()
+    live_grep_args_shortcuts.grep_visual_selection({ postfix = " -g \"*.*\""})
+  end
+  , { noremap = true, desc = "search pattern" })
+  vim.keymap.set('n', '<leader>sp', function ()
+    telescope.extensions.live_grep_args.live_grep_args({ postfix = " -g \"*.*\"" })
+  end, { noremap = true, desc = "search pattern" })
   vim.keymap.set('n', '<F1>', telescope_builtin.help_tags, { noremap = true })
   vim.keymap.set('n', 'gc', telescope_builtin.git_commits, { noremap = true, desc = "git commits" })
   -- git history
