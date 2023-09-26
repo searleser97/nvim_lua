@@ -73,7 +73,7 @@ if not vim.g.vscode then
     local maxBufferIndex = vim.fn.bufnr("$")
     local toggleTermBuffers = vim.fn.filter(vim.fn.range(1, maxBufferIndex), 'bufname(v:val) =~ ".*toggleterm.*"')
     local corruptedBuffersExcluded = vim.fn.filter(toggleTermBuffers, function (_key, val) return vim.fn.getbufinfo(val)[1].variables.term_title ~= "exit"; end)
-    return #corruptedBuffersExcluded;
+    return corruptedBuffersExcluded;
   end
 
   function ToggleIntegratedTerminal()
