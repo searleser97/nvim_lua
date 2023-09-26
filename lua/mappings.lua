@@ -8,7 +8,6 @@ end
 vim.keymap.set({'n', 'x'}, '<C-v>', '"+p', { noremap = true })
 vim.keymap.set({'n', 'x'}, '<C-b>', '<C-v>', { noremap = true })
 vim.keymap.set({'x', 'n'}, 'l', '"0p', { noremap = true })
-vim.keymap.set('n', '<cr>', 'i<cr><esc>', { noremap = true })
 vim.keymap.set('x', 'y', "ygv<esc>", { noremap = true })
 vim.keymap.set('n', 'Q', "<nop>", { noremap = true })
 
@@ -70,28 +69,29 @@ if not vim.g.vscode then
   end, { noremap = true, expr = true, replace_keycodes = true})
   vim.keymap.set('n', '<leader>c', '<Plug>(comment_toggle_linewise_current)', { noremap = true })
 
-  function _G.set_terminal_keymaps()
-    local opts = {buffer = 0}
-    vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], opts)
-    vim.keymap.set('t', '<c-t>', [[<C-\><C-n><cmd>ToggleTerm<cr>]], opts)
-  end
-
-  function IsToggleTermOpen()
+  function OpenToggleTerms()
     local maxBufferIndex = vim.fn.bufnr("$")
     local toggleTermBuffers = vim.fn.filter(vim.fn.range(1, maxBufferIndex), 'bufname(v:val) =~ ".*toggleterm.*"')
-    return #toggleTermBuffers > 0;
+    local corruptedBuffersExcluded = vim.fn.filter(toggleTermBuffers, function (_key, val) return vim.fn.getbufinfo(val)[1].variables.term_title ~= "exit"; end)
+    return #corruptedBuffersExcluded;
   end
 
   function ToggleIntegratedTerminal()
-    if (IsToggleTermOpen()) then
+    local openTerms = OpenToggleTerms()
+    if (#openTerms == 0) then
+      return "<cmd>ToggleTerm<cr>";
+    elseif #openTerms == 1 then
       return "<cmd>TermSelect<cr>1<cr>i";
     else
-      return "<cmd>ToggleTerm<cr>";
+      return "<cmd>TermSelect<cr>";
     end
   end
+
   vim.keymap.set('n', '<c-t>', ToggleIntegratedTerminal, { noremap = true, expr = true, replace_keycodes = true })
-  -- if you only want these mappings for toggle term use term://*toggleterm#* instead
-  vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
+  vim.keymap.set({'n', 't'}, '<c-x>', [[<C-\><C-n><cmd>ToggleTerm<cr>]], { noremap = true })
+  local opts = {noremap = true}
+  vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], opts)
+  vim.keymap.set('t', '<c-t>', [[<C-\><C-n><C-w><C-p>]], opts)
 
 else
   vim.keymap.set('n', 'u', '<cmd>call VSCodeNotify("undo")<cr>', { noremap = true })
