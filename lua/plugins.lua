@@ -267,6 +267,23 @@ require("lazy").setup({
     config = function ()
       require("gitlinker").setup()
     end
-  }
+  },
+  {
+    "NeogitOrg/neogit",
+    dependencies = {
+      "nvim-lua/plenary.nvim",         -- required
+      "nvim-telescope/telescope.nvim", -- optional
+      "sindrets/diffview.nvim",        -- optional
+    },
+    config = function ()
+      require("neogit").setup({
+        integrations = {
+          telescope = true,
+          diffview = true,
+        }
+      })
+    end,
+    cond = not vim.g.vscode
+  },
 })
 
