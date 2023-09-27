@@ -285,5 +285,21 @@ require("lazy").setup({
     end,
     cond = not vim.g.vscode
   },
+  {
+    "rmagatti/auto-session",
+    config = function()
+      require("auto-session").setup {
+        log_level = "error",
+        auto_session_suppress_dirs = { "~/", "~/Projects", "~/Downloads", "/"},
+        auto_session_enable_last_session = false,
+        cwd_change_handling = { -- table: Config for handling the DirChangePre and DirChanged autocmds, can be set to nil to disable altogether
+          restore_upcoming_session = false, -- boolean: restore session for upcoming cwd on cwd change
+        },
+        session_lens = {
+          previewer = true
+        }
+      }
+    end
+  }
 })
 

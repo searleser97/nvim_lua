@@ -91,8 +91,6 @@ if not vim.g.vscode then
   local harpoon_ui = require("harpoon.ui")
   vim.keymap.set('n', '<leader>ha', require("harpoon.mark").add_file, { noremap = true })
   vim.keymap.set('n', '<leader>hl', ":Telescope harpoon marks<cr>", { noremap = true })
-  vim.keymap.set('n', '<leader>hn', harpoon_ui.nav_next, { noremap = true })
-  vim.keymap.set('n', '<leader>hp', harpoon_ui.nav_prev, { noremap = true })
   vim.keymap.set('n', '<leader>1', function() harpoon_ui.nav_file(1) end, { noremap = true })
   vim.keymap.set('n', '<leader>2', function() harpoon_ui.nav_file(2) end, { noremap = true })
   vim.keymap.set('n', '<leader>3', function() harpoon_ui.nav_file(3) end, { noremap = true })
@@ -108,6 +106,7 @@ if not vim.g.vscode then
     end
   end, { noremap = true, expr = true, replace_keycodes = true})
   vim.keymap.set('n', '<leader>c', '<Plug>(comment_toggle_linewise_current)', { noremap = true })
+  vim.keymap.set("n", "<leader>ss", require("auto-session.session-lens").search_session, { noremap = true, desc = "search session" })
 
   function OpenToggleTerms()
     local maxBufferIndex = vim.fn.bufnr("$")
