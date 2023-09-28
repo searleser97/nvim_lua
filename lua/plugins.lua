@@ -286,19 +286,12 @@ require("lazy").setup({
     cond = not vim.g.vscode
   },
   {
-    "rmagatti/auto-session",
+    "natecraddock/sessions.nvim",
     config = function()
-      require("auto-session").setup {
-        log_level = "error",
-        auto_session_suppress_dirs = { "~/", "~/Projects", "~/Downloads", "/"},
-        auto_session_enable_last_session = false,
-        cwd_change_handling = { -- table: Config for handling the DirChangePre and DirChanged autocmds, can be set to nil to disable altogether
-          restore_upcoming_session = false, -- boolean: restore session for upcoming cwd on cwd change
-        },
-        session_lens = {
-          previewer = true
-        }
-      }
+      require("sessions").setup({
+        session_filepath = vim.fn.stdpath("data") .. "/sessions",
+        absolute = true,
+      })
     end
   }
 })

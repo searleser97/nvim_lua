@@ -47,6 +47,22 @@ if not vim.g.vscode then
   vim.keymap.set('n', '<leader>ss', telescope_builtin.treesitter, { noremap = true, desc = "show symbols" })
   vim.keymap.set('n', 'gd', telescope_builtin.lsp_definitions, { noremap = true, desc = "go to definition" })
   vim.keymap.set('n', 'gr', telescope_builtin.lsp_references, { noremap = true, desc = "go to references" })
+  local action_state = require "telescope.actions.state"
+  local actions = require "telescope.actions"
+  local sessions = require("sessions")
+  vim.keymap.set("n", "<leader>ss", function ()
+    telescope_builtin.find_files({
+      cwd = vim.fn.stdpath("data") .. "/sessions",
+      attach_mappings = function (_, map)
+        map("i", "<cr>", function (prompt_bufnr)
+          actions.close(prompt_bufnr)
+          sessions.load(action_state.get_selected_entry().path)
+        end)
+        return true
+      end
+    })
+  end, { noremap = true, desc = "search session" })
+  vim.keymap.set("n", "<leader>SS", ":SessionsSave ", { noremap = true, desc = "Save new Session" })
 
   local gs = package.loaded.gitsigns
 
@@ -106,7 +122,6 @@ if not vim.g.vscode then
     end
   end, { noremap = true, expr = true, replace_keycodes = true})
   vim.keymap.set('n', '<leader>c', '<Plug>(comment_toggle_linewise_current)', { noremap = true })
-  vim.keymap.set("n", "<leader>ss", require("auto-session.session-lens").search_session, { noremap = true, desc = "search session" })
 
   function OpenToggleTerms()
     local maxBufferIndex = vim.fn.bufnr("$")
