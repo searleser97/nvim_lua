@@ -229,7 +229,7 @@ require("lazy").setup({
     "lukas-reineke/indent-blankline.nvim",
     cond = not vim.g.vscode,
     config = function ()
-      require("indent_blankline").setup()
+      require("ibl").setup()
     end
   },
   {
@@ -286,9 +286,10 @@ require("lazy").setup({
     cond = not vim.g.vscode
   },
   {
-    "natecraddock/sessions.nvim",
+    "searleser97/sessions.nvim",
     config = function()
       require("sessions").setup({
+        use_unique_session_names = true,
         session_filepath = vim.fn.stdpath("data") .. "/sessions",
         absolute = true,
       })

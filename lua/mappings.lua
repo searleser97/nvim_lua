@@ -56,7 +56,7 @@ if not vim.g.vscode then
       attach_mappings = function (_, map)
         map("i", "<cr>", function (prompt_bufnr)
           actions.close(prompt_bufnr)
-          sessions.load(action_state.get_selected_entry().path)
+          sessions.load(string.sub(action_state.get_selected_entry()[1], 1, -9))
         end)
         return true
       end
