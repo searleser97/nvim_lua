@@ -142,10 +142,35 @@ if not vim.g.vscode then
   end
 
   vim.keymap.set('n', '<c-t>', ToggleIntegratedTerminal, { noremap = true, expr = true, replace_keycodes = true })
-  vim.keymap.set({'n', 't'}, '<c-x>', [[<C-\><C-n><cmd>ToggleTerm<cr>]], { noremap = true })
+  -- vim.keymap.set({'n', 't'}, '<c-x>', [[<C-\><C-n><cmd>ToggleTerm<cr>]], { noremap = true })
   local opts = {noremap = true}
-  vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], opts)
+  vim.keymap.set('t', '<c-n>', [[<C-\><C-n>]], opts)
   vim.keymap.set('t', '<c-t>', [[<C-\><C-n><C-w><C-p>]], opts)
+
+  local Terminal  = require('toggleterm.terminal').Terminal
+  local lazygit = Terminal:new({
+    cmd = "lazygit",
+    dir = "git_dir",
+    direction = "float",
+    float_opts = {
+      border = "double",
+    },
+    -- function to run on opening the terminal
+    on_open = function(term)
+      vim.cmd("startinsert!")
+      vim.api.nvim_buf_set_keymap(term.bufnr, "n", "q", "<cmd>close<CR>", {noremap = true, silent = true})
+    end,
+    -- function to run on closing the terminal
+    on_close = function(term)
+      vim.cmd("startinsert!")
+    end,
+  })
+
+  function _lazygit_toggle()
+    lazygit:toggle()
+  end
+
+  vim.api.nvim_set_keymap("n", "gs", "<cmd>lua _lazygit_toggle()<CR>", {noremap = true, silent = true})
 
 else
   vim.keymap.set('n', 'u', '<cmd>call VSCodeNotify("undo")<cr>', { noremap = true })
