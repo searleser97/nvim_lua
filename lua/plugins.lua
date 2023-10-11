@@ -83,7 +83,15 @@ require("lazy").setup({
       local actions = require("telescope.actions");
       telescope.setup({
         defaults = {
-          path_display = {"truncate"}
+          path_display = {"truncate"},
+          mappings = {
+            i = {
+              ["<C-l>"] = actions.results_scrolling_left,
+              ["<C-r>"] = actions.results_scrolling_right,
+              ["<c-p>"] = actions.cycle_history_prev,
+              ["<c-n>"] = actions.cycle_history_next,
+            }
+          }
         },
         extensions = {
         },
