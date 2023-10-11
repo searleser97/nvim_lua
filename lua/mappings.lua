@@ -52,6 +52,7 @@ if not vim.g.vscode then
   local sessions = require("sessions")
   vim.keymap.set("n", "<leader>ss", function ()
     telescope_builtin.find_files({
+      previewer = false,
       prompt_title = "Search Sessions",
       cwd = vim.fn.stdpath("data") .. "/sessions",
       attach_mappings = function (_, map)
