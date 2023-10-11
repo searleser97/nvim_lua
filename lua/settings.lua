@@ -39,5 +39,5 @@ if not vim.g.vscode then
   vim.cmd("colorscheme tokyonight-night")
 end
 
-vim.o.sessionoptions="blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
+vim.o.sessionoptions="blank,buffers,curdir,folds,help,tabpages,winsize,winpos,localoptions"
 
