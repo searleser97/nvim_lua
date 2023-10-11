@@ -28,8 +28,9 @@ if not vim.g.vscode then
   local telescope = require("telescope")
   local live_grep_args_shortcuts = require("telescope-live-grep-args.shortcuts")
 
-  vim.keymap.set('n', '<leader>f', telescope_builtin.find_files, { noremap = true, desc = "files" })
+  vim.keymap.set('n', '<leader>sf', telescope_builtin.find_files, { noremap = true, desc = "search files" })
   vim.keymap.set('n', '<leader>rf', telescope.extensions.recent_files.pick, { noremap = true, desc = "recent files" })
+  vim.keymap.set('n', '<leader>fb', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', { noremap = true, desc = "File Browser" })
   vim.keymap.set('x', '<leader>sp', function ()
     live_grep_args_shortcuts.grep_visual_selection({ postfix = " -g \"*.*\""})
   end
@@ -47,7 +48,6 @@ if not vim.g.vscode then
   vim.keymap.set('n', '<leader>ss', telescope_builtin.treesitter, { noremap = true, desc = "show symbols" })
   vim.keymap.set('n', 'gd', telescope_builtin.lsp_definitions, { noremap = true, desc = "go to definition" })
   vim.keymap.set('n', 'gr', telescope_builtin.lsp_references, { noremap = true, desc = "go to references" })
-  vim.keymap.set('n', '<space>fb', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', { noremap = true, desc = "File Browser" })
 
   local action_state = require "telescope.actions.state"
   local actions = require "telescope.actions"
