@@ -47,8 +47,11 @@ if not vim.g.vscode then
   vim.keymap.set('n', '<leader>ss', telescope_builtin.treesitter, { noremap = true, desc = "show symbols" })
   vim.keymap.set('n', 'gd', telescope_builtin.lsp_definitions, { noremap = true, desc = "go to definition" })
   vim.keymap.set('n', 'gr', telescope_builtin.lsp_references, { noremap = true, desc = "go to references" })
+  vim.keymap.set('n', '<space>fb', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', { noremap = true, desc = "File Browser" })
+
   local action_state = require "telescope.actions.state"
   local actions = require "telescope.actions"
+
   local sessions = require("sessions")
   vim.keymap.set("n", "<leader>ss", function ()
     telescope_builtin.find_files({
@@ -80,13 +83,13 @@ if not vim.g.vscode then
 
     vim.schedule(function() gs.next_hunk() end)
     return '<Ignore>'
-  end, {expr=true})
+  end, {expr=true, desc = "Next Change"})
 
   map('n', '[c', function()
     if vim.wo.diff then return '[c' end
     vim.schedule(function() gs.prev_hunk() end)
     return '<Ignore>'
-  end, {expr=true})
+  end, {expr=true, desc = "Previous Change"})
 
   -- Actions
   map('n', '<leader>hs', gs.stage_hunk)
