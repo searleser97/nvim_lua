@@ -1,4 +1,5 @@
 vim.g.mapleader = " "
+vim.opt.cursorline = true
 vim.opt.nu = true
 vim.opt.relativenumber = true
 vim.wo.number = true
