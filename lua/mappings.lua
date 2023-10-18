@@ -31,6 +31,7 @@ if not vim.g.vscode then
   vim.keymap.set('n', '<leader>sf', telescope_builtin.find_files, { noremap = true, desc = "search files" })
   vim.keymap.set('n', '<leader>rf', telescope.extensions.recent_files.pick, { noremap = true, desc = "recent files" })
   vim.keymap.set('n', '<leader>fb', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', { noremap = true, desc = "File Browser" })
+  vim.keymap.set('n', '<leader>sm', telescope_builtin.marks, { noremap = true, desc = "File Browser" })
   vim.keymap.set('x', '<leader>sp', function ()
     live_grep_args_shortcuts.grep_visual_selection({ postfix = " -g \"*.*\""})
   end
