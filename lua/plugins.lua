@@ -299,6 +299,7 @@ require("lazy").setup({
       vim.o.timeout = true
       vim.o.timeoutlen = 300
     end,
+    lazy = false
   },
   {
     "nvim-telescope/telescope-file-browser.nvim",
