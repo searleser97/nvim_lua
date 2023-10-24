@@ -92,9 +92,12 @@ if not vim.g.vscode then
     return '<Ignore>'
   end, {expr=true, desc = "Previous Change"})
 
+  vim.keymap.set({'n', 'x', 'o'}, 't', '<Plug>(leap-forward-to)')
+  vim.keymap.set({'n', 'x', 'o'}, 'T', '<Plug>(leap-backward-to)')
+
   -- Actions
-  map('n', '<leader>hs', gs.stage_hunk)
-  map('n', '<leader>hr', gs.reset_hunk)
+  map('n', '<leader>hs', gs.stage_hunk, {desc = "hunk stage"})
+  map('n', '<leader>hr', gs.reset_hunk, {desc = "hunk reset"})
   map('x', '<leader>hs', function() gs.stage_hunk {vim.fn.line('.'), vim.fn.line('v')} end)
   map('x', '<leader>hr', function() gs.reset_hunk {vim.fn.line('.'), vim.fn.line('v')} end)
   map('n', '<leader>hS', gs.stage_buffer)

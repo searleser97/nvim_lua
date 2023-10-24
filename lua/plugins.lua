@@ -57,7 +57,7 @@ require("lazy").setup({
     cond = not vim.g.vscode,
     config = function()
       require("nvim-treesitter.configs").setup({
-        ensure_installed = { "bash", "lua", "vim", "vimdoc", "query", "lua", "dart", "typescript", "javascript", "json" }
+        ensure_installed = { "bash", "lua", "vim", "vimdoc", "query", "lua", "dart", "typescript", "javascript", "json", "tsx" }
       })
     end
   },
@@ -261,6 +261,7 @@ require("lazy").setup({
       require("diffview").setup({
         enhanced_diff_hl = true,
         use_icons = true,
+        view = { x = { layout = "diff3_vertical" } }
       })
     end
   },
