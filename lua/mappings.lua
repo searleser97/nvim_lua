@@ -12,6 +12,26 @@ vim.keymap.set('x', 'y', "ygv<esc>", { noremap = true })
 vim.keymap.set('n', 'Q', "<nop>", { noremap = true })
 
 if not vim.g.vscode then
+  vim.api.nvim_create_user_command("DiffviewToggle", function(e)
+    local view = require("diffview.lib").get_current_view()
+
+    if view then
+      vim.cmd("DiffviewClose")
+    else
+      vim.cmd("DiffviewOpen " .. e.args)
+    end
+  end, { nargs = "*" })
+
+  vim.api.nvim_create_user_command("DiffviewFileHistoryToggle", function(e)
+    local view = require("diffview.lib").get_current_view()
+
+    if view then
+      vim.cmd("DiffviewClose")
+    else
+      vim.cmd("DiffviewFileHistory " .. e.args)
+    end
+  end, { nargs = "*" })
+
   -- fine-grained undo
   vim.keymap.set('i', '<space>', '<space><c-g>u', { noremap = true })
   vim.keymap.set('i', '<tab>', '<tab><c-g>u', { noremap = true })
@@ -42,9 +62,9 @@ if not vim.g.vscode then
   vim.keymap.set('n', '<F1>', telescope_builtin.help_tags, { noremap = true })
   vim.keymap.set('n', 'gc', telescope_builtin.git_commits, { noremap = true, desc = "git commits" })
   -- git history
-  vim.keymap.set('n', 'gh', telescope_builtin.git_bcommits, { noremap = true, desc = "git history" })
+  vim.keymap.set('n', 'gh', "<cmd>DiffviewFileHistoryToggle %<cr>", { noremap = true, desc = "git history" })
   vim.keymap.set('n', 'gb', telescope_builtin.git_branches, { noremap = true, desc = "git branches" })
-  vim.keymap.set('n', 'gs', "<cmd>DiffviewOpen<cr>", { noremap = true, desc = "git status" })
+  vim.keymap.set('n', 'gs', "<cmd>DiffviewToggle<cr>", { noremap = true, desc = "git status" })
   vim.keymap.set('n', 'gS', telescope_builtin.git_stash, { noremap = true, desc = "git stash" })
   vim.keymap.set('n', '<leader>ss', telescope_builtin.treesitter, { noremap = true, desc = "show symbols" })
   vim.keymap.set('n', 'gd', telescope_builtin.lsp_definitions, { noremap = true, desc = "go to definition" })
@@ -99,17 +119,12 @@ if not vim.g.vscode then
   -- Actions
   map('n', '<leader>hs', gs.stage_hunk, {desc = "hunk stage"})
   map('n', '<leader>hr', gs.reset_hunk, {desc = "hunk reset"})
-  map('x', '<leader>hs', function() gs.stage_hunk {vim.fn.line('.'), vim.fn.line('v')} end)
-  map('x', '<leader>hr', function() gs.reset_hunk {vim.fn.line('.'), vim.fn.line('v')} end)
-  map('n', '<leader>hS', gs.stage_buffer)
-  map('n', '<leader>hu', gs.undo_stage_hunk)
-  map('n', '<leader>hR', gs.reset_buffer)
-  map('n', '<leader>hp', gs.preview_hunk)
-  map('n', '<leader>hb', function() gs.blame_line{full=true} end)
-  map('n', '<leader>tb', gs.toggle_current_line_blame)
-  map('n', '<leader>hd', gs.diffthis)
-  map('n', '<leader>hD', function() gs.diffthis('~') end)
-  map('n', '<leader>td', gs.toggle_deleted)
+  map('x', '<leader>hs', function() gs.stage_hunk {vim.fn.line('.'), vim.fn.line('v')} end, { desc = "hunk stage" })
+  map('x', '<leader>hr', function() gs.reset_hunk {vim.fn.line('.'), vim.fn.line('v')} end, { desc = "hunk reset" })
+  map('n', '<leader>su', gs.undo_stage_hunk, { desc = "stage undo" })
+  map('n', '<leader>hp', gs.preview_hunk, { desc = "hunk preview" })
+  map('n', '<leader>gb', function() gs.blame_line{full=true} end, { desc = "git blame" })
+  map('n', '<leader>td', gs.toggle_deleted, { desc = "toggle deleted lines" })
 
   -- Text object
   map({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
@@ -181,6 +196,7 @@ if not vim.g.vscode then
   end
 
   vim.api.nvim_set_keymap("n", "<leader>lg", "<cmd>lua _lazygit_toggle()<CR>", {noremap = true, silent = true})
+
 
 else
   vim.keymap.set('n', 'u', '<cmd>call VSCodeNotify("undo")<cr>', { noremap = true })

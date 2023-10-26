@@ -83,6 +83,10 @@ require("lazy").setup({
       local actions = require("telescope.actions");
       telescope.setup({
         defaults = {
+          layout_strategy = 'vertical',
+          layout_config = {
+            vertical = { width = 0.95 }
+          },
           path_display = {"tail"},
           mappings = {
             i = {
