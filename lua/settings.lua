@@ -29,6 +29,7 @@ vim.opt.signcolumn = "yes"
 vim.opt.isfname:append("@-@")
 
 vim.opt.updatetime = 50
+vim.opt.timeoutlen = 300
 
 vim.api.nvim_create_autocmd("BufEnter", {
   desc = "Disable automatic comment insertion",

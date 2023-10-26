@@ -261,7 +261,11 @@ require("lazy").setup({
       require("diffview").setup({
         enhanced_diff_hl = true,
         use_icons = true,
-        view = { x = { layout = "diff3_vertical" } }
+        view = {
+          merge_tool = { layout = "diff3_vertical" },
+          default = { layout = "diff2_vertical" },
+          file_history = { layout = "diff2_vertical" }
+        }
       })
     end
   },
