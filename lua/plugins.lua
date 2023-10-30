@@ -269,6 +269,16 @@ require("lazy").setup({
           merge_tool = { layout = "diff3_vertical" },
           default = { layout = "diff2_vertical" },
           file_history = { layout = "diff2_vertical" }
+        },
+        keymaps = {
+          file_panel = {
+            { "n", "c", "<cmd>Neogit commit<cr>", { desc = "Commit Popup" } },
+            { "n", "l", "<cmd>Neogit log<cr>", { desc = "Log Popup" } },
+            { "n", "p", "<cmd>Neogit pull<cr>", { desc = "Pull Popup" } },
+            { "n", "P", "<cmd>Neogit push<cr>", { desc = "Push Popup" } },
+            { "n", "F", "<cmd>Neogit fetch<cr>", { desc = "Fetch Popup" } },
+            { "n", "S", "<cmd>Neogit stash<cr>", { desc = "Stash Popup" } },
+          }
         }
       })
     end
@@ -319,6 +329,27 @@ require("lazy").setup({
     config = function ()
       require("telescope").load_extension("file_browser")
     end
-  }
+  },
+  {
+  "NeogitOrg/neogit",
+    dependencies = {
+      "nvim-lua/plenary.nvim",         -- required
+      "nvim-telescope/telescope.nvim", -- optional
+      "sindrets/diffview.nvim",        -- optional
+    },
+    config = function()
+      require("neogit").setup({
+        integrations = {
+          telescope = true,
+          diffview = true
+        },
+        commit_editor = {
+          kind = "floating"
+        },
+        popup = { kind = "floating" }
+      })
+    end
+  },
+  { "rickhowe/diffchar.vim" }
 })
 

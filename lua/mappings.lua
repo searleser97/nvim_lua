@@ -60,11 +60,12 @@ if not vim.g.vscode then
     telescope.extensions.live_grep_args.live_grep_args({ postfix = " -g \"*.*\"" })
   end, { noremap = true, desc = "search pattern" })
   vim.keymap.set('n', '<F1>', telescope_builtin.help_tags, { noremap = true })
-  vim.keymap.set('n', 'gc', telescope_builtin.git_commits, { noremap = true, desc = "git commits" })
+  vim.keymap.set('n', 'gc', telescope_builtin.git_commits, { noremap = true, desc = "git branch commits" })
   -- git history
-  vim.keymap.set('n', 'gh', "<cmd>DiffviewFileHistoryToggle %<cr>", { noremap = true, desc = "git history" })
+  -- vim.keymap.set('n', 'gh', "<cmd>DiffviewFileHistoryToggle %<cr>", { noremap = true, desc = "git file history" })
+  vim.keymap.set('n', 'gh', telescope_builtin.git_bcommits, { noremap = true, desc = "git file history" })
   vim.keymap.set('n', 'gb', telescope_builtin.git_branches, { noremap = true, desc = "git branches" })
-  vim.keymap.set('n', 'gs', "<cmd>DiffviewToggle<cr>", { noremap = true, desc = "git status" })
+  vim.keymap.set('n', 'gt', "<cmd>DiffviewToggle<cr>", { noremap = true, desc = "git tab/toggle" })
   vim.keymap.set('n', 'gS', telescope_builtin.git_stash, { noremap = true, desc = "git stash" })
   vim.keymap.set('n', '<leader>ss', telescope_builtin.treesitter, { noremap = true, desc = "show symbols" })
   vim.keymap.set('n', 'gd', telescope_builtin.lsp_definitions, { noremap = true, desc = "go to definition" })
@@ -75,10 +76,10 @@ if not vim.g.vscode then
   local actions = require "telescope.actions"
 
   local sessions = require("sessions")
-  vim.keymap.set("n", "<leader>ss", function ()
+  vim.keymap.set("n", "<leader>os", function ()
     telescope_builtin.find_files({
       previewer = false,
-      prompt_title = "Search Sessions",
+      prompt_title = "Open Session",
       cwd = vim.fn.stdpath("data") .. "/sessions",
       attach_mappings = function (_, map)
         map("i", "<cr>", function (prompt_bufnr)
@@ -195,8 +196,29 @@ if not vim.g.vscode then
     lazygit:toggle()
   end
 
-  vim.api.nvim_set_keymap("n", "<leader>lg", "<cmd>lua _lazygit_toggle()<CR>", {noremap = true, silent = true})
+  vim.api.nvim_set_keymap("n", "<leader>lg", "<cmd>lua _lazygit_toggle()<CR>", {noremap = true, silent = true, desc = "lazygit"})
 
+
+  local gitDiffStaged = Terminal:new({
+    cmd = "git diff --staged",
+    dir = "git_dir",
+    close_on_exit = false,
+    direction = "float",
+    float_opts = {
+      border = "double",
+    },
+    -- function to run on opening the terminal
+    on_open = function(term)
+      vim.cmd("startinsert!")
+      vim.api.nvim_buf_set_keymap(term.bufnr, "n", "q", "<cmd>close<CR>", {noremap = true, silent = true})
+    end,
+  })
+
+  function _gitDiffStaged_toggle()
+    gitDiffStaged:toggle()
+  end
+
+  vim.api.nvim_set_keymap("n", "<leader>gd", "<cmd>lua _gitDiffStaged_toggle()<CR>", {noremap = true, silent = true, desc = "git diff --staged"})
 
 else
   vim.keymap.set('n', 'u', '<cmd>call VSCodeNotify("undo")<cr>', { noremap = true })
