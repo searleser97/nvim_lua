@@ -74,6 +74,7 @@ if not vim.g.vscode then
 
   local action_state = require "telescope.actions.state"
   local actions = require "telescope.actions"
+  local previewers = require('telescope.previewers')
 
   local sessions = require("sessions")
   vim.keymap.set("n", "<leader>os", function ()
@@ -91,6 +92,17 @@ if not vim.g.vscode then
     })
   end, { noremap = true, desc = "search session" })
   vim.keymap.set("n", "<leader>SS", ":SessionsSave ", { noremap = true, desc = "Save new Session" })
+
+  local delta_previewer = previewers.new_termopen_previewer {
+    get_command = function(entry)
+      return { 'git', '-c', 'core.pager=delta', '-c', 'delta.side-by-side=false', 'diff', entry.value .. '^!' }
+    end
+  }
+  vim.keymap.set("n", "gc", function ()
+    telescope_builtin.git_commits({
+      previewer = delta_previewer
+    })
+  end, { noremap = true, desc = "git branch commits" })
 
   local gs = package.loaded.gitsigns
 

@@ -331,7 +331,7 @@ require("lazy").setup({
     end
   },
   {
-  "NeogitOrg/neogit",
+    "NeogitOrg/neogit",
     dependencies = {
       "nvim-lua/plenary.nvim",         -- required
       "nvim-telescope/telescope.nvim", -- optional
@@ -350,6 +350,13 @@ require("lazy").setup({
       })
     end
   },
-  { "rickhowe/diffchar.vim" }
+  { "rickhowe/diffchar.vim" },
+  {
+    "nvim-lualine/lualine.nvim",
+    dependencies = { 'nvim-tree/nvim-web-devicons', opt = true },
+    config = function ()
+      require('lualine').setup()
+    end
+  }
 })
 
