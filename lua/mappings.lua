@@ -10,6 +10,8 @@ vim.keymap.set({'n', 'x'}, '<C-b>', '<C-v>', { noremap = true })
 vim.keymap.set({'x', 'n'}, 'l', '"0p', { noremap = true })
 vim.keymap.set('x', 'y', "ygv<esc>", { noremap = true })
 vim.keymap.set('n', 'Q', "<nop>", { noremap = true })
+vim.keymap.set('n', 'zl', "10zl", { noremap = true })
+vim.keymap.set('n', 'zh', "10zh", { noremap = true })
 
 if not vim.g.vscode then
   vim.api.nvim_create_user_command("DiffviewToggle", function(e)
