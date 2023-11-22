@@ -89,8 +89,16 @@ require("lazy").setup({
           }
         },
         extensions = {
+          file_browser = {
+            respect_gitignore = false,
+            no_ignore = true,
+          }
         },
         pickers = {
+          find_files = {
+            hidden = true,
+            no_ignore = true
+          },
           git_branches = {
             mappings = {
               i = { ["<cr>"] = actions.git_switch_branch },
