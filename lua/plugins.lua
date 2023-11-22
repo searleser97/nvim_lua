@@ -30,7 +30,7 @@ require("lazy").setup({
   },
   {
     'VonHeikemen/lsp-zero.nvim',
-    branch = 'v2.x',
+    branch = 'v3.x',
     dependencies = {
       -- LSP Support
       {'neovim/nvim-lspconfig'},             -- Required
@@ -57,26 +57,17 @@ require("lazy").setup({
     cond = not vim.g.vscode,
     config = function()
       require("nvim-treesitter.configs").setup({
-        ensure_installed = { "bash", "lua", "vim", "vimdoc", "query", "lua", "dart", "typescript", "javascript", "json", "tsx" }
+        ensure_installed = { "bash", "lua", "vim", "vimdoc", "query", "dart", "typescript", "javascript", "json", "tsx", "c_sharp" }
       })
     end
   },
   {
-    "https://github.com/ThePrimeagen/harpoon",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-telescope/telescope.nvim"
-    },
-    cond = not vim.g.vscode,
-    config = function()
-      require("telescope").load_extension('harpoon')
-    end
-  },
-  {
     "nvim-telescope/telescope.nvim",
+    dir = "C:\\Users\\sergiosanc\\forks\\telescope.nvim",
     dependencies = {
       "nvim-lua/plenary.nvim"
     },
+    lazy = false,
     cond = not vim.g.vscode,
     config = function()
       local telescope = require("telescope");
@@ -107,6 +98,17 @@ require("lazy").setup({
           }
         }
       });
+    end
+  },
+  {
+    "https://github.com/ThePrimeagen/harpoon",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      -- "nvim-telescope/telescope.nvim"
+    },
+    cond = not vim.g.vscode,
+    config = function()
+      require("telescope").load_extension('harpoon')
     end
   },
   {
@@ -142,7 +144,20 @@ require("lazy").setup({
     priority = 1000,
     cond = not vim.g.vscode,
     config = function()
-      vim.cmd("colorscheme tokyonight-night")
+      require("tokyonight").setup({
+        style = "storm", -- The theme comes in three styles, `storm`, `moon`, a darker variant `night` and `day`
+        transparent = true,
+        on_colors = function (colors)
+          colors.diff.add = "#28444d"
+          colors.diff.change = colors.none
+          colors.diff.text = "#87632f"
+          colors.diff.text = "#966d30"
+
+          colors.gitSigns.add = colors.hint
+        end
+      })
+
+      vim.cmd("colorscheme tokyonight")
     end
   },
   {
@@ -151,7 +166,12 @@ require("lazy").setup({
     priority = 1000,
     cond = not vim.g.vscode,
     config = function()
-      -- vim.cmd("colorscheme catppuccin-mocha")
+    require("catppuccin").setup({
+      flavour = "mocha", -- latte, frappe, macchiato, mocha
+      transparent_background = true
+    })
+
+    -- vim.cmd("colorscheme catppuccin")
     end
   },
   {
@@ -177,7 +197,9 @@ require("lazy").setup({
     "akinsho/toggleterm.nvim",
     version = "*",
     config = function()
-      require("toggleterm").setup()
+      require("toggleterm").setup({
+        direction = "float"
+      })
     end
   },
   {
@@ -198,7 +220,7 @@ require("lazy").setup({
     config = function()
       require("telescope").load_extension("recent_files")
     end,
-    dependencies = { "nvim-telescope/telescope.nvim" },
+    -- dependencies = { "nvim-telescope/telescope.nvim" },
     cond = not vim.g.vscode
   },
   {
@@ -255,7 +277,7 @@ require("lazy").setup({
     config = function()
       require("telescope").load_extension("live_grep_args")
     end,
-    dependencies = { "nvim-telescope/telescope.nvim" },
+    -- dependencies = { "nvim-telescope/telescope.nvim" },
     cond = not vim.g.vscode
   },
   {
@@ -323,7 +345,7 @@ require("lazy").setup({
   {
     "nvim-telescope/telescope-file-browser.nvim",
     dependencies = {
-      "nvim-telescope/telescope.nvim",
+      -- "nvim-telescope/telescope.nvim",
       "nvim-lua/plenary.nvim",
     },
     config = function ()
@@ -334,7 +356,7 @@ require("lazy").setup({
     "NeogitOrg/neogit",
     dependencies = {
       "nvim-lua/plenary.nvim",         -- required
-      "nvim-telescope/telescope.nvim", -- optional
+      -- "nvim-telescope/telescope.nvim", -- optional
       "sindrets/diffview.nvim",        -- optional
     },
     config = function()
@@ -357,6 +379,12 @@ require("lazy").setup({
     config = function ()
       require('lualine').setup()
     end
+  },
+--  { "Hoffs/csharpls-extended-lsp.nvim" }
+  { 
+    "Decodetalkers/csharpls-extended-lsp.nvim",
+    dir = "C:\\Users\\sergiosanc\\forks\\csharpls-extended-lsp.nvim",
+    lazy = false
   }
 })
 
