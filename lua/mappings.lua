@@ -111,59 +111,6 @@ if not vim.g.vscode then
   end, { noremap = true, expr = true, replace_keycodes = true})
   vim.keymap.set('n', '<leader>c', '<Plug>(comment_toggle_linewise_current)', { noremap = true })
 
-  function OpenToggleTerms()
-    local maxBufferIndex = vim.fn.bufnr("$")
-    local toggleTermBuffers = vim.fn.filter(vim.fn.range(1, maxBufferIndex), 'bufname(v:val) =~ ".*toggleterm.*"')
-    local corruptedBuffersExcluded = vim.fn.filter(toggleTermBuffers, function (_key, val) return vim.fn.getbufinfo(val)[1].variables.term_title ~= "exit"; end)
-    return corruptedBuffersExcluded;
-  end
-
-  function ToggleIntegratedTerminal()
-    local openTerms = OpenToggleTerms()
-    if (#openTerms == 0) then
-      return "<cmd>ToggleTerm<cr>";
-    elseif #openTerms == 1 then
-      return "<cmd>TermSelect<cr>1<cr>i";
-    else
-      return "<cmd>TermSelect<cr>";
-    end
-  end
-
-  vim.keymap.set('n', '<c-t>', ToggleIntegratedTerminal, { noremap = true, expr = true, replace_keycodes = true })
-  local opts = {noremap = true}
-  vim.keymap.set('t', '<c-n>', [[<C-\><C-n>]], opts)
-  vim.keymap.set('t', '<c-t>', [[<C-\><C-n><C-w><C-p>]], opts)
-
-  local Terminal  = require('toggleterm.terminal').Terminal
-  local lazygit = Terminal:new({
-    cmd = "lazygit",
-    dir = "git_dir",
-    direction = "float",
-    float_opts = {
-      border = "double",
-    },
-    -- function to run on opening the terminal
-    on_open = function(term)
-      vim.cmd("startinsert!")
-      vim.api.nvim_buf_set_keymap(term.bufnr, "n", "q", "<cmd>close<CR>", {noremap = true, silent = true})
-    end,
-    -- function to run on closing the terminal
-    on_close = function(term)
-      vim.cmd("startinsert!")
-    end,
-  })
-
-  function _lazygit_toggle()
-    lazygit:toggle()
-  end
-
-  vim.api.nvim_set_keymap("n", "<leader>lg", "<cmd>lua _lazygit_toggle()<CR>", {noremap = true, silent = true, desc = "lazygit"})
-
-  local on_open_term = function(term)
-    vim.cmd("startinsert!")
-    vim.api.nvim_buf_set_keymap(term.bufnr, "n", "<C-t>", "<cmd>close<CR>", {noremap = true, silent = true})
-  end
-
   local gs = package.loaded.gitsigns
 
   -- Navigation
@@ -180,15 +127,38 @@ if not vim.g.vscode then
     return '<Ignore>'
   end, {expr=true, desc = "Previous Change"})
 
-  vim.keymap.set("n", "GD", "<cmd>TermExec cmd=\"git diff --staged\"<cr>", {noremap = true, silent = true, desc = "git diff --staged"})
-  vim.keymap.set("n", "Gd", "<cmd>TermExec cmd=\"git diff\"<cr>", {noremap = true, silent = true, desc = "git diff"})
+  local Terminal  = require('toggleterm.terminal').Terminal
+  local gitTermConfig =  {
+    dir = "git_dir",
+    direction = "float",
+    float_opts = {
+      border = "double",
+    },
+    count = 9,
+    -- function to run on opening the terminal
+    on_open = function(term)
+      vim.cmd("startinsert!")
+    end,
+  }
+
+  local gitTerm = Terminal:new(gitTermConfig);
+
+  local execGitCommand = function(command)
+    gitTerm:open()
+    gitTerm:change_dir('git_dir')
+    gitTerm:send(command)
+  end
+
+  
+  vim.keymap.set("n", "GD", function() execGitCommand("git diff --staged") end, {noremap = true, silent = true, desc = "git diff --staged"})
+  vim.keymap.set("n", "Gd", function() execGitCommand("git diff") end, {noremap = true, silent = true, desc = "git diff"})
   vim.keymap.set('n', 'Gc', telescope_builtin.git_commits, { noremap = true, desc = "git branch commits" })
-  vim.keymap.set('n', 'GC', "<cmd>TermExec cmd=\"git commit\"<cr>", { noremap = true, desc = "git commit" })
-  vim.keymap.set('n', 'GA', "<cmd>TermExec cmd=\"git commit --amend\"<cr>", { noremap = true, desc = "git commit amend" })
-  vim.keymap.set('n', 'GP', "<cmd>TermExec cmd=\"git push\"<cr>", { noremap = true, desc = "git push" })
-  vim.keymap.set('n', 'Gp', "<cmd>TermExec cmd=\"git pull\"<cr>", { noremap = true, desc = "git git pull" })
-  vim.keymap.set('n', 'GF', "<cmd>TermExec cmd=\"git push --force-with-lease\"<cr>", { noremap = true, desc = "git push force" })
-  vim.keymap.set('n', 'Gf', "<cmd>TermExec cmd=\"git fetch\"<cr>", { noremap = true, desc = "git fetch" })
+  vim.keymap.set('n', 'GC', function() execGitCommand("git commit") end, { noremap = true, desc = "git commit" })
+  vim.keymap.set('n', 'GA', function() execGitCommand("git commit --amend") end, { noremap = true, desc = "git commit amend" })
+  vim.keymap.set('n', 'GP', function() execGitCommand("git push") end, { noremap = true, desc = "git push" })
+  vim.keymap.set('n', 'Gp', function() execGitCommand("git pull") end, { noremap = true, desc = "git git pull" })
+  vim.keymap.set('n', 'GF', function() execGitCommand("git push --force-with-lease") end, { noremap = true, desc = "git push force" })
+  vim.keymap.set('n', 'Gf', function() execGitCommand("git fetch") end, { noremap = true, desc = "git fetch" })
   -- git history
   -- vim.keymap.set('n', 'Gh', "<cmd>DiffviewFileHistoryToggle %<cr>", { noremap = true, desc = "git file history" })
   vim.keymap.set('n', 'Gh', telescope_builtin.git_bcommits, { noremap = true, desc = "git file history" })
@@ -196,6 +166,51 @@ if not vim.g.vscode then
   vim.keymap.set('n', 'Gb', function() gs.blame_line{full=true} end, { desc = "git blame" })
   vim.keymap.set('n', 'GS', "<cmd>DiffviewToggle<cr>", { noremap = true, desc = "git status" })
   vim.keymap.set('n', 'Gs', telescope_builtin.git_stash, { noremap = true, desc = "git stash" })
+
+  function OpenToggleTerms(ids_to_ignore)
+    local maxBufferIndex = vim.fn.bufnr("$")
+    local toggleTermBuffers = vim.fn.filter(vim.fn.range(1, maxBufferIndex), function(idx, val)
+      local termId = string.match(string.match(vim.fn.bufname(val), "toggleterm#%d+") or "", "%d+")
+        return termId ~= nil and ids_to_ignore[termId] == nil;
+    end)
+    local corruptedBuffersExcluded = vim.fn.filter(toggleTermBuffers, function (_key, val) return vim.fn.getbufinfo(val)[1].variables.term_title ~= "exit"; end)
+    return corruptedBuffersExcluded;
+  end
+
+  -- I need this function
+  function ToggleAllTerms(ignore)
+    local openTerms = OpenToggleTerms(ignore)
+    print(vim.inspect(openTerms))
+    for _key, value in pairs(openTerms) do
+      local termId = string.match(string.match(vim.fn.bufname(value), "toggleterm#%d+"), "%d+")
+      vim.cmd(termId .."ToggleTerm")
+    end
+  end
+
+  vim.keymap.set('n', '<c-t>', function()
+    if vim.v.count ~= 0 then
+      vim.cmd(vim.v.count .. "ToggleTerm");
+    else
+      local openTermsCount = #OpenToggleTerms()
+      if openTermsCount < 1 then
+        vim.cmd("ToggleTerm");
+      else
+        ToggleAllTerms({ ["" .. gitTerm.id] = true })
+      end
+    end
+  end, { noremap = true })
+  vim.keymap.set('n', '<c-q>', "<cmd>close<cr>")
+
+  vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], { noremap = true })
+  vim.keymap.set('t', '<c-p>', [[<C-\><C-n><C-w><C-p>]])
+  vim.keymap.set('t', '<c-t>', function()
+    return [[<C-\><C-n><cmd>ToggleTermToggleAll<cr>]];
+  end, { expr = true })
+  vim.keymap.set('t', '<c-q>', [[<C-\><C-n><cmd>close<cr>]])
+  vim.keymap.set('t', '<c-Up>', [[<C-\><C-n><C-w><Up>]])
+  vim.keymap.set('t', '<c-Down>', [[<C-\><C-n><C-w><Down>]])
+  vim.keymap.set('t', '<c-Left>', [[<C-\><C-n><C-w><Left>]])
+  vim.keymap.set('t', '<c-Right>', [[<C-\><C-n><C-w><Right>]])
 
   -- Actions
   vim.keymap.set('n', '<leader>hs', gs.stage_hunk, {desc = "hunk stage"})
