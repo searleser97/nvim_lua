@@ -305,12 +305,7 @@ require("lazy").setup({
         },
         keymaps = {
           file_panel = {
-            { "n", "c", "<cmd>Neogit commit<cr>", { desc = "Commit Popup" } },
-            { "n", "l", "<cmd>Neogit log<cr>", { desc = "Log Popup" } },
-            { "n", "p", "<cmd>Neogit pull<cr>", { desc = "Pull Popup" } },
-            { "n", "P", "<cmd>Neogit push<cr>", { desc = "Push Popup" } },
-            { "n", "F", "<cmd>Neogit fetch<cr>", { desc = "Fetch Popup" } },
-            { "n", "S", "<cmd>Neogit stash<cr>", { desc = "Stash Popup" } },
+            { "n", "<c-r>", "<cmd>DiffviewRefresh<cr>", { desc = "DiffviewRefresh" } },
           }
         }
       })
