@@ -358,26 +358,6 @@ require("lazy").setup({
       require("telescope").load_extension("file_browser")
     end
   },
-  {
-    "NeogitOrg/neogit",
-    dependencies = {
-      "nvim-lua/plenary.nvim",         -- required
-      -- "nvim-telescope/telescope.nvim", -- optional
-      "sindrets/diffview.nvim",        -- optional
-    },
-    config = function()
-      require("neogit").setup({
-        integrations = {
-          telescope = true,
-          diffview = true
-        },
-        commit_editor = {
-          kind = "floating"
-        },
-        popup = { kind = "floating" }
-      })
-    end
-  },
   { "rickhowe/diffchar.vim" },
   {
     "nvim-lualine/lualine.nvim",
@@ -386,7 +366,6 @@ require("lazy").setup({
       require('lualine').setup()
     end
   },
---  { "Hoffs/csharpls-extended-lsp.nvim" }
   { 
     "Decodetalkers/csharpls-extended-lsp.nvim",
     dir = "C:\\Users\\sergiosanc\\forks\\csharpls-extended-lsp.nvim",
