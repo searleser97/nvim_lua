@@ -140,9 +140,9 @@ require("lazy").setup({
         completion = {
           completeopt = 'menu,menuone,noinsert'
         },
-        mapping = {
+        mapping = cmp.mapping.preset.insert({
           ['<CR>'] = cmp.mapping.confirm({select = true}),
-        }
+        })
       })
     end
   },
@@ -206,7 +206,10 @@ require("lazy").setup({
     version = "*",
     config = function()
       require("toggleterm").setup({
-        direction = "float"
+        -- direction = "t"
+        on_open = function(term)
+          vim.cmd("startinsert!")
+        end
       })
     end
   },
