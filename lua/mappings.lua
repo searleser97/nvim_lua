@@ -191,9 +191,9 @@ if not vim.g.vscode then
     if vim.v.count ~= 0 then
       vim.cmd(vim.v.count .. "ToggleTerm");
     else
-      local openTermsCount = #OpenToggleTerms()
+      local openTermsCount = #OpenToggleTerms({ ["".. gitTerm.id] = true })
       if openTermsCount < 1 then
-        vim.cmd("ToggleTerm");
+        vim.cmd("1ToggleTerm");
       else
         ToggleAllTerms({ ["" .. gitTerm.id] = true })
       end
