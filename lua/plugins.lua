@@ -63,7 +63,7 @@ require("lazy").setup({
   },
   {
     "nvim-telescope/telescope.nvim",
-    dir = "C:\\Users\\sergiosanc\\forks\\telescope.nvim",
+    dir = "E:\\forks\\telescope.nvim",
     dependencies = {
       "nvim-lua/plenary.nvim"
     },
@@ -368,7 +368,7 @@ require("lazy").setup({
   },
   { 
     "Decodetalkers/csharpls-extended-lsp.nvim",
-    dir = "C:\\Users\\sergiosanc\\forks\\csharpls-extended-lsp.nvim",
+    dir = "E:\\forks\\csharpls-extended-lsp.nvim",
     lazy = false
   }
 })
