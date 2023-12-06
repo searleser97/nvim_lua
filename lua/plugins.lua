@@ -74,11 +74,12 @@ require("lazy").setup({
       local actions = require("telescope.actions");
       telescope.setup({
         defaults = {
+          dynamic_preview_title = true,
           layout_strategy = 'vertical',
           layout_config = {
             vertical = { width = 0.95 }
           },
-          path_display = {"tail"},
+          path_display = {"tail"}, -- "smart", "tail"
           mappings = {
             i = {
               ["<C-l>"] = actions.results_scrolling_left,
@@ -209,7 +210,8 @@ require("lazy").setup({
         -- direction = "t"
         on_open = function(term)
           vim.cmd("startinsert!")
-        end
+        end,
+        autochdir = true
       })
     end
   },
@@ -217,7 +219,7 @@ require("lazy").setup({
     "notjedi/nvim-rooter.lua",
     config = function()
       require("nvim-rooter").setup({
-        rooter_patterns = { 'pubspec.yaml', 'package.json', 'dirs.proj', '.git', '.hg', '.svn' }
+        rooter_patterns = { '*_root.txt', 'pubspec.yaml', 'package.json', 'dirs.proj', '.git', '.hg', '.svn' }
       })
     end,
     cond = not vim.g.vscode
@@ -331,6 +333,7 @@ require("lazy").setup({
   },
   {
     "searleser97/sessions.nvim",
+    dir = "E:\\forks\\sessions.nvim",
     config = function()
       require("sessions").setup({
         use_unique_session_names = true,
@@ -370,6 +373,6 @@ require("lazy").setup({
     "Decodetalkers/csharpls-extended-lsp.nvim",
     dir = "E:\\forks\\csharpls-extended-lsp.nvim",
     lazy = false
-  }
+  },
 })
 
