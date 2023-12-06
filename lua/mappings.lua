@@ -149,7 +149,6 @@ if not vim.g.vscode then
     gitTerm:send(command)
   end
 
-  
   vim.keymap.set("n", "GD", function() execGitCommand("git diff --staged") end, {noremap = true, silent = true, desc = "git diff --staged"})
   vim.keymap.set("n", "Gd", function() execGitCommand("git diff") end, {noremap = true, silent = true, desc = "git diff"})
   vim.keymap.set('n', 'Gc', telescope_builtin.git_commits, { noremap = true, desc = "git branch commits" })
@@ -166,6 +165,7 @@ if not vim.g.vscode then
   vim.keymap.set('n', 'Gb', function() gs.blame_line{full=true} end, { desc = "git blame" })
   vim.keymap.set('n', 'GS', "<cmd>DiffviewToggle<cr>", { noremap = true, desc = "git status" })
   vim.keymap.set('n', 'Gs', telescope_builtin.git_stash, { noremap = true, desc = "git stash" })
+  vim.keymap.set('n', 'GT', function() gitTerm:open() end, { noremap = true, desc = "git terminal" })
 
   function OpenToggleTerms(ids_to_ignore)
     local maxBufferIndex = vim.fn.bufnr("$")
