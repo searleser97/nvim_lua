@@ -334,6 +334,7 @@ require("lazy").setup({
   {
     "searleser97/sessions.nvim",
     dir = "E:\\forks\\sessions.nvim",
+    cond = not vim.g.vscode,
     config = function()
       require("sessions").setup({
         use_unique_session_names = true,
@@ -344,6 +345,7 @@ require("lazy").setup({
   },
   {
     "folke/which-key.nvim",
+    cond = not vim.g.vscode,
     event = "VeryLazy",
     init = function()
       vim.o.timeout = true
@@ -357,6 +359,7 @@ require("lazy").setup({
       -- "nvim-telescope/telescope.nvim",
       "nvim-lua/plenary.nvim",
     },
+    cond = not vim.g.vscode,
     config = function ()
       require("telescope").load_extension("file_browser")
     end
@@ -365,6 +368,7 @@ require("lazy").setup({
   {
     "nvim-lualine/lualine.nvim",
     dependencies = { 'nvim-tree/nvim-web-devicons', opt = true },
+    cond = not vim.g.vscode,
     config = function ()
       require('lualine').setup()
     end
@@ -372,7 +376,12 @@ require("lazy").setup({
   { 
     "Decodetalkers/csharpls-extended-lsp.nvim",
     dir = "E:\\forks\\csharpls-extended-lsp.nvim",
+    cond = not vim.g.vscode,
     lazy = false
   },
+  {
+    "github/copilot.vim",
+    cond = not vim.g.vscode
+  }
 })
 
