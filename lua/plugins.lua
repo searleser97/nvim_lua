@@ -10,6 +10,9 @@ if not vim.loop.fs_stat(lazypath) then
   })
 end
 vim.opt.rtp:prepend(lazypath)
+function Is_Windows()
+  return package.config:sub(1,1) == "\\";
+end
 
 require("lazy").setup({
   {
@@ -62,8 +65,8 @@ require("lazy").setup({
     end
   },
   {
-    "nvim-telescope/telescope.nvim",
-    dir = "E:\\forks\\telescope.nvim",
+    "searleser97/telescope.nvim",
+    dir = Is_Windows() and "E:\\forks\\telescope.nvim" or nil,
     dependencies = {
       "nvim-lua/plenary.nvim"
     },
@@ -93,6 +96,7 @@ require("lazy").setup({
           file_browser = {
             respect_gitignore = false,
             no_ignore = true,
+            hidden = { file_browser = true, folder_browser = true },
           }
         },
         pickers = {
@@ -199,7 +203,9 @@ require("lazy").setup({
     "arnamak/stay-centered.nvim",
     lazy = false,
     config = function()
-      require("stay-centered").setup()
+      require("stay-centered").setup({
+        skip_filetypes = { "toggleterm" }
+      })
     end
   },
   {
@@ -219,7 +225,7 @@ require("lazy").setup({
     "notjedi/nvim-rooter.lua",
     config = function()
       require("nvim-rooter").setup({
-        rooter_patterns = { '*_root.txt', 'pubspec.yaml', 'package.json', 'dirs.proj', '.git', '.hg', '.svn' }
+        rooter_patterns = { '*_root.txt', 'Cargo.toml', 'pubspec.yaml', 'package.json', 'dirs.proj', '.git', '.hg', '.svn' }
       })
     end,
     cond = not vim.g.vscode
@@ -333,7 +339,7 @@ require("lazy").setup({
   },
   {
     "searleser97/sessions.nvim",
-    dir = "E:\\forks\\sessions.nvim",
+    dir = Is_Windows() and "E:\\forks\\sessions.nvim" or nil,
     cond = not vim.g.vscode,
     config = function()
       require("sessions").setup({
@@ -375,7 +381,7 @@ require("lazy").setup({
   },
   { 
     "Decodetalkers/csharpls-extended-lsp.nvim",
-    dir = "E:\\forks\\csharpls-extended-lsp.nvim",
+    dir = Is_Windows() and "E:\\forks\\csharpls-extended-lsp.nvim" or nil,
     cond = not vim.g.vscode,
     lazy = false
   },
