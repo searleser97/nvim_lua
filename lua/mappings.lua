@@ -71,13 +71,23 @@ if not vim.g.vscode then
   local action_state = require "telescope.actions.state"
   local actions = require "telescope.actions"
   local previewers = require('telescope.previewers')
+  local pickers = require "telescope.pickers"
+  local finders = require "telescope.finders"
+  local make_entry = require "telescope.make_entry"
+  local conf = require"telescope.config".values
 
   local sessions = require("sessions")
+  local lua_utils = require("lua_utils")
+
   vim.keymap.set("n", "<leader>os", function ()
-    telescope_builtin.find_files({
+    pickers.new({}, {
       previewer = false,
       prompt_title = "Open Session",
-      cwd = vim.fn.stdpath("data") .. "/sessions",
+      finder = finders.new_table({
+        results = lua_utils.file_names_sorted_by_modified_date(vim.fn.stdpath("data") .. "/sessions"),
+        entry_maker = make_entry.gen_from_file({})
+      }),
+      sorter = conf.file_sorter(),
       attach_mappings = function (_, map)
         map("i", "<cr>", function (prompt_bufnr)
           actions.close(prompt_bufnr)
@@ -85,7 +95,7 @@ if not vim.g.vscode then
         end)
         return true
       end
-    })
+    }):find()
   end, { noremap = true, desc = "search session" })
   vim.keymap.set("n", "<leader>SS", ":SessionsSave ", { noremap = true, desc = "Save new Session" })
 
@@ -129,7 +139,7 @@ if not vim.g.vscode then
 
   local Terminal  = require('toggleterm.terminal').Terminal
   local gitTermConfig =  {
-    dir = "git_dir",
+    autochdir = true,
     direction = "float",
     float_opts = {
       border = "double",
@@ -145,7 +155,7 @@ if not vim.g.vscode then
 
   local execGitCommand = function(command)
     gitTerm:open()
-    gitTerm:change_dir('git_dir')
+    gitTerm:change_dir(vim.loop.cwd())
     gitTerm:send(command)
   end
 
