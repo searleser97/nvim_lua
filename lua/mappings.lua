@@ -174,7 +174,7 @@ if not vim.g.vscode then
   vim.keymap.set('n', 'Gb', function() gs.blame_line{full=true} end, { desc = "git blame" })
   vim.keymap.set('n', 'GS', "<cmd>DiffviewToggle<cr>", { noremap = true, desc = "git status" })
   vim.keymap.set('n', 'Gs', telescope_builtin.git_stash, { noremap = true, desc = "git stash" })
-  vim.keymap.set('n', 'GT', function() gitTerm:open() end, { noremap = true, desc = "git terminal" })
+  vim.keymap.set({ 'n', 't' }, '<C-g>', function() gitTerm:toggle() end, { noremap = true, desc = "git terminal" })
 
   function OpenToggleTerms(ids_to_ignore)
     local maxBufferIndex = vim.fn.bufnr("$")
