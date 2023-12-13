@@ -70,7 +70,6 @@ if not vim.g.vscode then
 
   local action_state = require "telescope.actions.state"
   local actions = require "telescope.actions"
-  local previewers = require('telescope.previewers')
   local pickers = require "telescope.pickers"
   local finders = require "telescope.finders"
   local make_entry = require "telescope.make_entry"
@@ -161,7 +160,7 @@ if not vim.g.vscode then
 
   vim.keymap.set("n", "GD", function() execGitCommand("git diff --staged") end, {noremap = true, silent = true, desc = "git diff --staged"})
   vim.keymap.set("n", "Gd", function() execGitCommand("git diff") end, {noremap = true, silent = true, desc = "git diff"})
-  vim.keymap.set('n', 'Gc', telescope_builtin.git_commits, { noremap = true, desc = "git branch commits" })
+  vim.keymap.set('n', 'Gl', telescope_builtin.git_commits, { noremap = true, desc = "git branch commits" })
   vim.keymap.set('n', 'GC', function() execGitCommand("git commit") end, { noremap = true, desc = "git commit" })
   vim.keymap.set('n', 'GA', function() execGitCommand("git commit --amend") end, { noremap = true, desc = "git commit amend" })
   vim.keymap.set('n', 'GP', function() execGitCommand("git push") end, { noremap = true, desc = "git push" })
