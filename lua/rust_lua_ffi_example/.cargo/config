@@ -1,0 +1,19 @@
+# [target.x86_64-pc-windows-msvc]
+# rustflags = [
+  # "-C", "link-arg=-undefined",
+  # "-C", "link-arg=dynamic_lookup",
+  # "-C",
+  #   "link-args=-Wl,-z,undefs"
+# ]
+#
+# [target.nightly-x86_64-pc-windows-msvc]
+# rustflags = [
+#   "-C", "link-arg=-undefined",
+#   "-C", "link-arg=dynamic_lookup",
+# ]
+#
+# [target.aarch64-pc-windows-msvc]
+# rustflags = [
+#   "-C", "link-arg=-undefined",
+#   "-C", "link-arg=dynamic_lookup",
+# ]
