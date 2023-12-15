@@ -64,10 +64,6 @@ if not vim.g.vscode then
   vim.keymap.set('n', '<F1>', telescope_builtin.help_tags, { noremap = true })
   vim.keymap.set('n', '<leader>ss', telescope_builtin.treesitter, { noremap = true, desc = "show symbols" })
 
-  vim.keymap.set('n', 'gi', telescope_builtin.lsp_implementations, { noremap = true, desc = "go to implementation" })
-  vim.keymap.set('n', 'gr', telescope_builtin.lsp_references, { noremap = true, desc = "go to references" })
-  vim.keymap.set('n', '<leader>sd', vim.diagnostic.open_float, { noremap = true, desc = "show diagnostics" })
-
   local action_state = require "telescope.actions.state"
   local actions = require "telescope.actions"
   local pickers = require "telescope.pickers"
@@ -139,7 +135,7 @@ if not vim.g.vscode then
   local Terminal  = require('toggleterm.terminal').Terminal
   local gitTermConfig =  {
     autochdir = true,
-    direction = "float",
+    -- direction = "float",
     float_opts = {
       border = "double",
     },
@@ -150,12 +146,12 @@ if not vim.g.vscode then
     end,
   }
 
-  local gitTerm = Terminal:new(gitTermConfig);
+  GitTerm = Terminal:new(gitTermConfig);
 
   local execGitCommand = function(command)
-    gitTerm:open()
-    gitTerm:change_dir(vim.loop.cwd())
-    gitTerm:send(command)
+    GitTerm:open()
+    GitTerm:change_dir(vim.loop.cwd())
+    GitTerm:send(command)
   end
 
   vim.keymap.set("n", "GD", function() execGitCommand("git diff --staged") end, {noremap = true, silent = true, desc = "git diff --staged"})
@@ -174,7 +170,7 @@ if not vim.g.vscode then
   vim.keymap.set('n', 'Gb', function() gs.blame_line{full=true} end, { desc = "git blame" })
   vim.keymap.set('n', 'GS', "<cmd>DiffviewToggle<cr>", { noremap = true, desc = "git status" })
   vim.keymap.set('n', 'Gs', telescope_builtin.git_stash, { noremap = true, desc = "git stash" })
-  vim.keymap.set({ 'n', 't' }, '<C-g>', function() gitTerm:toggle() end, { noremap = true, desc = "git terminal" })
+  vim.keymap.set({ 'n', 't' }, '<C-g>', function() GitTerm:toggle() end, { noremap = true, desc = "git terminal" })
 
   function OpenToggleTerms(ids_to_ignore)
     local maxBufferIndex = vim.fn.bufnr("$")
@@ -200,11 +196,11 @@ if not vim.g.vscode then
     if vim.v.count ~= 0 then
       vim.cmd(vim.v.count .. "ToggleTerm");
     else
-      local openTermsCount = #OpenToggleTerms({ ["".. gitTerm.id] = true })
+      local openTermsCount = #OpenToggleTerms({ ["".. GitTerm.id] = true })
       if openTermsCount < 1 then
         vim.cmd("1ToggleTerm");
       else
-        ToggleAllTerms({ ["" .. gitTerm.id] = true })
+        ToggleAllTerms({ ["" .. GitTerm.id] = true })
       end
     end
   end, { noremap = true })
