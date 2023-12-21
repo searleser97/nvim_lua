@@ -149,9 +149,13 @@ if not vim.g.vscode then
   GitTerm = Terminal:new(gitTermConfig);
 
   local execGitCommand = function(command)
-    GitTerm:open()
-    GitTerm:change_dir(vim.loop.cwd())
-    GitTerm:send(command)
+    if (GitTerm:is_open()) then
+      GitTerm:send(command)
+    else
+      GitTerm:open()
+      GitTerm:change_dir(vim.loop.cwd())
+      GitTerm:send(command)
+    end
   end
 
   vim.keymap.set("n", "GD", function() execGitCommand("git diff --staged") end, {noremap = true, silent = true, desc = "git diff --staged"})
