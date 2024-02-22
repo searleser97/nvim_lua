@@ -4,5 +4,7 @@ require("mappings")
 require("lsp")
 require("parsers")
 
-vim.cmd("WhichKey<cr>")
+if not vim.g.vscode then
+  vim.cmd("WhichKey<cr>")
+end
 
