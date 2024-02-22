@@ -13,7 +13,25 @@ vim.keymap.set('n', 'Q', "<nop>", { noremap = true })
 vim.keymap.set('n', 'zl', "10zl", { noremap = true })
 vim.keymap.set('n', 'zh', "10zh", { noremap = true })
 
+vim.keymap.set({'n', 'x', 'o'}, 'f', '<Plug>(leap-forward-to)')
+vim.keymap.set({'n', 'x', 'o'}, 'F', '<Plug>(leap-backward-to)')
+
+vim.keymap.set('n', '<leader>ts', function() require('treesj').toggle({ split = { recursive = true } }) end, { noremap = true, desc = "toggle split"})
+vim.keymap.set('x', '<leader>c', function()
+  local mode = vim.fn.mode()
+  if  mode == 'V' then
+    return "<Plug>(comment_toggle_linewise_visual)"
+  elseif mode == 'v' then
+    return "<Plug>(comment_toggle_blockwise_visual)"
+  end
+end, { noremap = true, expr = true, replace_keycodes = true})
+vim.keymap.set('n', '<leader>c', '<Plug>(comment_toggle_linewise_current)', { noremap = true })
+
+vim.keymap.set({'n', 'x'}, '<C-r>', '<nop>', { noremap = true })
+vim.keymap.set({'n', 'x'}, 'R', '<C-r>', { noremap = true })
+
 if not vim.g.vscode then
+
   vim.api.nvim_create_user_command("DiffviewToggle", function(e)
     local view = require("diffview.lib").get_current_view()
 
@@ -50,19 +68,19 @@ if not vim.g.vscode then
   local telescope = require("telescope")
   local live_grep_args_shortcuts = require("telescope-live-grep-args.shortcuts")
 
-  vim.keymap.set('n', '<leader>sf', telescope_builtin.find_files, { noremap = true, desc = "search files" })
-  vim.keymap.set('n', '<leader>rf', telescope.extensions.recent_files.pick, { noremap = true, desc = "recent files" })
-  vim.keymap.set('n', '<leader>fb', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', { noremap = true, desc = "File Browser" })
-  vim.keymap.set('n', '<leader>sm', telescope_builtin.marks, { noremap = true, desc = "search marks" })
-  vim.keymap.set('x', '<leader>sp', function ()
+  vim.keymap.set('n', '<c-s>f', telescope_builtin.find_files, { noremap = true, desc = "search files" })
+  vim.keymap.set('n', '<c-r>f', telescope.extensions.recent_files.pick, { noremap = true, desc = "recent files" })
+  vim.keymap.set('n', '<c-f>b', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', { noremap = true, desc = "File Browser" })
+  vim.keymap.set('n', '<c-s>m', telescope_builtin.marks, { noremap = true, desc = "search marks" })
+  vim.keymap.set('x', '<c-s>p', function ()
     live_grep_args_shortcuts.grep_visual_selection({ postfix = " -g \"*.*\""})
   end
   , { noremap = true, desc = "search pattern" })
-  vim.keymap.set('n', '<leader>sp', function ()
+  vim.keymap.set('n', '<c-s>p', function ()
     telescope.extensions.live_grep_args.live_grep_args({ postfix = " -g \"*.*\"" })
   end, { noremap = true, desc = "search pattern" })
   vim.keymap.set('n', '<F1>', telescope_builtin.help_tags, { noremap = true })
-  vim.keymap.set('n', '<leader>ss', telescope_builtin.treesitter, { noremap = true, desc = "show symbols" })
+  vim.keymap.set('n', '<c-s>s', telescope_builtin.treesitter, { noremap = true, desc = "show symbols" })
 
   local action_state = require "telescope.actions.state"
   local actions = require "telescope.actions"
@@ -73,8 +91,9 @@ if not vim.g.vscode then
 
   local sessions = require("sessions")
   local lua_utils = require("lua_utils")
-
-  vim.keymap.set("n", "<leader>os", function ()
+  vim.keymap.set("n", "<c-p>", "<c-o>", { noremap = true })
+  vim.keymap.set("n", "<c-n>", "<c-i>", { noremap = true })
+  vim.keymap.set("n", "<c-o>s", function ()
     pickers.new({}, {
       previewer = false,
       prompt_title = "Open Session",
@@ -91,11 +110,9 @@ if not vim.g.vscode then
         return true
       end
     }):find()
-  end, { noremap = true, desc = "search session" })
-  vim.keymap.set("n", "<leader>SS", ":SessionsSave ", { noremap = true, desc = "Save new Session" })
+  end, { noremap = true, desc = "open session" })
+  vim.keymap.set("n", "<c-s>S", ":SessionsSave ", { noremap = true, desc = "Save new Session" })
 
-  vim.keymap.set({'n', 'x', 'o'}, 'f', '<Plug>(leap-forward-to)')
-  vim.keymap.set({'n', 'x', 'o'}, 'F', '<Plug>(leap-backward-to)')
 
   local harpoon_ui = require("harpoon.ui")
   vim.keymap.set('n', '<leader>ha', require("harpoon.mark").add_file, { noremap = true })
@@ -105,16 +122,6 @@ if not vim.g.vscode then
   vim.keymap.set('n', '<leader>3', function() harpoon_ui.nav_file(3) end, { noremap = true })
   vim.keymap.set('n', '<leader>4', function() harpoon_ui.nav_file(4) end, { noremap = true })
 
-  vim.keymap.set('n', '<leader>ts', function() require('treesj').toggle({ split = { recursive = true } }) end, { noremap = true, desc = "toggle split"})
-  vim.keymap.set('x', '<leader>c', function()
-    local mode = vim.fn.mode()
-    if  mode == 'V' then
-      return "<Plug>(comment_toggle_linewise_visual)"
-    elseif mode == 'v' then
-      return "<Plug>(comment_toggle_blockwise_visual)"
-    end
-  end, { noremap = true, expr = true, replace_keycodes = true})
-  vim.keymap.set('n', '<leader>c', '<Plug>(comment_toggle_linewise_current)', { noremap = true })
 
   local gs = package.loaded.gitsigns
 
@@ -158,22 +165,22 @@ if not vim.g.vscode then
     end
   end
 
-  vim.keymap.set("n", "GD", function() execGitCommand("git diff --staged") end, {noremap = true, silent = true, desc = "git diff --staged"})
-  vim.keymap.set("n", "Gd", function() execGitCommand("git diff") end, {noremap = true, silent = true, desc = "git diff"})
-  vim.keymap.set('n', 'Gl', telescope_builtin.git_commits, { noremap = true, desc = "git branch commits" })
-  vim.keymap.set('n', 'GC', function() execGitCommand("git commit") end, { noremap = true, desc = "git commit" })
-  vim.keymap.set('n', 'GA', function() execGitCommand("git commit --amend") end, { noremap = true, desc = "git commit amend" })
-  vim.keymap.set('n', 'GP', function() execGitCommand("git push") end, { noremap = true, desc = "git push" })
-  vim.keymap.set('n', 'Gp', function() execGitCommand("git pull") end, { noremap = true, desc = "git git pull" })
-  vim.keymap.set('n', 'GF', function() execGitCommand("git push --force-with-lease") end, { noremap = true, desc = "git push force" })
-  vim.keymap.set('n', 'Gf', function() execGitCommand("git fetch") end, { noremap = true, desc = "git fetch" })
+  vim.keymap.set("n", "<c-g>D", function() execGitCommand("git diff --staged") end, {noremap = true, silent = true, desc = "git diff --staged"})
+  vim.keymap.set("n", "<c-g>d", function() execGitCommand("git diff") end, {noremap = true, silent = true, desc = "git diff"})
+  vim.keymap.set('n', '<c-g>l', telescope_builtin.git_commits, { noremap = true, desc = "git branch commits" })
+  vim.keymap.set('n', '<c-g>c', function() execGitCommand("git commit") end, { noremap = true, desc = "git commit" })
+  vim.keymap.set('n', '<c-g>a', function() execGitCommand("git commit --amend") end, { noremap = true, desc = "git commit amend" })
+  vim.keymap.set('n', '<c-g>P', function() execGitCommand("git push") end, { noremap = true, desc = "git push" })
+  vim.keymap.set('n', '<c-g>p', function() execGitCommand("git pull") end, { noremap = true, desc = "git git pull" })
+  vim.keymap.set('n', '<c-g>F', function() execGitCommand("git push --force-with-lease") end, { noremap = true, desc = "git push force" })
+  vim.keymap.set('n', '<c-g>f', function() execGitCommand("git fetch") end, { noremap = true, desc = "git fetch" })
   -- git history
   -- vim.keymap.set('n', 'Gh', "<cmd>DiffviewFileHistoryToggle %<cr>", { noremap = true, desc = "git file history" })
-  vim.keymap.set('n', 'Gh', telescope_builtin.git_bcommits, { noremap = true, desc = "git file history" })
-  vim.keymap.set('n', 'GB', telescope_builtin.git_branches, { noremap = true, desc = "git branches" })
-  vim.keymap.set('n', 'Gb', function() gs.blame_line{full=true} end, { desc = "git blame" })
-  vim.keymap.set('n', 'GS', "<cmd>DiffviewToggle<cr>", { noremap = true, desc = "git status" })
-  vim.keymap.set('n', 'Gs', telescope_builtin.git_stash, { noremap = true, desc = "git stash" })
+  vim.keymap.set('n', '<c-g>h', telescope_builtin.git_bcommits, { noremap = true, desc = "git file history" })
+  vim.keymap.set('n', '<c-g>B', telescope_builtin.git_branches, { noremap = true, desc = "git branches" })
+  vim.keymap.set('n', '<c-g>b', function() gs.blame_line{full=true} end, { desc = "git blame" })
+  vim.keymap.set('n', '<c-g>s', "<cmd>DiffviewToggle<cr>", { noremap = true, desc = "git status" })
+  vim.keymap.set('n', '<c-g>S', telescope_builtin.git_stash, { noremap = true, desc = "git stash" })
   vim.keymap.set({ 'n', 't' }, '<C-g>', function() GitTerm:toggle() end, { noremap = true, desc = "git terminal" })
 
   function OpenToggleTerms(ids_to_ignore)
@@ -233,13 +240,5 @@ if not vim.g.vscode then
   -- Text object
   vim.keymap.set({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
 else
-  vim.keymap.set('n', 'u', '<cmd>call VSCodeNotify("undo")<cr>', { noremap = true })
-  vim.keymap.set('n', '<c-r>', '<cmd>call VSCodeNotify("redo")<cr>', { noremap = true })
-  vim.keymap.set('n', '<leader>ha', '<cmd>call VSCodeNotify("vscode-harpoon.addEditor")<cr>', { noremap = true })
-  vim.keymap.set('n', '<leader>hl', '<cmd>call VSCodeNotify("vscode-harpoon.editorQuickPick")<cr>', { noremap = true })
-  vim.keymap.set('n', '<leader>he', '<cmd>call VSCodeNotify("vscode-harpoon.editEditors")<cr>', { noremap = true })
-  vim.keymap.set('n', '<leader>1', '<cmd>call VSCodeNotify("vscode-harpoon.gotoEditor1")<cr>', { noremap = true })
-  vim.keymap.set('n', '<leader>2', '<cmd>call VSCodeNotify("vscode-harpoon.gotoEditor2")<cr>', { noremap = true })
-  vim.keymap.set('n', '<leader>3', '<cmd>call VSCodeNotify("vscode-harpoon.gotoEditor3")<cr>', { noremap = true })
-  vim.keymap.set('n', '<leader>4', '<cmd>call VSCodeNotify("vscode-harpoon.gotoEditor4")<cr>', { noremap = true })
+  -- all vscode specific keybindings are defined in the keybindings.json file of vscode
 end

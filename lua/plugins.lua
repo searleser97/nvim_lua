@@ -49,6 +49,7 @@ require("lazy").setup({
   },
   {
     "https://github.com/mbbill/undotree",
+    cond = not vim.g.vscode
   },
   {
     "https://github.com/tpope/vim-fugitive",
@@ -96,13 +97,24 @@ require("lazy").setup({
           file_browser = {
             respect_gitignore = false,
             no_ignore = true,
-            hidden = { file_browser = true, folder_browser = true },
+            hidden = true,
           }
         },
         pickers = {
           find_files = {
             hidden = true,
-            no_ignore = true
+            no_ignore = true,
+            find_command = {
+              "rg",
+              "--files",
+              "--hidden",
+              "--no-ignore-vcs",
+              "-g",
+              "!**/.git/*",
+              "-g",
+              "!**/node_modules/*",
+              "-g", "!**/.repro/*", -- just to hide .repro rtp
+            },
           },
           git_branches = {
             mappings = {
@@ -200,15 +212,6 @@ require("lazy").setup({
     end
   },
   {
-    "arnamak/stay-centered.nvim",
-    lazy = false,
-    config = function()
-      require("stay-centered").setup({
-        skip_filetypes = { "toggleterm" }
-      })
-    end
-  },
-  {
     "akinsho/toggleterm.nvim",
     version = "*",
     config = function()
@@ -219,7 +222,8 @@ require("lazy").setup({
         end,
         autochdir = true
       })
-    end
+    end,
+    cond = not vim.g.vscode
   },
   {
     "notjedi/nvim-rooter.lua",
