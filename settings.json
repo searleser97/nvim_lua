@@ -1,0 +1,10 @@
+{
+    "vscode-neovim.neovimExecutablePaths.win32": "C:\\tools\\neovim\\nvim-win64\\bin\\nvim.exe",
+    "editor.lineNumbers": "relative",
+    "extensions.experimental.affinity": {
+        "asvetliakov.vscode-neovim": 1
+    },
+    "workbench.editor.showTabs": "none",
+    "editor.matchBrackets": "never",
+    "editor.autoClosingBrackets": "never"
+}
