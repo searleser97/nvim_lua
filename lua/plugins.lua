@@ -58,7 +58,6 @@ require("lazy").setup({
   {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
-    cond = not vim.g.vscode,
     config = function()
       require("nvim-treesitter.configs").setup({
         ensure_installed = { "bash", "lua", "vim", "vimdoc", "query", "dart", "typescript", "javascript", "json", "tsx", "c_sharp" }
