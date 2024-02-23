@@ -10,8 +10,8 @@ vim.keymap.set({'n', 'x'}, '<C-b>', '<C-v>', { noremap = true })
 vim.keymap.set({'x', 'n'}, 'l', '"0p', { noremap = true })
 vim.keymap.set('x', 'y', "ygv<esc>", { noremap = true })
 vim.keymap.set('n', 'Q', "<nop>", { noremap = true })
-vim.keymap.set('n', 'zl', "10zl", { noremap = true })
-vim.keymap.set('n', 'zh', "10zh", { noremap = true })
+vim.keymap.set('n', 'zr', "10zl", { noremap = true })
+vim.keymap.set('n', 'zl', "10zh", { noremap = true })
 
 vim.keymap.set({'n', 'x', 'o'}, 'f', '<Plug>(leap-forward-to)')
 vim.keymap.set({'n', 'x', 'o'}, 'F', '<Plug>(leap-backward-to)')
@@ -240,5 +240,24 @@ if not vim.g.vscode then
   -- Text object
   vim.keymap.set({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
 else
-  -- all vscode specific keybindings are defined in the keybindings.json file of vscode
+  -- all vscode ctrl+... keybindings are defined in the keybindings.json file of vscode
+  local vscode = require("vscode-neovim")
+  vim.keymap.set("n", "gr", function() vscode.call("editor.action.goToReferences") end)
+  vim.keymap.set("n", "gi", function() vscode.call("editor.action.goToImplementation") end)
+  vim.keymap.set("n", "zl", function()
+    vscode.call("scrollLeft")
+    vscode.call("scrollLeft")
+    vscode.call("scrollLeft")
+    vscode.call("scrollLeft")
+    vscode.call("scrollLeft")
+    vscode.call("scrollLeft")
+  end)
+  vim.keymap.set("n", "zr", function()
+    vscode.call("scrollRight")
+    vscode.call("scrollRight")
+    vscode.call("scrollRight")
+    vscode.call("scrollRight")
+    vscode.call("scrollRight")
+    vscode.call("scrollRight")
+  end)
 end
