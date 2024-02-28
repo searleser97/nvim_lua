@@ -260,4 +260,10 @@ else
     vscode.call("scrollRight")
     vscode.call("scrollRight")
   end)
+  vim.keymap.set("n", "<c-t>", function()
+    local dirPath = vim.fn.expand("%:p:h")
+    vscode.call("workbench.action.terminal.sendSequence",
+      { args = { text = "cd " .. dirPath .. "\n"} }
+    )
+  end)
 end
