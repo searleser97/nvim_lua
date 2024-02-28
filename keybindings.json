@@ -126,6 +126,21 @@
       }
     },
     {
+      "key": "ctrl+g shift+f",
+      "command": "runCommands",
+      "args": {
+        "commands": [
+          {
+            "command": "workbench.action.terminal.sendSequence",
+            "args": { "text": "git push --force-with-lease\u000D" }
+          },
+          {
+            "command": "workbench.action.terminal.focus"
+          }
+        ]
+      }
+    },
+    {
       "key": "ctrl+g p",
       "command": "runCommands",
       "args": {
@@ -250,6 +265,22 @@
       "command": "workbench.action.terminal.toggleTerminal"
     },
     {
+      "key": "ctrl+shift+t",
+      "command": "runCommands",
+      "args": {
+        "commands": [
+          {
+            "command": "workbench.action.terminal.toggleTerminal"
+          },
+          {
+            "command": "vscode-neovim.send",
+            "when": "editorTextFocus",
+            "args": "<c-t>"
+          }
+        ]
+      }
+    },
+    {
       "key": "ctrl+up",
       "command": "workbench.action.navigateUp"
     },
@@ -264,6 +295,18 @@
     {
       "key": "ctrl+right",
       "command": "workbench.action.navigateRight"
+    },
+    {
+      "key": "ctrl+0",
+      "command": "-workbench.action.focusSideBar"
+    },
+    {
+      "key": "ctrl+s t",
+      "command": "workbench.action.toggleSidebarVisibility"
+    },
+    {
+      "key": "ctrl+b",
+      "command": "-workbench.action.toggleSidebarVisibility"
     },
     /* fine grain undo below (not working) */
     /*{
