@@ -301,12 +301,20 @@
       "command": "-workbench.action.focusSideBar"
     },
     {
-      "key": "ctrl+s t",
+      "key": "ctrl+s b",
       "command": "workbench.action.toggleSidebarVisibility"
     },
     {
       "key": "ctrl+b",
       "command": "-workbench.action.toggleSidebarVisibility"
+    },
+    {
+      "key": "ctrl+g shift+c",
+      "command": "workbench.panel.chat.view.copilot.focus"
+    },
+    {
+      "key": "ctrl+j",
+      "command": "-workbench.action.togglePanel"
     },
     /* fine grain undo below (not working) */
     /*{
