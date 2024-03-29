@@ -316,6 +316,40 @@
       "key": "ctrl+j",
       "command": "-workbench.action.togglePanel"
     },
+    {
+      "key": "ctrl+u",
+      "command": "extension.multiCommand.execute",
+      "args": {
+        "interval": 100,
+        "sequence": [
+          {
+            "command": "vscode-neovim.ctrl-u"
+          },
+          {
+            "command": "vscode-neovim.send",
+            "when": "editorTextFocus",
+            "args": "M"
+          }
+        ]
+      }
+    },
+    {
+      "key": "ctrl+d",
+      "command": "extension.multiCommand.execute",
+      "args": {
+        "interval": 100,
+        "sequence": [
+          {
+            "command": "vscode-neovim.ctrl-d"
+          },
+          {
+            "command": "vscode-neovim.send",
+            "when": "editorTextFocus",
+            "args": "M"
+          }
+        ]
+      }
+    },
     /* fine grain undo below (not working) */
     /*{
       "key": "space",
