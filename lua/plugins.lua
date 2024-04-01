@@ -128,7 +128,7 @@ require("lazy").setup({
     "https://github.com/ThePrimeagen/harpoon",
     dependencies = {
       "nvim-lua/plenary.nvim",
-      "searleser97/telescope.nvim"
+      -- "searleser97/telescope.nvim"
     },
     cond = not vim.g.vscode,
     config = function()
@@ -212,6 +212,7 @@ require("lazy").setup({
   },
   {
     "akinsho/toggleterm.nvim",
+    dir = Is_Windows() and "E:\\forks\\toggleterm.nvim" or nil,
     version = "*",
     config = function()
       require("toggleterm").setup({
@@ -242,7 +243,7 @@ require("lazy").setup({
     config = function()
       require("telescope").load_extension("recent_files")
     end,
-    dependencies = { "searleser97/telescope.nvim" },
+    -- dependencies = { "searleser97/telescope.nvim" },
     cond = not vim.g.vscode
   },
   {
@@ -299,7 +300,7 @@ require("lazy").setup({
     config = function()
       require("telescope").load_extension("live_grep_args")
     end,
-    dependencies = { "searleser97/telescope.nvim" },
+    -- dependencies = { "searleser97/telescope.nvim" },
     cond = not vim.g.vscode
   },
   {
@@ -365,7 +366,7 @@ require("lazy").setup({
   {
     "nvim-telescope/telescope-file-browser.nvim",
     dependencies = {
-      "searleser97/telescope.nvim",
+      -- "searleser97/telescope.nvim",
       "nvim-lua/plenary.nvim",
     },
     cond = not vim.g.vscode,
