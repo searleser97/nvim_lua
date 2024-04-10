@@ -266,4 +266,16 @@ else
       { args = { text = "cd " .. dirPath .. "\n"} }
     )
   end)
+  vim.keymap.set("n", "]c", function()
+    vscode.call("workbench.action.editor.nextChange")
+  end)
+  vim.keymap.set("n", "[c", function()
+    vscode.call("workbench.action.editor.previousChange")
+  end)
+  vim.keymap.set("n", "]x", function()
+    vscode.call("merge-conflict.next")
+  end)
+  vim.keymap.set("n", "[x", function()
+    vscode.call("merge-conflict.previous")
+  end)
 end
