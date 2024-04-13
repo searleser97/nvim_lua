@@ -7,7 +7,10 @@ else
 end
 vim.keymap.set({'n', 'x'}, '<C-v>', '"+p', { noremap = true })
 vim.keymap.set({'n', 'x'}, '<C-b>', '<C-v>', { noremap = true })
-vim.keymap.set({'x', 'n'}, 'l', '"0p', { noremap = true })
+vim.keymap.set({'x', 'n'}, '<M-p>', 'p', { noremap = true })
+vim.keymap.set({'x', 'n'}, '<M-P>', 'P', { noremap = true })
+vim.keymap.set({'x', 'n'}, 'p', '"0p', { noremap = true })
+vim.keymap.set({'x', 'n'}, 'P', '"0P', { noremap = true })
 vim.keymap.set('x', 'y', "ygv<esc>", { noremap = true })
 vim.keymap.set('n', 'Q', "<nop>", { noremap = true })
 vim.keymap.set('n', 'zr', "10zl", { noremap = true })
@@ -29,6 +32,7 @@ vim.keymap.set('n', '<leader>c', '<Plug>(comment_toggle_linewise_current)', { no
 
 vim.keymap.set({'n', 'x'}, '<C-r>', '<nop>', { noremap = true })
 vim.keymap.set({'n', 'x'}, 'R', '<C-r>', { noremap = true })
+
 
 if not vim.g.vscode then
 
@@ -93,7 +97,7 @@ if not vim.g.vscode then
   local lua_utils = require("lua_utils")
   vim.keymap.set("n", "<c-p>", "<c-o>", { noremap = true })
   vim.keymap.set("n", "<c-n>", "<c-i>", { noremap = true })
-  vim.keymap.set("n", "<c-o>s", function ()
+  local open_session_action = function ()
     pickers.new({}, {
       previewer = false,
       prompt_title = "Open Session",
@@ -110,7 +114,8 @@ if not vim.g.vscode then
         return true
       end
     }):find()
-  end, { noremap = true, desc = "open session" })
+  end
+  vim.keymap.set("n", "<c-o>s", open_session_action, { noremap = true, desc = "open session" })
   vim.keymap.set("n", "<c-s>S", ":SessionsSave ", { noremap = true, desc = "Save new Session" })
 
 
@@ -239,6 +244,10 @@ if not vim.g.vscode then
 
   -- Text object
   vim.keymap.set({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
+
+  return {
+    open_session_action = open_session_action
+  }
 else
   -- all vscode ctrl+... keybindings are defined in the keybindings.json file of vscode
   local vscode = require("vscode-neovim")
