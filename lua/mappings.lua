@@ -7,10 +7,9 @@ else
 end
 vim.keymap.set({'n', 'x'}, '<C-v>', '"+p', { noremap = true })
 vim.keymap.set({'n', 'x'}, '<C-b>', '<C-v>', { noremap = true })
-vim.keymap.set({'x', 'n'}, '<M-p>', 'p', { noremap = true })
-vim.keymap.set({'x', 'n'}, '<M-P>', 'P', { noremap = true })
-vim.keymap.set({'x', 'n'}, 'p', '"0p', { noremap = true })
-vim.keymap.set({'x', 'n'}, 'P', '"0P', { noremap = true })
+vim.keymap.set({'x', 'n'}, '<M-p>', '"ap', { noremap = true })
+vim.keymap.set({'x', 'n'}, '<M-P>', '"aP', { noremap = true })
+vim.keymap.set({'x'}, 'p', 'p<cmd>let @a=@"<cr><cmd>let @"=@0<cr>', { noremap = true })
 vim.keymap.set('x', 'y', "ygv<esc>", { noremap = true })
 vim.keymap.set('n', 'Q', "<nop>", { noremap = true })
 vim.keymap.set('n', 'zr', "10zl", { noremap = true })
