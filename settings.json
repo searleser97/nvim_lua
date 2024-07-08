@@ -1,36 +1,43 @@
 {
-    "vscode-neovim.neovimExecutablePaths.win32": "C:\\tools\\neovim\\nvim-win64\\bin\\nvim.exe",
-    "editor.lineNumbers": "relative",
-    "extensions.experimental.affinity": {
-        "asvetliakov.vscode-neovim": 1
-    },
-    "workbench.editor.showTabs": "none",
-    "editor.matchBrackets": "never",
-    "editor.autoClosingBrackets": "never",
-    "terminal.integrated.profiles.windows": {
-      "VsDevCmd (2022)": {
-        "path": [
-          "${env:windir}\\Sysnative\\cmd.exe",
-          "${env:windir}\\System32\\cmd.exe"
-        ],
-        "args": [
-          "/k",
-          // Path below assumes a VS2022 Community install; 
-          // update as appropriate if your IDE installation path
-          // is different, or if using the standalone build tools
-          "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/Common7/Tools/VsDevCmd.bat",
-          "-arch=x64",
-          "-host_arch=x64"
-        ],
-        "overrideName": true,
-        "icon": "terminal-cmd"
-      },
-    },
-    "diffEditor.hideUnchangedRegions.enabled": true,
-    "git.confirmSync": false,
-    "git.autofetch": true,
-    "diffEditor.ignoreTrimWhitespace": false,
-    "[typescript]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "vscode-neovim.neovimExecutablePaths.win32": "C:\\tools\\neovim\\nvim-win64\\bin\\nvim.exe",
+  "vscode-neovim.neovimExecutablePaths.darwin": "/Users/sergiosanc/ProgramFiles/nvim-macos-arm64/bin/nvim",
+  "editor.lineNumbers": "relative",
+  "extensions.experimental.affinity": {
+    "asvetliakov.vscode-neovim": 1
+  },
+  "workbench.editor.showTabs": "none",
+  "editor.matchBrackets": "never",
+  "editor.autoClosingBrackets": "never",
+  "terminal.integrated.profiles.windows": {
+    "VsDevCmd (2022)": {
+      "path": [
+        "${env:windir}\\Sysnative\\cmd.exe",
+        "${env:windir}\\System32\\cmd.exe"
+      ],
+      "args": [
+        "/k",
+        // Path below assumes a VS2022 Community install;
+        // update as appropriate if your IDE installation path
+        // is different, or if using the standalone build tools
+        "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/Common7/Tools/VsDevCmd.bat",
+        "-arch=x64",
+        "-host_arch=x64"
+      ],
+      "overrideName": true,
+      "icon": "terminal-cmd"
     }
+  },
+  "diffEditor.hideUnchangedRegions.enabled": true,
+  "git.confirmSync": false,
+  "git.autofetch": true,
+  "diffEditor.ignoreTrimWhitespace": false,
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.renderLineHighlight": "all",
+  "workbench.colorCustomizations": {
+    "editor.lineHighlightBackground": "#171a1a",
+    "editor.lineHighlightBorder": "#9292ac"
+  }
 }
+
