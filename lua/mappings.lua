@@ -288,4 +288,37 @@ else
   vim.keymap.set("n", "[x", function()
     vscode.call("merge-conflict.previous")
   end)
+
+  function nvim_feedkeys(keys)
+    local feedable_keys = vim.api.nvim_replace_termcodes(keys, true, false, true)
+    vim.api.nvim_feedkeys(feedable_keys, "n", false)
+  end
+
+  -- Centers the viewport. This needs to be delayed for the cursor position to be
+  -- correct after the nvim_feedkeys operations.
+  function center_viewport(delay)
+    vim.defer_fn(function()
+      local current_line = vim.api.nvim_win_get_cursor(0)[1]
+      vscode.call("revealLine", {args = {lineNumber = current_line, at = "center"}})
+    end, delay)
+  end
+
+  vim.keymap.set("n", "n", function()
+    nvim_feedkeys("n")
+    center_viewport(20)
+  end)
+
+  vim.keymap.set("n", "N", function()
+    nvim_feedkeys("N")
+    center_viewport(20)
+  end)
+  vim.keymap.set("n", "<c-p>", function()
+    vscode.call("workbench.action.navigateBack")
+    center_viewport(80)
+  end)
+  vim.keymap.set("n", "<c-n>", function()
+    vscode.call("workbench.action.navigateForward")
+    center_viewport(80)
+  end)
+  
 end
