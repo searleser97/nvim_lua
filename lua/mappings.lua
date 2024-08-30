@@ -14,6 +14,8 @@ vim.keymap.set('x', 'y', "ygv<esc>", { noremap = true })
 vim.keymap.set('n', 'Q', "<nop>", { noremap = true })
 vim.keymap.set('n', 'zl', "15zl", { noremap = true })
 vim.keymap.set('n', 'zh', "15zh", { noremap = true })
+vim.keymap.set('n', 'n', "nzz", { noremap = true })
+vim.keymap.set('n', 'N', "Nzz", { noremap = true })
 
 vim.keymap.set({'n', 'x', 'o'}, 'f', '<Plug>(leap-forward-to)')
 vim.keymap.set({'n', 'x', 'o'}, 'F', '<Plug>(leap-backward-to)')
