@@ -254,11 +254,15 @@
   },
   {
     "key": "ctrl+n",
-    "command": "workbench.action.navigateForward"
+    "command": "vscode-neovim.send",
+    "when": "editorTextFocus && neovim.mode == normal",
+    "args": "<C-n>"
   },
   {
     "key": "ctrl+p",
-    "command": "workbench.action.navigateBack"
+    "command": "vscode-neovim.send",
+    "when": "editorTextFocus && neovim.mode == normal",
+    "args": "<C-p>"
   },
   {
     "key": "ctrl+t",
@@ -364,7 +368,19 @@
     "key": "ctrl+.",
     "command": "-editor.action.quickFix",
     "when": "editorHasCodeActionsProvider && textInputFocus && !editorReadonly"
-  }
+  },
+  {
+    "key": "n",
+    "command": "vscode-neovim.send",
+    "when": "editorTextFocus && neovim.mode == normal",
+    "args": "n"
+  },
+  {
+    "key": "shift+n",
+    "command": "vscode-neovim.send",
+    "when": "editorTextFocus && neovim.mode == normal",
+    "args": "N"
+  },
   /* fine grain undo below (not working) */
   /*{
       "key": "space",
