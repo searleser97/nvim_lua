@@ -315,11 +315,11 @@ else
   end)
   vim.keymap.set("n", "<c-p>", function()
     vscode.call("workbench.action.navigateBack")
-    center_viewport(80)
+    center_viewport(100)
   end)
   vim.keymap.set("n", "<c-n>", function()
     vscode.call("workbench.action.navigateForward")
-    center_viewport(80)
+    center_viewport(100)
   end)
   
 end
