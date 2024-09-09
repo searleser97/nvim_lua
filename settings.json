@@ -1,6 +1,7 @@
 {
   "vscode-neovim.neovimExecutablePaths.win32": "C:\\tools\\neovim\\nvim-win64\\bin\\nvim.exe",
   "vscode-neovim.neovimExecutablePaths.darwin": "/Users/sergiosanc/ProgramFiles/nvim-macos-arm64/bin/nvim",
+  "vscode-neovim.neovimExecutablePaths.linux": "/home/s/ProgramFiles/nvim-linux64/bin/nvim",
   "editor.lineNumbers": "relative",
   "extensions.experimental.affinity": {
     "asvetliakov.vscode-neovim": 1
