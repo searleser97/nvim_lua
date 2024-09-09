@@ -126,14 +126,12 @@ require("lazy").setup({
   },
   {
     "https://github.com/ThePrimeagen/harpoon",
+    branch = "harpoon2",
     dependencies = {
       "nvim-lua/plenary.nvim",
       -- "searleser97/telescope.nvim"
     },
     cond = not vim.g.vscode,
-    config = function()
-      require("telescope").load_extension('harpoon')
-    end
   },
   {
     "hrsh7th/nvim-cmp",
@@ -177,7 +175,7 @@ require("lazy").setup({
           colors.diff.text = "#87632f"
           colors.diff.text = "#966d30"
 
-          colors.gitSigns.add = colors.hint
+          -- colors.gitSigns.add = colors.hint
         end
       })
 
@@ -357,7 +355,6 @@ require("lazy").setup({
   {
     "folke/which-key.nvim",
     cond = not vim.g.vscode,
-    event = "VeryLazy",
     init = function()
       vim.o.timeout = true
       vim.o.timeoutlen = 300

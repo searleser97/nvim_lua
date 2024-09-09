@@ -95,7 +95,7 @@ if not vim.g.vscode then
   local conf = require"telescope.config".values
 
   local sessions = require("sessions")
-  local lua_utils = require("lua_utils")
+  -- local lua_utils = require("lua_utils")
   vim.keymap.set("n", "<c-p>", "<c-o>", { noremap = true })
   vim.keymap.set("n", "<c-n>", "<c-i>", { noremap = true })
   local open_session_action = function ()
@@ -103,7 +103,7 @@ if not vim.g.vscode then
       previewer = false,
       prompt_title = "Open Session",
       finder = finders.new_table({
-        results = lua_utils.file_names_sorted_by_modified_date(vim.fn.stdpath("data") .. "/sessions"),
+        -- results = lua_utils.file_names_sorted_by_modified_date(vim.fn.stdpath("data") .. "/sessions"),
         entry_maker = make_entry.gen_from_file({})
       }),
       sorter = conf.file_sorter(),
@@ -120,13 +120,14 @@ if not vim.g.vscode then
   vim.keymap.set("n", "<c-s>S", ":SessionsSave ", { noremap = true, desc = "Save new Session" })
 
 
-  local harpoon_ui = require("harpoon.ui")
-  vim.keymap.set('n', '<leader>ha', require("harpoon.mark").add_file, { noremap = true })
-  vim.keymap.set('n', '<leader>hl', ":Telescope harpoon marks<cr>", { noremap = true })
-  vim.keymap.set('n', '<leader>1', function() harpoon_ui.nav_file(1) end, { noremap = true })
-  vim.keymap.set('n', '<leader>2', function() harpoon_ui.nav_file(2) end, { noremap = true })
-  vim.keymap.set('n', '<leader>3', function() harpoon_ui.nav_file(3) end, { noremap = true })
-  vim.keymap.set('n', '<leader>4', function() harpoon_ui.nav_file(4) end, { noremap = true })
+  local harpoon = require("harpoon")
+  harpoon:setup()
+  vim.keymap.set('n', '<leader>ha', function() harpoon:list():add() end, { noremap = true })
+  vim.keymap.set('n', '<leader>hl', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { noremap = true })
+  vim.keymap.set('n', '<leader>1', function() harpoon:list():select(1) end, { noremap = true })
+  vim.keymap.set('n', '<leader>2', function() harpoon:list():select(2) end, { noremap = true })
+  vim.keymap.set('n', '<leader>3', function() harpoon:list():select(3) end, { noremap = true })
+  vim.keymap.set('n', '<leader>4', function() harpoon:list():select(4) end, { noremap = true })
 
 
   local gs = package.loaded.gitsigns

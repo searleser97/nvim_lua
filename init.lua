@@ -5,7 +5,6 @@ require("lsp")
 require("parsers")
 
 if not vim.g.vscode then
-  vim.cmd("WhichKey<cr>")
   if (vim.fn.argc() == 0) then
     vim.schedule(mappings.open_session_action)
   end
