@@ -322,37 +322,15 @@
   },
   {
     "key": "ctrl+u",
-    "command": "extension.multiCommand.execute",
-    "args": {
-      "interval": 100,
-      "sequence": [
-        {
-          "command": "vscode-neovim.ctrl-u"
-        },
-        {
-          "command": "vscode-neovim.send",
-          "when": "editorTextFocus",
-          "args": "M"
-        }
-      ]
-    }
+    "command": "vscode-neovim.send",
+    "when": "editorTextFocus",
+    "args": "<c-u>"
   },
   {
     "key": "ctrl+d",
-    "command": "extension.multiCommand.execute",
-    "args": {
-      "interval": 100,
-      "sequence": [
-        {
-          "command": "vscode-neovim.ctrl-d"
-        },
-        {
-          "command": "vscode-neovim.send",
-          "when": "editorTextFocus",
-          "args": "M"
-        }
-      ]
-    }
+    "command": "vscode-neovim.send",
+    "when": "editorTextFocus",
+    "args": "<c-d>"
   },
   {
     "key": "ctrl+c",
@@ -383,23 +361,24 @@
   },
   /* fine grain undo below (not working) */
   /*{
-      "key": "space",
-      "command": "runCommands",
-      "args": {
-        "commands": [
-          {
-            "command": "type",
-            "args": { "text": " " }
-          },
-          {
-            "command": "vscode-neovim.escape",
-          },
-          {
-            "command": "type",
-            "args": { "text": "a" }
-          }
-        ]
-      },
-    }*/
+    "key": "space",
+    "command": "runCommands",
+    "args": {
+      "commands": [
+        {
+          "command": "type",
+          "args": { "text": " " }
+        },
+        {
+          "command": "vscode-neovim.escape",
+        },
+        {
+          "command": "type",
+          "args": { "text": "a" }
+        }
+      ]
+    },
+  }*/
 ]
+
 
