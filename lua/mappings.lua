@@ -321,5 +321,14 @@ else
     vscode.call("workbench.action.navigateForward")
     center_viewport(100)
   end)
+  vim.keymap.set("n", "<c-u>", function()
+    vscode.call("vscode-neovim.ctrl-u")
+    nvim_feedkeys("M");
+  end)
+
+  vim.keymap.set("n", "<c-d>", function()
+    vscode.call("vscode-neovim.ctrl-d")
+    nvim_feedkeys("M");
+  end)
   
 end

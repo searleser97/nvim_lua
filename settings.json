@@ -6,7 +6,6 @@
   "extensions.experimental.affinity": {
     "asvetliakov.vscode-neovim": 1
   },
-  "workbench.editor.showTabs": "none",
   "editor.matchBrackets": "never",
   "editor.autoClosingBrackets": "never",
   "terminal.integrated.profiles.windows": {
@@ -33,12 +32,13 @@
   "git.autofetch": true,
   "diffEditor.ignoreTrimWhitespace": false,
   "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "vscode.typescript-language-features"
   },
   "editor.renderLineHighlight": "all",
   "workbench.colorCustomizations": {
     "editor.lineHighlightBackground": "#171a1a",
     "editor.lineHighlightBorder": "#9292ac"
-  }
+  },
+  "workbench.editor.showTabs": "single"
 }
-
+  
