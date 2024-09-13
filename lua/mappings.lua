@@ -290,9 +290,11 @@ else
     vscode.call("merge-conflict.previous")
   end)
 
-  function nvim_feedkeys(keys)
-    local feedable_keys = vim.api.nvim_replace_termcodes(keys, true, false, true)
-    vim.api.nvim_feedkeys(feedable_keys, "n", false)
+  function nvim_feedkeys(keys, delay)
+    vim.defer_fn(function()
+      local feedable_keys = vim.api.nvim_replace_termcodes(keys, true, false, true)
+      vim.api.nvim_feedkeys(feedable_keys, "n", false)
+    end, delay)
   end
 
   -- Centers the viewport. This needs to be delayed for the cursor position to be
@@ -305,12 +307,12 @@ else
   end
 
   vim.keymap.set("n", "n", function()
-    nvim_feedkeys("n")
+    nvim_feedkeys("n", 0)
     center_viewport(20)
   end)
 
   vim.keymap.set("n", "N", function()
-    nvim_feedkeys("N")
+    nvim_feedkeys("N", 0)
     center_viewport(20)
   end)
   vim.keymap.set("n", "<c-p>", function()
@@ -321,14 +323,18 @@ else
     vscode.call("workbench.action.navigateForward")
     center_viewport(100)
   end)
+
+  -- TODO: Improve this keybiding so that it behaves like in [neo]vim, i.e. staying in the same visual position (not text position)
+  -- this could be probably achievaple by passing the newCursorPosition (based on file line number) in the "to" param of the cursorMove command
+  -- the newCursorPosition could be computed by knowing how many lines will be scrolled, and adding that value to the current cursor position
   vim.keymap.set("n", "<c-u>", function()
     vscode.call("vscode-neovim.ctrl-u")
-    nvim_feedkeys("M");
+    vim.defer_fn(function() vscode.call("cursorMove", { args = { to = "viewPortCenter" } }) end, 80)
   end)
 
   vim.keymap.set("n", "<c-d>", function()
     vscode.call("vscode-neovim.ctrl-d")
-    nvim_feedkeys("M");
+    vim.defer_fn(function() vscode.call("cursorMove", { args = { to = "viewPortCenter" } }) end, 80)
   end)
   
 end
