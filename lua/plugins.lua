@@ -65,6 +65,9 @@ require("lazy").setup({
     end
   },
   {
+    "nvim-lua/plenary.nvim"
+  },
+  {
     "searleser97/telescope.nvim",
     dir = Is_Windows() and "E:\\forks\\telescope.nvim" or nil,
     dependencies = {
@@ -155,7 +158,7 @@ require("lazy").setup({
           completeopt = 'menu,menuone,noinsert'
         },
         mapping = cmp.mapping.preset.insert({
-          ['<CR>'] = cmp.mapping.confirm({select = true}),
+          ['<TAB>'] = cmp.mapping.confirm({select = true}),
         })
       })
     end
