@@ -2,7 +2,7 @@
         editor = nvim
         pager = delta
 [push]
-	autoSetupRemote = true
+        autoSetupRemote = true
 [diff]
         colorMoved = zebra
         colorMovedWS = ignore-space-change
@@ -21,4 +21,6 @@
         file-renamed-label = [R] file::
 [pull]
         rebase = true
+[credential]
+        helper = store
 
