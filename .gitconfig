@@ -1,0 +1,24 @@
+[core]
+        editor = nvim
+        pager = delta
+[push]
+	autoSetupRemote = true
+[diff]
+        colorMoved = zebra
+        colorMovedWS = ignore-space-change
+[merge]
+        conflictstyle = diff3
+[delta]
+        map-styles = bold purple => syntax purple, bold cyan => syntax blue, bold yellow => syntax purple, bold blue => syntax blue
+        side-by-side = true
+        file-decoration-style = "#606018" overline
+        file-style = 232 bold 184
+        hunk-header-style = syntax bold italic 237
+        file-added-label = [+] file::
+        file-copied-label = [C] file::
+        file-modified-label = [M] file::
+        file-removed-label = [-] file::
+        file-renamed-label = [R] file::
+[pull]
+        rebase = true
+
