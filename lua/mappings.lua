@@ -95,15 +95,23 @@ if not vim.g.vscode then
   local conf = require"telescope.config".values
 
   local sessions = require("sessions")
+  local scan = require'plenary.scandir'
+  local path = require'plenary.path'
   -- local lua_utils = require("lua_utils")
   vim.keymap.set("n", "<c-p>", "<c-o>", { noremap = true })
   vim.keymap.set("n", "<c-n>", "<c-i>", { noremap = true })
+  local files = scan.scan_dir(vim.fn.stdpath("data") .. "/sessions", { depth = 1, })
+  local filenames = {}
+  for index, filepath in ipairs(files) do
+    local splitpath = vim.split(filepath, path.path.sep)
+    table.insert(filenames, splitpath[#splitpath])
+  end
   local open_session_action = function ()
     pickers.new({}, {
       previewer = false,
       prompt_title = "Open Session",
       finder = finders.new_table({
-        -- results = lua_utils.file_names_sorted_by_modified_date(vim.fn.stdpath("data") .. "/sessions"),
+        results = filenames,
         entry_maker = make_entry.gen_from_file({})
       }),
       sorter = conf.file_sorter(),
