@@ -384,7 +384,7 @@ require("lazy").setup({
       require('lualine').setup()
     end
   },
-  { 
+  {
     "Decodetalkers/csharpls-extended-lsp.nvim",
     dir = Is_Windows() and "E:\\forks\\csharpls-extended-lsp.nvim" or nil,
     cond = not vim.g.vscode,
@@ -393,6 +393,13 @@ require("lazy").setup({
   {
     "github/copilot.vim",
     cond = not vim.g.vscode
+  },
+  {
+    "pteroctopus/faster.nvim",
+    cond = not vim.g.vscode,
+    config = function()
+      require('faster').setup()
+    end
   }
 })
 
