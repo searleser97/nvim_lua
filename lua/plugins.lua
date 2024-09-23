@@ -58,7 +58,7 @@ require("lazy").setup({
   {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
-    cond = not vim.g.vscode
+    cond = not vim.g.vscode,
     config = function()
       require("nvim-treesitter.configs").setup({
         ensure_installed = { "bash", "lua", "vim", "vimdoc", "query", "dart", "typescript", "javascript", "json", "tsx", "c_sharp" }
@@ -70,8 +70,7 @@ require("lazy").setup({
     cond = not vim.g.vscode
   },
   {
-    "searleser97/telescope.nvim",
-    dir = Is_Windows() and "E:\\forks\\telescope.nvim" or nil,
+    "nvim-telescope/telescope.nvim",
     dependencies = {
       "nvim-lua/plenary.nvim"
     },
@@ -347,7 +346,6 @@ require("lazy").setup({
   },
   {
     "searleser97/sessions.nvim",
-    dir = Is_Windows() and "E:\\forks\\sessions.nvim" or nil,
     cond = not vim.g.vscode,
     config = function()
       require("sessions").setup({
