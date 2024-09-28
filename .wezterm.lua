@@ -20,8 +20,12 @@ end)
 config.keys = {
   { key = 'v', mods = 'CTRL', action = act.PasteFrom 'Clipboard' },
   { key = 'c', mods = 'CTRL', action = ctrl_c_action },
-  { key = 'c', mods = 'SUPER', action = ctrl_c_action }
+  { key = 'c', mods = 'SUPER', action = ctrl_c_action },
 }
 
+for c = string.byte("a"), string.byte("z") do
+  local key = string.char(c)
+  table.insert(config.keys, { key = key, mods = 'SUPER', action = wezterm.action.SendKey { key = key, mods = 'CTRL' } })
+end
 return config
 
