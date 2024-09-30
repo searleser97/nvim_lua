@@ -27,5 +27,6 @@ for c = string.byte("a"), string.byte("z") do
   local key = string.char(c)
   table.insert(config.keys, { key = key, mods = 'SUPER', action = wezterm.action.SendKey { key = key, mods = 'CTRL' } })
 end
+
 return config
 
