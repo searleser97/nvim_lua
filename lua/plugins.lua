@@ -74,7 +74,7 @@ require("lazy").setup({
     dependencies = {
       "nvim-lua/plenary.nvim"
     },
-    lazy = false,
+    lazy = true,
     cond = not vim.g.vscode,
     config = function()
       local telescope = require("telescope");
@@ -136,6 +136,7 @@ require("lazy").setup({
       -- "searleser97/telescope.nvim"
     },
     cond = not vim.g.vscode,
+    lazy = true
   },
   {
     "hrsh7th/nvim-cmp",
@@ -186,23 +187,23 @@ require("lazy").setup({
       vim.cmd("colorscheme tokyonight")
     end
   },
-  {
-    "catppuccin/nvim",
-    name = "catppuccin",
-    priority = 1000,
-    cond = not vim.g.vscode,
-    config = function()
-    require("catppuccin").setup({
-      flavour = "mocha", -- latte, frappe, macchiato, mocha
-      transparent_background = true
-    })
-
-    -- vim.cmd("colorscheme catppuccin")
-    end
-  },
+  -- {
+  --   "catppuccin/nvim",
+  --   name = "catppuccin",
+  --   priority = 1000,
+  --   cond = not vim.g.vscode,
+  --   config = function()
+  --   require("catppuccin").setup({
+  --     flavour = "mocha", -- latte, frappe, macchiato, mocha
+  --     transparent_background = true
+  --   })
+  --
+  --   -- vim.cmd("colorscheme catppuccin")
+  --   end
+  -- },
   {
     'numToStr/Comment.nvim',
-    lazy = false,
+    lazy = true,
     config = function()
       require("Comment").setup({
         mappings = {
@@ -214,8 +215,6 @@ require("lazy").setup({
   },
   {
     "akinsho/toggleterm.nvim",
-    dir = Is_Windows() and "E:\\forks\\toggleterm.nvim" or nil,
-    version = "*",
     config = function()
       require("toggleterm").setup({
         -- direction = "t"
@@ -225,7 +224,8 @@ require("lazy").setup({
         autochdir = true
       })
     end,
-    cond = not vim.g.vscode
+    cond = not vim.g.vscode,
+    lazy = true
   },
   {
     "notjedi/nvim-rooter.lua",
@@ -246,7 +246,8 @@ require("lazy").setup({
       require("telescope").load_extension("recent_files")
     end,
     -- dependencies = { "searleser97/telescope.nvim" },
-    cond = not vim.g.vscode
+    cond = not vim.g.vscode,
+    lazy = true
   },
   {
     'Wansmer/treesj',
@@ -259,7 +260,7 @@ require("lazy").setup({
   },
   {
     'akinsho/flutter-tools.nvim',
-    lazy = false,
+    lazy = true,
     dependencies = {
         'nvim-lua/plenary.nvim',
         -- 'stevearc/dressing.nvim', -- optional for vim.ui.select
@@ -278,7 +279,7 @@ require("lazy").setup({
       -- "antoinemadec/FixCursorHold.nvim",
       "sidlatau/neotest-dart"
     },
-    lazy = false,
+    lazy = true,
     cond = not vim.g.vscode,
     config = function ()
       require("neotest").setup({
@@ -304,7 +305,8 @@ require("lazy").setup({
       require("telescope").load_extension("live_grep_args")
     end,
     -- dependencies = { "searleser97/telescope.nvim" },
-    cond = not vim.g.vscode
+    cond = not vim.g.vscode,
+    lazy = true
   },
   {
     "sindrets/diffview.nvim",
@@ -324,7 +326,8 @@ require("lazy").setup({
           }
         }
       })
-    end
+    end,
+    lazy = true
   },
   {
     "nvim-tree/nvim-web-devicons",
@@ -342,7 +345,8 @@ require("lazy").setup({
     cond = not vim.g.vscode,
     config = function ()
       require("gitlinker").setup()
-    end
+    end,
+    lazy = true
   },
   {
     "searleser97/sessions.nvim",
@@ -373,7 +377,8 @@ require("lazy").setup({
     cond = not vim.g.vscode,
     config = function ()
       require("telescope").load_extension("file_browser")
-    end
+    end,
+    lazy = true
   },
   { "rickhowe/diffchar.vim" },
   {
