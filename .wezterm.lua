@@ -7,6 +7,9 @@ if package.config:sub(1,1) == '\\' then
 end
 
 config.hide_tab_bar_if_only_one_tab = true
+config.initial_cols = 120
+config.initial_rows = 30
+config.font_size = 14
 
 local ctrl_c_action = wezterm.action_callback(function(window, pane)
   local sel = window:get_selection_text_for_pane(pane)
@@ -21,9 +24,18 @@ config.keys = {
   { key = 'v', mods = 'CTRL', action = act.PasteFrom 'Clipboard' },
   { key = 'c', mods = 'CTRL', action = ctrl_c_action },
   { key = 'c', mods = 'SUPER', action = ctrl_c_action },
+  { key = 'LeftArrow', mods = 'SUPER', action = wezterm.action.SendKey{ key = 'LeftArrow', mods = 'CTRL'} },
+  { key = 'RightArrow', mods = 'SUPER', action = wezterm.action.SendKey{ key = 'RightArrow', mods = 'CTRL'} },
+  { key = 'DownArrow', mods = 'SUPER', action = wezterm.action.SendKey{ key = 'DownArrow', mods = 'CTRL'} },
+  { key = 'UpArrow', mods = 'SUPER', action = wezterm.action.SendKey{ key = 'UpArrow', mods = 'CTRL'} },
 }
 
 for c = string.byte("a"), string.byte("z") do
+  local key = string.char(c)
+  table.insert(config.keys, { key = key, mods = 'SUPER', action = wezterm.action.SendKey { key = key, mods = 'CTRL' } })
+end
+
+for c = string.byte("0"), string.byte("9") do
   local key = string.char(c)
   table.insert(config.keys, { key = key, mods = 'SUPER', action = wezterm.action.SendKey { key = key, mods = 'CTRL' } })
 end
