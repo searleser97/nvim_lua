@@ -277,7 +277,7 @@
     "command": "workbench.action.terminal.toggleTerminal"
   },
   {
-    "key": "ctrl+shift+t",
+    "key": "F5",
     "command": "runCommands",
     "args": {
       "commands": [

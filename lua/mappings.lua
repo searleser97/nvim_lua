@@ -230,6 +230,12 @@ if not vim.g.vscode then
       end
     end
   end, { noremap = true })
+
+  vim.keymap.set('n', '<F5>', function()
+    local dirPath = vim.fn.expand("%:p:h"):gsub("%%20", " ")
+    vim.cmd("1TermExec cmd=\"cd " .. dirPath .. "\"")
+  end, { noremap = true })
+
   vim.keymap.set('n', '<c-q>', "<cmd>close<cr>")
 
   vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], { noremap = true })
@@ -280,9 +286,9 @@ else
     vscode.call("scrollRight")
   end)
   vim.keymap.set("n", "<c-t>", function()
-    local dirPath = vim.fn.expand("%:p:h")
+    local dirPath = vim.fn.expand("%:p:h"):gsub("^vscode%-userdata:", ""):gsub("%%20", " ")
     vscode.call("workbench.action.terminal.sendSequence",
-      { args = { text = "cd " .. dirPath .. "\n"} }
+      { args = { text = "cd \"" .. dirPath .. "\"\n"} }
     )
   end)
   vim.keymap.set("n", "]c", function()
