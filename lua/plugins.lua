@@ -104,21 +104,6 @@ require("lazy").setup({
           }
         },
         pickers = {
-          find_files = {
-            hidden = true,
-            no_ignore = true,
-            find_command = {
-              "rg",
-              "--files",
-              "--hidden",
-              "--no-ignore-vcs",
-              "-g",
-              "!**/.git/*",
-              "-g",
-              "!**/node_modules/*",
-              "-g", "!**/.repro/*", -- just to hide .repro rtp
-            },
-          },
           git_branches = {
             mappings = {
               i = { ["<cr>"] = actions.git_switch_branch },
@@ -133,7 +118,7 @@ require("lazy").setup({
     branch = "harpoon2",
     dependencies = {
       "nvim-lua/plenary.nvim",
-      -- "searleser97/telescope.nvim"
+      "nvim-telescope/telescope.nvim"
     },
     cond = not vim.g.vscode,
     lazy = true
@@ -245,7 +230,7 @@ require("lazy").setup({
     config = function()
       require("telescope").load_extension("recent_files")
     end,
-    -- dependencies = { "searleser97/telescope.nvim" },
+    dependencies = { "nvim-telescope/telescope.nvim" },
     cond = not vim.g.vscode,
     lazy = true
   },
@@ -304,7 +289,7 @@ require("lazy").setup({
     config = function()
       require("telescope").load_extension("live_grep_args")
     end,
-    -- dependencies = { "searleser97/telescope.nvim" },
+    dependencies = { "nvim-telescope/telescope.nvim" },
     cond = not vim.g.vscode,
     lazy = true
   },
@@ -371,7 +356,7 @@ require("lazy").setup({
   {
     "nvim-telescope/telescope-file-browser.nvim",
     dependencies = {
-      -- "searleser97/telescope.nvim",
+      "nvim-telescope/telescope.nvim",
       "nvim-lua/plenary.nvim",
     },
     cond = not vim.g.vscode,

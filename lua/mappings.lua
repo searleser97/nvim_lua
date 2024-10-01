@@ -73,7 +73,15 @@ if not vim.g.vscode then
   local telescope = require("telescope")
   local live_grep_args_shortcuts = require("telescope-live-grep-args.shortcuts")
 
-  vim.keymap.set('n', '<c-s>f', telescope_builtin.find_files, { noremap = true, desc = "search files" })
+  vim.keymap.set('n', '<c-s>f', function()
+    local cwd = vim.system({ 'git', 'rev-parse', '--show-toplevel' }, { text = true }):wait().stdout:gsub("\n", "")
+    telescope_builtin.find_files({
+      cwd = cwd,
+      hidden = true,
+      no_ignore = true,
+      no_ignore_parent = true
+    })
+  end , { noremap = true, desc = "search files" })
   vim.keymap.set('n', '<c-r>f', telescope.extensions.recent_files.pick, { noremap = true, desc = "recent files" })
   vim.keymap.set('n', '<c-f>b', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', { noremap = true, desc = "File Browser" })
   vim.keymap.set('n', '<c-s>m', telescope_builtin.marks, { noremap = true, desc = "search marks" })
