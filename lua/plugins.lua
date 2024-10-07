@@ -223,7 +223,12 @@ require("lazy").setup({
   },
   {
     "https://github.com/nvim-treesitter/nvim-treesitter-context",
-    cond = not vim.g.vscode
+    cond = not vim.g.vscode,
+    config = function()
+      require("treesitter-context").setup({
+        multiline_threshold = 2
+      })
+    end
   },
   {
     "smartpde/telescope-recent-files",
