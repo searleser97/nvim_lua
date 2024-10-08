@@ -216,7 +216,7 @@ require("lazy").setup({
     "notjedi/nvim-rooter.lua",
     config = function()
       require("nvim-rooter").setup({
-        rooter_patterns = { '*_root.txt', 'Cargo.toml', 'pubspec.yaml', 'package.json', 'dirs.proj', '.git', '.hg', '.svn' }
+        rooter_patterns = { '*_root.txt', '.git', 'Cargo.toml', 'pubspec.yaml', 'package.json', 'dirs.proj', '.hg', '.svn' }
       })
     end,
     cond = not vim.g.vscode

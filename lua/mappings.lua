@@ -16,6 +16,7 @@ vim.keymap.set('n', 'zl', "15zl", { noremap = true })
 vim.keymap.set('n', 'zh', "15zh", { noremap = true })
 vim.keymap.set('n', 'n', "nzz", { noremap = true })
 vim.keymap.set('n', 'N', "Nzz", { noremap = true })
+vim.keymap.set('n', '<c-q>', "<cmd>close<cr>")
 
 vim.keymap.set({'n', 'x', 'o'}, 'f', '<Plug>(leap-forward-to)')
 vim.keymap.set({'n', 'x', 'o'}, 'F', '<Plug>(leap-backward-to)')
@@ -164,15 +165,11 @@ if not vim.g.vscode then
   local Terminal  = require('toggleterm.terminal').Terminal
   local gitTermConfig =  {
     autochdir = true,
-    -- direction = "float",
+    direction = "float",
     float_opts = {
       border = "double",
     },
     count = 9,
-    -- function to run on opening the terminal
-    on_open = function(term)
-      vim.cmd("startinsert!")
-    end,
   }
 
   GitTerm = Terminal:new(gitTermConfig);
@@ -204,6 +201,27 @@ if not vim.g.vscode then
   vim.keymap.set({'n', 't'}, '<c-g>s', "<cmd>DiffviewToggle<cr>", { noremap = true, desc = "git status" })
   vim.keymap.set({'n', 't'}, '<c-g>S', telescope_builtin.git_stash, { noremap = true, desc = "git stash" })
   vim.keymap.set({'n', 't'}, '<c-g>t', function() GitTerm:toggle() end, { noremap = true, desc = "git terminal" })
+
+  vim.keymap.set('t', '<c-e>', [[<C-\><C-n>]], { noremap = true, desc = "exit terminal mode" })
+  vim.keymap.set('t', '<c-w>p', [[<C-\><C-n><C-w><C-p>]], { desc = "got to previous window" })
+  vim.keymap.set('t', '<c-t>', function()
+    return [[<C-\><C-n><cmd>ToggleTermToggleAll<cr>]];
+  end, { expr = true, desc = "toggle all terminals" })
+  vim.keymap.set('t', '<c-q>', [[<C-\><C-n><cmd>close<cr>]], { desc = "close terminal" })
+  vim.keymap.set('t', '<c-Up>', [[<C-\><C-n><C-w><Up>]], { desc = "move cursor to the window above" })
+  vim.keymap.set('t', '<c-Down>', [[<C-\><C-n><C-w><Down>]], { desc = "move cursor to the window below" })
+  vim.keymap.set('t', '<c-Left>', [[<C-\><C-n><C-w><Left>]], { desc = "move cursor to the window on the left" })
+  vim.keymap.set('t', '<c-Right>', [[<C-\><C-n><C-w><Right>]], { desc = "move cursor to the window on the right" })
+
+  vim.api.nvim_create_autocmd({ 'BufEnter' }, {
+    desc = 'Insert mode in terminal when entering it',
+    pattern = 'term://*',
+    callback = function()
+      vim.defer_fn(function()
+        vim.cmd('startinsert!')
+      end, 100)
+    end
+  })
 
   function OpenToggleTerms(ids_to_ignore)
     local maxBufferIndex = vim.fn.bufnr("$")
@@ -242,19 +260,6 @@ if not vim.g.vscode then
     local dirPath = vim.fn.expand("%:p:h"):gsub("%%20", " ")
     vim.cmd("1TermExec cmd=\"cd " .. dirPath .. "\"")
   end, { noremap = true })
-
-  vim.keymap.set('n', '<c-q>', "<cmd>close<cr>")
-
-  vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], { noremap = true })
-  vim.keymap.set('t', '<c-p>', [[<C-\><C-n><C-w><C-p>]])
-  vim.keymap.set('t', '<c-t>', function()
-    return [[<C-\><C-n><cmd>ToggleTermToggleAll<cr>]];
-  end, { expr = true })
-  vim.keymap.set('t', '<c-q>', [[<C-\><C-n><cmd>close<cr>]])
-  vim.keymap.set('t', '<c-Up>', [[<C-\><C-n><C-w><Up>]])
-  vim.keymap.set('t', '<c-Down>', [[<C-\><C-n><C-w><Down>]])
-  vim.keymap.set('t', '<c-Left>', [[<C-\><C-n><C-w><Left>]])
-  vim.keymap.set('t', '<c-Right>', [[<C-\><C-n><C-w><Right>]])
 
   -- Actions
   vim.keymap.set('n', '<leader>hs', gs.stage_hunk, {desc = "hunk stage"})
@@ -311,7 +316,7 @@ else
     vscode.call("merge-conflict.previous")
   end)
 
-  function nvim_feedkeys(keys, delay)
+  local nvim_feedkeys = function(keys, delay)
     vim.defer_fn(function()
       local feedable_keys = vim.api.nvim_replace_termcodes(keys, true, false, true)
       vim.api.nvim_feedkeys(feedable_keys, "n", false)
@@ -320,7 +325,7 @@ else
 
   -- Centers the viewport. This needs to be delayed for the cursor position to be
   -- correct after the nvim_feedkeys operations.
-  function center_viewport(delay)
+  local center_viewport = function(delay)
     vim.defer_fn(function()
       local current_line = vim.api.nvim_win_get_cursor(0)[1]
       vscode.call("revealLine", {args = {lineNumber = current_line, at = "center"}})
