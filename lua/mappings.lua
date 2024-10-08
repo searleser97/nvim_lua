@@ -146,6 +146,41 @@ if not vim.g.vscode then
   vim.keymap.set('n', '<C-3>', function() harpoon:list():select(3) end, { noremap = true })
   vim.keymap.set('n', '<C-4>', function() harpoon:list():select(4) end, { noremap = true })
 
+  local contrastantColors = {
+    ["purple"] = "white",
+    ["red"] = "white",
+    ["green"] = "white",
+    ["blue"] = "white",
+    ["black"] = "white",
+    ["magenta"] = "white",
+    ["grey"] = "white",
+    ["darkgrey"] = "white",
+    ["darkblue"] = "white",
+    ["darkred"] = "white",
+    ["darkgreen"] = "white",
+    ["orange"] = "black",
+    ["yellow"] = "black",
+    ["white"] = "black",
+    ["cyan"] = "black",
+    ["light_grey"] = "black",
+  }
+
+  vim.api.nvim_create_user_command('SetStatusLineBG', function(opts)
+    -- The following line tells lua to re-require the module, otherwise it just returns the cached module value
+    package.loaded["lualine.themes.auto"] = nil
+    local autoTheme = require('lualine.themes.auto')
+    autoTheme.normal.c.gui = "bold"
+    if opts.fargs[1] == "auto" then
+      require('lualine').setup({ options = { theme = autoTheme } })
+    else
+      autoTheme.normal.c.bg = opts.fargs[1]
+      if contrastantColors[opts.fargs[1]] then
+        autoTheme.normal.c.fg = contrastantColors[opts.fargs[1]]
+      end
+      require('lualine').setup({ options = { theme = autoTheme } })
+    end
+  end, { nargs = 1 })
+
   local gs = package.loaded.gitsigns
 
   -- Navigation

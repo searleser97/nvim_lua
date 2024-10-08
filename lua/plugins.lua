@@ -376,7 +376,9 @@ require("lazy").setup({
     dependencies = { 'nvim-tree/nvim-web-devicons', opt = true },
     cond = not vim.g.vscode,
     config = function ()
-      require('lualine').setup()
+      local autoTheme = require('lualine.themes.auto')
+      autoTheme.normal.c.gui = "bold"
+      require('lualine').setup({ options = { theme = autoTheme } })
     end
   },
   {
