@@ -35,6 +35,10 @@ vim.keymap.set('n', '<leader>c', '<Plug>(comment_toggle_linewise_current)', { no
 vim.keymap.set({'n', 'x'}, '<C-r>', '<nop>', { noremap = true })
 vim.keymap.set({'n', 'x'}, 'R', '<C-r>', { noremap = true })
 
+local getGitCWD = function()
+  return vim.system({ 'git', 'rev-parse', '--show-toplevel' }, { text = true }):wait().stdout:gsub("\n", "")
+end
+
 
 if not vim.g.vscode then
 
@@ -75,9 +79,8 @@ if not vim.g.vscode then
   local live_grep_args_shortcuts = require("telescope-live-grep-args.shortcuts")
 
   vim.keymap.set('n', '<c-s>f', function()
-    local cwd = vim.system({ 'git', 'rev-parse', '--show-toplevel' }, { text = true }):wait().stdout:gsub("\n", "")
     telescope_builtin.find_files({
-      cwd = cwd,
+      cwd = getGitCWD(),
       hidden = true,
       no_ignore = true,
       no_ignore_parent = true
@@ -87,11 +90,11 @@ if not vim.g.vscode then
   vim.keymap.set('n', '<c-f>b', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', { noremap = true, desc = "File Browser" })
   vim.keymap.set('n', '<c-s>m', telescope_builtin.marks, { noremap = true, desc = "search marks" })
   vim.keymap.set('x', '<c-s>p', function ()
-    live_grep_args_shortcuts.grep_visual_selection({ postfix = " -g \"*.*\""})
+    live_grep_args_shortcuts.grep_visual_selection({ cwd = getGitCWD(), postfix = " -g \"*.*\""})
   end
   , { noremap = true, desc = "search pattern" })
   vim.keymap.set('n', '<c-s>p', function ()
-    telescope.extensions.live_grep_args.live_grep_args({ postfix = " -g \"*.*\"" })
+    telescope.extensions.live_grep_args.live_grep_args({ cwd = getGitCWD(), postfix = " -g \"*.*\"" })
   end, { noremap = true, desc = "search pattern" })
   vim.keymap.set('n', '<F1>', telescope_builtin.help_tags, { noremap = true })
   vim.keymap.set('n', '<c-s>s', telescope_builtin.treesitter, { noremap = true, desc = "show symbols" })
