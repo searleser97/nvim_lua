@@ -334,7 +334,24 @@ require("lazy").setup({
     "ruifm/gitlinker.nvim",
     cond = not vim.g.vscode,
     config = function ()
-      require("gitlinker").setup()
+      require("gitlinker").setup({
+        callbacks = {
+          ["dynamicscrm.visualstudio.com"] = function(url_data)
+            local base_url = require"gitlinker.hosts".get_base_https_url(url_data)
+            print(vim.inspect(url_data))
+            local url = base_url .. "?path=/" .. url_data.file
+            if url_data.lstart then
+              url = url .. "&version=GC" .. url_data.rev
+              url = url .. "&line=" .. url_data.lstart
+              if url_data.lend then url = url .. "&lineEnd=" .. url_data.lend end
+              url = url .. "&lineStartColumn=1"
+              url = url .. "&lineEndColumn=1000"
+              url = url .. "&_a=contents"
+            end
+            return url
+          end
+        }
+      })
     end,
     lazy = true
   },

@@ -136,6 +136,8 @@ if not vim.g.vscode then
   vim.keymap.set("n", "<c-o>s", open_session_action, { noremap = true, desc = "open session" })
   vim.keymap.set("n", "<c-s>S", ":SessionsSave ", { noremap = true, desc = "Save new Session" })
 
+  vim.keymap.set('n', '<leader>gl', function() require("gitlinker").get_buf_range_url("n", {action_callback = require("gitlinker.actions").open_in_browser}) end, {silent = true})
+  vim.keymap.set('v', '<leader>gl', function() require("gitlinker").get_buf_range_url("v", {action_callback = require("gitlinker.actions").open_in_browser}) end, {silent = true})
 
   local harpoon = require("harpoon")
   harpoon:setup()
