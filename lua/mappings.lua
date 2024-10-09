@@ -107,8 +107,8 @@ if not vim.g.vscode then
   local scan = require'plenary.scandir'
   local path = require'plenary.path'
   -- local lua_utils = require("lua_utils")
-  vim.keymap.set("n", "<c-p>", "<c-o>", { noremap = true })
-  vim.keymap.set("n", "<c-n>", "<c-i>", { noremap = true })
+  vim.keymap.set("n", "<c-p>", "<c-o>zz", { noremap = true })
+  vim.keymap.set("n", "<c-n>", "<c-i>zz", { noremap = true })
   local files = scan.scan_dir(vim.fn.stdpath("data") .. "/sessions", { depth = 1, })
   local filenames = {}
   for index, filepath in ipairs(files) do

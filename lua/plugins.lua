@@ -72,6 +72,7 @@ require("lazy").setup({
   {
     "nvim-telescope/telescope.nvim",
     dependencies = {
+      "nvim-telescope/telescope-live-grep-args.nvim",
       "nvim-lua/plenary.nvim"
     },
     lazy = true,
@@ -111,6 +112,7 @@ require("lazy").setup({
           }
         }
       });
+      telescope.load_extension("live_grep_args")
     end
   },
   {
@@ -288,15 +290,6 @@ require("lazy").setup({
     config = function ()
       require("ibl").setup()
     end
-  },
-  {
-    "nvim-telescope/telescope-live-grep-args.nvim",
-    config = function()
-      require("telescope").load_extension("live_grep_args")
-    end,
-    dependencies = { "nvim-telescope/telescope.nvim" },
-    cond = not vim.g.vscode,
-    lazy = true
   },
   {
     "sindrets/diffview.nvim",
