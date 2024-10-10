@@ -179,7 +179,7 @@ require("lazy").setup({
           completeopt = 'menu,menuone,noinsert'
         },
         mapping = cmp.mapping.preset.insert({
-          ['<TAB>'] = cmp.mapping.confirm({select = true}),
+          ['<right>'] = cmp.mapping.confirm({select = true}),
         })
       })
     end

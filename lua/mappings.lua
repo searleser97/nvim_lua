@@ -302,7 +302,8 @@ if not vim.g.vscode then
 
   vim.keymap.set('n', '<F5>', function()
     local dirPath = vim.fn.expand("%:p:h"):gsub("%%20", " ")
-    vim.cmd("1TermExec cmd=\"cd " .. dirPath .. "\"")
+    local count = vim.v.count > 0 and vim.v.count or 1
+    vim.cmd(count .. "TermExec cmd=\"cd " .. dirPath .. "\"")
   end, { noremap = true })
 
   -- Actions
