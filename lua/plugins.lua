@@ -90,6 +90,7 @@ require("lazy").setup({
           path_display = {"tail"}, -- "smart", "tail"
           mappings = {
             i = {
+              ["<CR>"] = actions.select_default + require("telescope.actions").center,
               ["<C-l>"] = actions.results_scrolling_left,
               ["<C-r>"] = actions.results_scrolling_right,
               ["<c-p>"] = actions.cycle_history_prev,
@@ -107,7 +108,7 @@ require("lazy").setup({
         pickers = {
           git_branches = {
             mappings = {
-              i = { ["<cr>"] = actions.git_switch_branch },
+              i = { ["<cr>"] = actions.git_switch_branch + actions.center,},
             }
           }
         }
