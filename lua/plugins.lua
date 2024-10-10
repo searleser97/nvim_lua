@@ -72,7 +72,6 @@ require("lazy").setup({
   {
     "nvim-telescope/telescope.nvim",
     dependencies = {
-      "nvim-telescope/telescope-live-grep-args.nvim",
       "nvim-lua/plenary.nvim"
     },
     lazy = true,
@@ -90,7 +89,7 @@ require("lazy").setup({
           path_display = {"tail"}, -- "smart", "tail"
           mappings = {
             i = {
-              ["<CR>"] = actions.select_default + require("telescope.actions").center,
+              ["<CR>"] = actions.select_default + actions.center,
               ["<C-l>"] = actions.results_scrolling_left,
               ["<C-r>"] = actions.results_scrolling_right,
               ["<c-p>"] = actions.cycle_history_prev,
@@ -103,6 +102,12 @@ require("lazy").setup({
             respect_gitignore = false,
             no_ignore = true,
             hidden = true,
+            mappings = {
+              i = {
+                -- looks like file browser does not support the center action I use in default mappings
+                ["<CR>"] = actions.select_default
+              }
+            }
           }
         },
         pickers = {
@@ -113,14 +118,40 @@ require("lazy").setup({
           }
         }
       });
-      telescope.load_extension("live_grep_args")
     end
+  },
+  {
+    "nvim-telescope/telescope-file-browser.nvim",
+    dependencies = {
+      "nvim-telescope/telescope.nvim",
+    },
+    cond = not vim.g.vscode,
+    config = function ()
+      require("telescope").load_extension("file_browser")
+    end,
+    lazy = true
+  },
+  {
+    "nvim-telescope/telescope-live-grep-args.nvim",
+    cond = not vim.g.vscode,
+    config = function()
+      require("telescope").load_extension("live_grep_args")
+    end,
+    lazy = true
+  },
+  {
+    "smartpde/telescope-recent-files",
+    config = function()
+      require("telescope").load_extension("recent_files")
+    end,
+    dependencies = { "nvim-telescope/telescope.nvim" },
+    cond = not vim.g.vscode,
+    lazy = true
   },
   {
     "https://github.com/ThePrimeagen/harpoon",
     branch = "harpoon2",
     dependencies = {
-      "nvim-lua/plenary.nvim",
       "nvim-telescope/telescope.nvim"
     },
     cond = not vim.g.vscode,
@@ -232,15 +263,6 @@ require("lazy").setup({
         multiline_threshold = 2
       })
     end
-  },
-  {
-    "smartpde/telescope-recent-files",
-    config = function()
-      require("telescope").load_extension("recent_files")
-    end,
-    dependencies = { "nvim-telescope/telescope.nvim" },
-    cond = not vim.g.vscode,
-    lazy = true
   },
   {
     'Wansmer/treesj',
@@ -368,18 +390,6 @@ require("lazy").setup({
       vim.o.timeoutlen = 300
     end,
     lazy = false
-  },
-  {
-    "nvim-telescope/telescope-file-browser.nvim",
-    dependencies = {
-      "nvim-telescope/telescope.nvim",
-      "nvim-lua/plenary.nvim",
-    },
-    cond = not vim.g.vscode,
-    config = function ()
-      require("telescope").load_extension("file_browser")
-    end,
-    lazy = true
   },
   { "rickhowe/diffchar.vim" },
   {
