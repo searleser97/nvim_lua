@@ -148,7 +148,7 @@ if not vim.g.vscode then
 
   local harpoon = require("harpoon")
   harpoon:setup()
-  vim.keymap.set('n', '<leader>ha', function() harpoon:list():add() end, { noremap = true })
+  vim.keymap.set('n', '<c-h>a', function() harpoon:list():add() end, { noremap = true })
   vim.keymap.set('n', '<c-h>l', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { noremap = true })
   vim.keymap.set('n', '<C-1>', function() harpoon:list():select(1) end, { noremap = true })
   vim.keymap.set('n', '<C-2>', function() harpoon:list():select(2) end, { noremap = true })
