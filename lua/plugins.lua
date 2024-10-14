@@ -169,6 +169,7 @@ require("lazy").setup({
       local cmp = require("cmp")
       cmp.setup({
         sources = {
+          { name = "copilot", group_index = 2 },
           { name = 'async_path' },
           { name = 'nvim_lsp' },
           { name = 'buffer' },
@@ -179,7 +180,7 @@ require("lazy").setup({
           completeopt = 'menu,menuone,noinsert'
         },
         mapping = cmp.mapping.preset.insert({
-          ['<right>'] = cmp.mapping.confirm({select = true}),
+          ['<tab>'] = cmp.mapping.confirm({select = true}),
         })
       })
     end
@@ -187,6 +188,7 @@ require("lazy").setup({
   {
     "folke/tokyonight.nvim",
     lazy = false,
+    name = "tokyonight",
     priority = 1000,
     cond = not vim.g.vscode,
     config = function()
@@ -198,31 +200,33 @@ require("lazy").setup({
           colors.diff.change = colors.none
           colors.diff.text = "#87632f"
           colors.diff.text = "#966d30"
-
-          -- colors.gitSigns.add = colors.hint
         end
       })
 
       vim.cmd("colorscheme tokyonight")
     end
   },
-  -- {
-  --   "catppuccin/nvim",
-  --   name = "catppuccin",
-  --   priority = 1000,
-  --   cond = not vim.g.vscode,
-  --   config = function()
-  --   require("catppuccin").setup({
-  --     flavour = "mocha", -- latte, frappe, macchiato, mocha
-  --     transparent_background = true
-  --   })
-  --
-  --   -- vim.cmd("colorscheme catppuccin")
-  --   end
-  -- },
   {
     'numToStr/Comment.nvim',
-    lazy = true,
+    keys = {
+      {
+        '<leader>c',
+        function()
+          local mode = vim.fn.mode()
+          if  mode == 'V' then
+            return "<Plug>(comment_toggle_linewise_visual)"
+          elseif mode == 'v' then
+            return "<Plug>(comment_toggle_blockwise_visual)"
+          end
+        end,
+        mode = 'x', noremap = true, expr = true, replace_keycodes = true
+      },
+      {
+        '<leader>c',
+        '<Plug>(comment_toggle_linewise_current)',
+        mode = 'n', noremap = true
+      }
+    },
     config = function()
       require("Comment").setup({
         mappings = {
@@ -312,7 +316,8 @@ require("lazy").setup({
     cond = not vim.g.vscode,
     config = function ()
       require("ibl").setup()
-    end
+    end,
+    lazy = false
   },
   {
     "sindrets/diffview.nvim",
@@ -374,6 +379,7 @@ require("lazy").setup({
   {
     "searleser97/sessions.nvim",
     cond = not vim.g.vscode,
+    lazy = false,
     config = function()
       require("sessions").setup({
         use_unique_session_names = true,
@@ -394,6 +400,7 @@ require("lazy").setup({
   { "rickhowe/diffchar.vim" },
   {
     "nvim-lualine/lualine.nvim",
+    lazy = false,
     dependencies = { 'nvim-tree/nvim-web-devicons', opt = true },
     cond = not vim.g.vscode,
     config = function ()
@@ -409,11 +416,21 @@ require("lazy").setup({
     lazy = false
   },
   {
-    "github/copilot.vim",
-    cond = not vim.g.vscode
+    "zbirenbaum/copilot-cmp",
+    dependencies = "zbirenbaum/copilot.lua",
+    lazy = true,
+    cmd = "Copilot",
+    config = function ()
+      require("copilot").setup({
+        suggestion = { enabled = false },
+        panel = { enabled = false },
+      })
+      require("copilot_cmp").setup()
+    end
   },
   {
     "pteroctopus/faster.nvim",
+    lazy = false,
     cond = not vim.g.vscode,
     config = function()
       require('faster').setup()

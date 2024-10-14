@@ -22,15 +22,6 @@ vim.keymap.set({'n', 'x', 'o'}, 'f', '<Plug>(leap-forward-to)')
 vim.keymap.set({'n', 'x', 'o'}, 'F', '<Plug>(leap-backward-to)')
 
 vim.keymap.set('n', '<leader>ts', function() require('treesj').toggle({ split = { recursive = true } }) end, { noremap = true, desc = "toggle split"})
-vim.keymap.set('x', '<leader>c', function()
-  local mode = vim.fn.mode()
-  if  mode == 'V' then
-    return "<Plug>(comment_toggle_linewise_visual)"
-  elseif mode == 'v' then
-    return "<Plug>(comment_toggle_blockwise_visual)"
-  end
-end, { noremap = true, expr = true, replace_keycodes = true})
-vim.keymap.set('n', '<leader>c', '<Plug>(comment_toggle_linewise_current)', { noremap = true })
 
 vim.keymap.set({'n', 'x'}, '<C-r>', '<nop>', { noremap = true })
 vim.keymap.set({'n', 'x'}, 'R', '<C-r>', { noremap = true })
