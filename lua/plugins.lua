@@ -435,6 +435,31 @@ require("lazy").setup({
     config = function()
       require('faster').setup()
     end
-  }
+  },
+  {
+    "CopilotC-Nvim/CopilotChat.nvim",
+    cmd = "CopilotChat",
+    keys = {
+      {
+        '<c-g><c-c>',
+        function ()
+          local cc = require("CopilotChat")
+          cc.toggle()
+        end,
+        mode = 'n', noremap = true
+      }
+    },
+    branch = "canary",
+    dependencies = {
+      { "zbirenbaum/copilot.lua" }, -- or github/copilot.vim
+      { "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
+    },
+    build = "make tiktoken", -- Only on MacOS or Linux
+    opts = {
+      debug = true, -- Enable debugging
+      window = { layout = 'float' }
+    },
+    -- See Commands section for default commands if you want to lazy load on them
+  },
 })
 
