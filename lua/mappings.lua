@@ -221,7 +221,7 @@ if not vim.g.vscode then
 
   vim.keymap.set({'n', 't'}, "<c-g>D", function() execGitCommand("git diff --staged") end, {noremap = true, silent = true, desc = "git diff --staged"})
   vim.keymap.set({'n', 't'}, "<c-g>d", function() execGitCommand("git diff") end, {noremap = true, silent = true, desc = "git diff"})
-  vim.keymap.set({'n', 't'}, '<c-g>l', telescope_builtin.git_commits, { noremap = true, desc = "git branch commits" })
+  vim.keymap.set({'n', 't'}, "<c-g>l", function() execGitCommand('git log -p --pretty=format:"commit %C(#FFDE59)%h%Creset %aI %aN  %s%n%n%b"') end, {noremap = true, silent = true, desc = "git log"})
   vim.keymap.set({'n', 't'}, '<c-g>c', function() execGitCommand("git commit") end, { noremap = true, desc = "git commit" })
   vim.keymap.set({'n', 't'}, '<c-g>a', function() execGitCommand("git commit --amend") end, { noremap = true, desc = "git commit amend" })
   vim.keymap.set({'n', 't'}, '<c-g>P', function() execGitCommand("git push") end, { noremap = true, desc = "git push" })
