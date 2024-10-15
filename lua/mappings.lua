@@ -219,12 +219,14 @@ if not vim.g.vscode then
     end
   end
   
-  local gitPrettyFormat = 'format:"commit %C(#FFDE59)%h%Creset %aI %aN  %s%n%n%b"'
+  local gitPrettyFormat = "commit %C(#FFDE59)%h%Creset %aI %aN  %s"
+  local gitPrettyFormatWithDescription = gitPrettyFormat .. "%n%n%b"
   vim.keymap.set({'n', 't'}, "<c-g>D", function() execGitCommand("git diff --staged") end, {noremap = true, silent = true, desc = "git diff --staged"})
   vim.keymap.set({'n', 't'}, "<c-g>d", function() execGitCommand("git diff") end, {noremap = true, silent = true, desc = "git diff"})
-  vim.keymap.set({'n', 't'}, "<c-g>l", function() execGitCommand("git log -p --pretty=" .. gitPrettyFormat) end, {noremap = true, silent = true, desc = "git log"})
+  vim.keymap.set({'n', 't'}, "<c-g>l", function() execGitCommand('git log -p --pretty=format:"' .. gitPrettyFormatWithDescription .. '"') end, {noremap = true, silent = true, desc = "git log"})
+  vim.keymap.set({'n', 't'}, "<c-g>g", function() execGitCommand('git log --graph --pretty=format:"' .. gitPrettyFormat .. '"') end, {noremap = true, silent = true, desc = "git graph"})
   vim.keymap.set({'n', 't'}, '<c-g>c', function() execGitCommand("git commit") end, { noremap = true, desc = "git commit" })
-  vim.keymap.set({'n', 't'}, '<c-g>a', function() execGitCommand("git commit --amend") end, { noremap = true, desc = "git commit amend" })
+  vim.keymap.set({'n', 't'}, '<c-g>a', function() execGitCommand("git commit --amend") end, { noremap = true, desc = "git commit --amend" })
   vim.keymap.set({'n', 't'}, '<c-g>P', function() execGitCommand("git push") end, { noremap = true, desc = "git push" })
   vim.keymap.set({'n', 't'}, '<c-g>p', function() execGitCommand("git pull") end, { noremap = true, desc = "git git pull" })
   vim.keymap.set({'n', 't'}, '<c-g>F', function() execGitCommand("git push --force-with-lease") end, { noremap = true, desc = "git push force" })
@@ -233,7 +235,7 @@ if not vim.g.vscode then
   vim.keymap.set({'n', 't'}, '<c-g>s', "<cmd>DiffviewToggle<cr>", { noremap = true, desc = "git status" })
   vim.keymap.set({'n', 't'}, '<c-g>S', telescope_builtin.git_stash, { noremap = true, desc = "git stash" })
   vim.keymap.set({'n', 't'}, '<c-g>t', function() GitTerm:toggle() end, { noremap = true, desc = "git terminal" })
-  vim.keymap.set({'n', 't'}, '<leader>gh', function() execGitCommand("git log -p --follow --pretty=" .. gitPrettyFormat .. " -- " .. vim.api.nvim_buf_get_name(0)) end, { noremap = true, desc = "git file history" })
+  vim.keymap.set({'n', 't'}, '<leader>gh', function() execGitCommand('git log -p --follow --pretty=format:"' .. gitPrettyFormatWithDescription .. '" -- ' .. vim.api.nvim_buf_get_name(0)) end, { noremap = true, desc = "git file history" })
   vim.keymap.set({'n', 't'}, '<leader>gb', function() gs.blame_line{full=true} end, { desc = "git blame" })
 
   vim.keymap.set('t', '<c-e>', [[<C-\><C-n>]], { noremap = true, desc = "exit terminal mode" })
