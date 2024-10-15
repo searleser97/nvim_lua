@@ -139,12 +139,13 @@ if not vim.g.vscode then
 
   local harpoon = require("harpoon")
   harpoon:setup()
-  vim.keymap.set('n', '<c-h>a', function() harpoon:list():add() end, { noremap = true })
-  vim.keymap.set('n', '<c-h>l', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { noremap = true })
+  vim.keymap.set('n', '<c-h>a', function() harpoon:list():add() end, { noremap = true, desc = "harpoon add" })
+  vim.keymap.set('n', '<c-h>l', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { noremap = true, desc = "harpoon list" })
   vim.keymap.set('n', '<C-1>', function() harpoon:list():select(1) end, { noremap = true })
   vim.keymap.set('n', '<C-2>', function() harpoon:list():select(2) end, { noremap = true })
   vim.keymap.set('n', '<C-3>', function() harpoon:list():select(3) end, { noremap = true })
   vim.keymap.set('n', '<C-4>', function() harpoon:list():select(4) end, { noremap = true })
+  vim.keymap.set('n', '<C-5>', function() harpoon:list():select(5) end, { noremap = true })
 
   local contrastantColors = {
     ["purple"] = "white",
