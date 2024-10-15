@@ -218,19 +218,18 @@ if not vim.g.vscode then
       GitTerm:send(command)
     end
   end
-
+  
+  local gitPrettyFormat = 'format:"commit %C(#FFDE59)%h%Creset %aI %aN  %s%n%n%b"'
   vim.keymap.set({'n', 't'}, "<c-g>D", function() execGitCommand("git diff --staged") end, {noremap = true, silent = true, desc = "git diff --staged"})
   vim.keymap.set({'n', 't'}, "<c-g>d", function() execGitCommand("git diff") end, {noremap = true, silent = true, desc = "git diff"})
-  vim.keymap.set({'n', 't'}, "<c-g>l", function() execGitCommand('git log -p --pretty=format:"commit %C(#FFDE59)%h%Creset %aI %aN  %s%n%n%b"') end, {noremap = true, silent = true, desc = "git log"})
+  vim.keymap.set({'n', 't'}, "<c-g>l", function() execGitCommand("git log -p --pretty=" .. gitPrettyFormat) end, {noremap = true, silent = true, desc = "git log"})
   vim.keymap.set({'n', 't'}, '<c-g>c', function() execGitCommand("git commit") end, { noremap = true, desc = "git commit" })
   vim.keymap.set({'n', 't'}, '<c-g>a', function() execGitCommand("git commit --amend") end, { noremap = true, desc = "git commit amend" })
   vim.keymap.set({'n', 't'}, '<c-g>P', function() execGitCommand("git push") end, { noremap = true, desc = "git push" })
   vim.keymap.set({'n', 't'}, '<c-g>p', function() execGitCommand("git pull") end, { noremap = true, desc = "git git pull" })
   vim.keymap.set({'n', 't'}, '<c-g>F', function() execGitCommand("git push --force-with-lease") end, { noremap = true, desc = "git push force" })
   vim.keymap.set({'n', 't'}, '<c-g>f', function() execGitCommand("git fetch") end, { noremap = true, desc = "git fetch" })
-  -- git history
-  -- vim.keymap.set('n', 'Gh', "<cmd>DiffviewFileHistoryToggle %<cr>", { noremap = true, desc = "git file history" })
-  vim.keymap.set({'n', 't'}, '<c-g>h', telescope_builtin.git_bcommits, { noremap = true, desc = "git file history" })
+  vim.keymap.set({'n', 't'}, '<c-g>h', function() execGitCommand("git log -p --follow --pretty=" .. gitPrettyFormat .. " -- " .. vim.api.nvim_buf_get_name(0)) end, { noremap = true, desc = "git file history" })
   vim.keymap.set({'n', 't'}, '<c-g>B', telescope_builtin.git_branches, { noremap = true, desc = "git branches" })
   vim.keymap.set({'n', 't'}, '<c-g>b', function() gs.blame_line{full=true} end, { desc = "git blame" })
   vim.keymap.set({'n', 't'}, '<c-g>s', "<cmd>DiffviewToggle<cr>", { noremap = true, desc = "git status" })

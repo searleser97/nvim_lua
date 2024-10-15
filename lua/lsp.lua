@@ -27,7 +27,12 @@ if not vim.g.vscode then
         require("lspconfig").csharp_ls.setup(config)
       end,
       ["lua_ls"] = function()
-        require("lspconfig").lua_ls.setup(lsp_zero.nvim_lua_ls())
+        local lua_opts = lsp_zero.nvim_lua_ls()
+        lua_opts.settings.Lua.workspace.library = {
+          vim.env.VIMRUNTIME,
+          os.getenv('HOME') .. '/.config/luvit-meta'
+        }
+        require("lspconfig").lua_ls.setup(lua_opts)
       end
     }
   });
