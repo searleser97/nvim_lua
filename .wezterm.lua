@@ -8,6 +8,7 @@ if package.config:sub(1,1) == '\\' then
   config.default_prog = { 'C:\\Program Files\\PowerShell\\7\\pwsh.exe' }
 end
 
+config.window_background_opacity = 0.8
 config.hide_tab_bar_if_only_one_tab = true
 config.initial_cols = 120
 config.initial_rows = 30
