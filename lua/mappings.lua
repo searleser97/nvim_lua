@@ -36,7 +36,10 @@ local getPathToGitDirOr = function(defaultPath)
 end
 
 if not vim.g.vscode then
-
+  vim.keymap.set({'n', 'x'}, '<C-u>', '<C-u>M')
+  vim.keymap.set({'n', 'x'}, '<C-d>', '<C-d>M')
+  vim.keymap.set({'n', 'x'}, 'n', 'nzz')
+  vim.keymap.set({'n', 'x'}, 'N', 'Nzz')
   vim.api.nvim_create_user_command("DiffviewToggle", function(e)
     local view = require("diffview.lib").get_current_view()
 
