@@ -406,7 +406,28 @@ require("lazy").setup({
     config = function ()
       local autoTheme = require('lualine.themes.auto')
       autoTheme.normal.c.gui = "bold"
-      require('lualine').setup({ options = { theme = autoTheme } })
+      require('lualine').setup({
+        options = {
+          theme = autoTheme,
+        },
+        sections = {
+          lualine_a = {"location"},
+          lualine_b = {"progress"},
+          lualine_c = {"filetype", "fileformat", "encoding"},
+          lualine_x = {},
+          lualine_y = {},
+          lualine_z = {"vim.fn.expand('%')"},
+        },
+        inactive_sections = {
+          lualine_x = {"vim.fn.expand('%')"},
+          lualine_c = {"location", "progress"}
+        },
+        tabline = {
+          lualine_z = {'tabs'},
+          lualine_b = {'branch'},
+          lualine_a = {'mode'}
+        }
+      })
     end
   },
   {
