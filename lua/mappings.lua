@@ -138,6 +138,8 @@ if not vim.g.vscode then
   vim.keymap.set('v', '<leader>gl', function() require("gitlinker").get_buf_range_url("v", {action_callback = require("gitlinker.actions").open_in_browser}) end, {silent = true})
 
   local harpoon = require("harpoon")
+  -- harpoon depends on the current working directory remaining static through out the session
+  -- therefore, in nvim-rooter, we are just setting directories related to source-control
   harpoon:setup()
   vim.keymap.set('n', '<c-h>a', function() harpoon:list():add() end, { noremap = true, desc = "harpoon add" })
   vim.keymap.set('n', '<c-h>l', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { noremap = true, desc = "harpoon list" })
