@@ -142,7 +142,7 @@ if not vim.g.vscode then
   -- therefore, in nvim-rooter, we are just setting directories related to source-control
   harpoon:setup()
   vim.keymap.set('n', '<c-h>a', function() harpoon:list():add() end, { noremap = true, desc = "harpoon add" })
-  vim.keymap.set('n', '<c-h>l', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { noremap = true, desc = "harpoon list" })
+  vim.keymap.set('n', '<c-h>l', function() harpoon.ui:toggle_quick_menu(harpoon:list(), { ui_width_ratio = 0.95 }) end, { noremap = true, desc = "harpoon list" })
   vim.keymap.set('n', '<C-1>', function() harpoon:list():select(1) end, { noremap = true })
   vim.keymap.set('n', '<C-2>', function() harpoon:list():select(2) end, { noremap = true })
   vim.keymap.set('n', '<C-3>', function() harpoon:list():select(3) end, { noremap = true })
