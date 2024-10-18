@@ -40,6 +40,8 @@ if not vim.g.vscode then
   vim.keymap.set({'n', 'x'}, '<C-d>', '<C-d>M')
   vim.keymap.set({'n', 'x'}, 'n', 'nzz')
   vim.keymap.set({'n', 'x'}, 'N', 'Nzz')
+  vim.keymap.set("n", "<c-p>", "<c-o>zz", { noremap = true })
+  vim.keymap.set("n", "<c-n>", "<c-i>zz", { noremap = true })
   vim.api.nvim_create_user_command("DiffviewToggle", function(e)
     local view = require("diffview.lib").get_current_view()
 
@@ -107,9 +109,6 @@ if not vim.g.vscode then
   local sessions = require("sessions")
   local scan = require'plenary.scandir'
   local path = require'plenary.path'
-  -- local lua_utils = require("lua_utils")
-  vim.keymap.set("n", "<c-p>", "<c-o>zz", { noremap = true })
-  vim.keymap.set("n", "<c-n>", "<c-i>zz", { noremap = true })
   local files = scan.scan_dir(vim.fn.stdpath("data") .. "/sessions", { depth = 1, })
   local filenames = {}
   for index, filepath in ipairs(files) do
@@ -309,6 +308,14 @@ if not vim.g.vscode then
     local dirPath = vim.fn.expand("%:p:h"):gsub("%%20", " ")
     local count = vim.v.count > 0 and vim.v.count or 1
     vim.cmd(count .. "TermExec cmd=\"cd " .. dirPath .. "\"")
+  end, { noremap = true })
+
+  vim.keymap.set('n', '<F6>', function()
+    local count = vim.v.count > 0 and vim.v.count or 1
+    vim.cmd(count .. "TermExec cmd=\"pwd\"")
+    vim.schedule(function()
+      vim.cmd(count .. "TermExec cmd=\"cd " .. getPathToGitDirOr(vim.loop.cwd()) .. "\"")
+    end)
   end, { noremap = true })
 
   -- Actions
