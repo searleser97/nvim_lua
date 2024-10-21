@@ -2,7 +2,6 @@ if not vim.g.vscode then
   local lsp_zero = require("lsp-zero").preset({})
 
   lsp_zero.on_attach(function(client, buffer)
-    -- lsp_zero.default_keymaps({ buffer = buffer })
     lsp_zero.highlight_symbol(client, buffer)
     local telescope_builtin = require('telescope.builtin')
     vim.keymap.set('n', 'gd', telescope_builtin.lsp_definitions, { noremap = true, desc = "go to definition" })
