@@ -35,13 +35,16 @@ end
 
 
 table.insert(config.keys, { key = 'v', mods = 'CTRL', action = act.PasteFrom 'Clipboard' })
-table.insert(config.keys, { key = 'v', mods = 'SUPER', action = act.PasteFrom 'Clipboard' })
 table.insert(config.keys, { key = 'c', mods = 'CTRL', action = ctrl_c_action })
+
+-- bindings needed for MAC
+table.insert(config.keys, { key = 'v', mods = 'SUPER', action = act.PasteFrom 'Clipboard' })
 table.insert(config.keys, { key = 'c', mods = 'SUPER', action = ctrl_c_action })
 table.insert(config.keys, { key = 'LeftArrow', mods = 'SUPER', action = wezterm.action.SendKey{ key = 'LeftArrow', mods = 'CTRL'} })
 table.insert(config.keys, { key = 'RightArrow', mods = 'SUPER', action = wezterm.action.SendKey{ key = 'RightArrow', mods = 'CTRL'} })
 table.insert(config.keys, { key = 'DownArrow', mods = 'SUPER', action = wezterm.action.SendKey{ key = 'DownArrow', mods = 'CTRL'} })
 table.insert(config.keys, { key = 'UpArrow', mods = 'SUPER', action = wezterm.action.SendKey{ key = 'UpArrow', mods = 'CTRL'} })
+table.insert(config.keys, { key = 'n', mods = 'SUPER|SHIFT', action = wezterm.action.SpawnWindow })
 
 return config
 
