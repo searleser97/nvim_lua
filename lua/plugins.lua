@@ -149,6 +149,8 @@ require("lazy").setup({
     lazy = true
   },
   {
+    "https://github.com/ThePrimeagen/harpoon",
+    branch = "harpoon2",
     keys = {
       {'<c-h>a', function() require('harpoon'):list():add() end, { mode = 'n', noremap = true, desc = "harpoon add" }},
       {'<c-h>l', function()
@@ -165,8 +167,6 @@ require("lazy").setup({
         return key_mappings
       end)())
     },
-    "https://github.com/ThePrimeagen/harpoon",
-    branch = "harpoon2",
     dependencies = {
       "nvim-telescope/telescope.nvim"
     },
