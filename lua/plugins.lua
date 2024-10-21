@@ -210,7 +210,7 @@ require("lazy").setup({
     'numToStr/Comment.nvim',
     keys = {
       {
-        '<leader>c',
+        '<leader>ct',
         function()
           local mode = vim.fn.mode()
           if  mode == 'V' then
@@ -219,12 +219,12 @@ require("lazy").setup({
             return "<Plug>(comment_toggle_blockwise_visual)"
           end
         end,
-        mode = 'x', noremap = true, expr = true, replace_keycodes = true
+        mode = 'x', noremap = true, expr = true, replace_keycodes = true, desc = "comment toggle"
       },
       {
-        '<leader>c',
+        '<leader>ct',
         '<Plug>(comment_toggle_linewise_current)',
-        mode = 'n', noremap = true
+        mode = 'n', noremap = true, desc = "comment toggle"
       }
     },
     config = function()
