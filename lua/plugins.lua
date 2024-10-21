@@ -149,13 +149,33 @@ require("lazy").setup({
     lazy = true
   },
   {
+    keys = {
+      {'<c-h>a', function() require('harpoon'):list():add() end, { mode = 'n', noremap = true, desc = "harpoon add" }},
+      {'<c-h>l', function()
+        require('harpoon').ui:toggle_quick_menu(require('harpoon'):list(), { ui_width_ratio = 0.95 })
+      end,
+          { mode = 'n', noremap = true, desc = "harpoon list" }},
+      unpack((function()
+        local key_mappings = {}
+        for i = 1, 9 do
+          table.insert(key_mappings, {'<C-' .. i .. '>', function()
+            require('harpoon'):list():select(i)
+          end, { mode = 'n', noremap = true }})
+        end
+        return key_mappings
+      end)())
+    },
     "https://github.com/ThePrimeagen/harpoon",
     branch = "harpoon2",
     dependencies = {
       "nvim-telescope/telescope.nvim"
     },
     cond = not vim.g.vscode,
-    lazy = true
+    config = function()
+      -- harpoon depends on the current working directory remaining static through out the session
+      -- therefore, in nvim-rooter, we are just setting directories related to source-control
+      require("harpoon"):setup()
+    end
   },
   {
     "hrsh7th/nvim-cmp",
@@ -439,7 +459,6 @@ require("lazy").setup({
   {
     "zbirenbaum/copilot-cmp",
     dependencies = "zbirenbaum/copilot.lua",
-    lazy = true,
     cmd = "Copilot",
     config = function ()
       require("copilot").setup({
@@ -467,7 +486,7 @@ require("lazy").setup({
           local cc = require("CopilotChat")
           cc.toggle()
         end,
-        mode = 'n', noremap = true
+        mode = {'n', 'x'}, noremap = true
       }
     },
     branch = "canary",
