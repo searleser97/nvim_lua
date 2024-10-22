@@ -9,3 +9,4 @@ otherwise, if the cursor is inside the terminal close/hide the terminal
 
 - (in progress) move keybindings to plugins.lua file, so that plugins can be really loaded lazyly
 
+- PR to toggleterm to stack terminals on top of each other
