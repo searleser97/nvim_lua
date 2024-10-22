@@ -1,18 +1,20 @@
+-- to debug this config with print statements run wezterm with the following command
+-- WEZTERM_LOG=INFO wezterm
+
 local wezterm = require 'wezterm'
-local config = wezterm.config_builder()
+local globalConfig = wezterm.config_builder()
 local act = wezterm.action
 
-config.keys = {}
-
 if package.config:sub(1,1) == '\\' then
-  config.default_prog = { 'C:\\Program Files\\PowerShell\\7\\pwsh.exe' }
+  globalConfig.default_prog = { 'C:\\Program Files\\PowerShell\\7\\pwsh.exe' }
 end
 
-config.window_background_opacity = 0.8
-config.hide_tab_bar_if_only_one_tab = true
-config.initial_cols = 120
-config.initial_rows = 30
-config.font_size = 14
+globalConfig.disable_default_key_bindings = true
+globalConfig.window_background_opacity = 0.8
+globalConfig.hide_tab_bar_if_only_one_tab = true
+globalConfig.initial_cols = 120
+globalConfig.initial_rows = 30
+globalConfig.font_size = 14
 
 local ctrl_c_action = wezterm.action_callback(function(window, pane)
   local sel = window:get_selection_text_for_pane(pane)
@@ -23,28 +25,75 @@ local ctrl_c_action = wezterm.action_callback(function(window, pane)
   end
 end)
 
-for c = string.byte("a"), string.byte("z") do
-  local key = string.char(c)
-  table.insert(config.keys, { key = key, mods = 'SUPER', action = wezterm.action.SendKey { key = key, mods = 'CTRL' } })
+-- main process refers to the terminal emulator used, like zsh, bash, powershell, ...
+local set_keybindings_for_main_process = function(config)
+  table.insert(config.keys, { key = 'v', mods = 'CTRL', action = act.PasteFrom 'Clipboard' })
+  table.insert(config.keys, { key = 'c', mods = 'CTRL', action = ctrl_c_action })
+
+  -- bindings needed for MAC
+  table.insert(config.keys, { key = 'v', mods = 'SUPER', action = act.PasteFrom 'Clipboard' })
+  table.insert(config.keys, { key = 'c', mods = 'SUPER', action = ctrl_c_action })
 end
 
-for c = string.byte("0"), string.byte("9") do
-  local key = string.char(c)
-  table.insert(config.keys, { key = key, mods = 'SUPER', action = wezterm.action.SendKey { key = key, mods = 'CTRL' } })
+local set_universal_keybindings = function(config)
+  table.insert(config.keys, { key = 'n', mods = 'SUPER|SHIFT', action = wezterm.action.SpawnWindow })
 end
 
+local set_keybindings_for_vim_like_process = function(config)
+  for c = string.byte("a"), string.byte("z") do
+    local key = string.char(c)
+    table.insert(config.keys, { key = key, mods = 'SUPER', action = wezterm.action.SendKey { key = key, mods = 'CTRL' } })
+  end
+  for c = string.byte("0"), string.byte("9") do
+    local key = string.char(c)
+    table.insert(config.keys, { key = key, mods = 'SUPER', action = wezterm.action.SendKey { key = key, mods = 'CTRL' } })
+  end
+  local otherKeys = {  'LeftArrow',  'RightArrow',  'DownArrow',  'UpArrow' }
+  for _, key in ipairs(otherKeys) do
+    table.insert(config.keys, { key = key, mods = 'SUPER', action = wezterm.action.SendKey { key = key, mods = 'CTRL' } })
+  end
+end
 
-table.insert(config.keys, { key = 'v', mods = 'CTRL', action = act.PasteFrom 'Clipboard' })
-table.insert(config.keys, { key = 'c', mods = 'CTRL', action = ctrl_c_action })
+local vim_keybindings_status_var_name = 'vim_keybindings_status';
 
--- bindings needed for MAC
-table.insert(config.keys, { key = 'v', mods = 'SUPER', action = act.PasteFrom 'Clipboard' })
-table.insert(config.keys, { key = 'c', mods = 'SUPER', action = ctrl_c_action })
-table.insert(config.keys, { key = 'LeftArrow', mods = 'SUPER', action = wezterm.action.SendKey{ key = 'LeftArrow', mods = 'CTRL'} })
-table.insert(config.keys, { key = 'RightArrow', mods = 'SUPER', action = wezterm.action.SendKey{ key = 'RightArrow', mods = 'CTRL'} })
-table.insert(config.keys, { key = 'DownArrow', mods = 'SUPER', action = wezterm.action.SendKey{ key = 'DownArrow', mods = 'CTRL'} })
-table.insert(config.keys, { key = 'UpArrow', mods = 'SUPER', action = wezterm.action.SendKey{ key = 'UpArrow', mods = 'CTRL'} })
-table.insert(config.keys, { key = 'n', mods = 'SUPER|SHIFT', action = wezterm.action.SpawnWindow })
+wezterm.on('user-var-changed', function(window, pane, name, value)
+  if name == vim_keybindings_status_var_name then
+    if window then
+      if value == 'enabled' then
+        local config = window:get_config_overrides() or {}
+        config.keys = wezterm.gui.default_keys()
+        set_universal_keybindings(config)
+        set_keybindings_for_vim_like_process(config)
+        wezterm.GLOBAL.vimHasAffectedKeyBindings = true
+        window:set_config_overrides(config)
+      elseif value == 'disabled' then
+        local config = window:get_config_overrides() or {}
+        config.keys = wezterm.gui.default_keys()
+        set_universal_keybindings(config)
+        set_keybindings_for_main_process(config)
+        wezterm.GLOBAL.vimHasAffectedKeyBindings = true
+        window:set_config_overrides(config)
+      end
+    end
+  end
+end)
 
-return config
+if wezterm.GLOBAL.isInitialLoad == nil then
+  wezterm.GLOBAL.isInitialLoad = true
+end
+
+wezterm.on('window-config-reloaded', function(window, pane)
+  if wezterm.GLOBAL.isInitialLoad then
+    wezterm.GLOBAL.isInitialLoad = false
+    wezterm.emit('user-var-changed', window, pane, vim_keybindings_status_var_name, 'disabled')
+  end
+end)
+
+-- if not wezterm.GLOBAL.vimHasAffectedKeyBindings then
+--   globalConfig.keys = {}
+--   set_universal_keybindings(globalConfig)
+--   set_keybindings_for_main_process(globalConfig)
+-- end
+
+return globalConfig
 
