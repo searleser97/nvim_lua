@@ -12,3 +12,5 @@ otherwise, if the cursor is inside the terminal close/hide the terminal
 - PR to toggleterm to stack terminals on top of each other
 
 - use H to show lsp hover info 
+
+- center after direct jump to implementation/definition/reference/...

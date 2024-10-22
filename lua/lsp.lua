@@ -12,10 +12,10 @@ if not vim.g.vscode then
       vim.diagnostic.open_float()
       vim.diagnostic.open_float() -- the second call moves my cursor inside the diagnostic window
     end, { noremap = true, desc = "show diagnostics" })
-    vim.keymap.set('n', '<leader>si', function()
+    vim.keymap.set('n', 'H', function()
       vim.lsp.buf.hover()
       vim.lsp.buf.hover()
-    end, { noremap = true, desc = "show symbol info" })
+    end, { noremap = true, desc = "hover info" })
     vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { noremap = true, desc = "code action" }) end)
 
   require("mason").setup({})
