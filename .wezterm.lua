@@ -89,11 +89,5 @@ wezterm.on('window-config-reloaded', function(window, pane)
   end
 end)
 
--- if not wezterm.GLOBAL.vimHasAffectedKeyBindings then
---   globalConfig.keys = {}
---   set_universal_keybindings(globalConfig)
---   set_keybindings_for_main_process(globalConfig)
--- end
-
 return globalConfig
 
