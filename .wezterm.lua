@@ -64,14 +64,12 @@ wezterm.on('user-var-changed', function(window, pane, name, value)
         config.keys = wezterm.gui.default_keys()
         set_universal_keybindings(config)
         set_keybindings_for_vim_like_process(config)
-        wezterm.GLOBAL.vimHasAffectedKeyBindings = true
         window:set_config_overrides(config)
       elseif value == 'disabled' then
         local config = window:get_config_overrides() or {}
         config.keys = wezterm.gui.default_keys()
         set_universal_keybindings(config)
         set_keybindings_for_main_process(config)
-        wezterm.GLOBAL.vimHasAffectedKeyBindings = true
         window:set_config_overrides(config)
       end
     end
@@ -83,6 +81,7 @@ if wezterm.GLOBAL.isInitialLoad == nil then
 end
 
 wezterm.on('window-config-reloaded', function(window, pane)
+-- wezterm.on('update-status', function(window, pane)
   if wezterm.GLOBAL.isInitialLoad then
     wezterm.GLOBAL.isInitialLoad = false
     wezterm.emit('user-var-changed', window, pane, vim_keybindings_status_var_name, 'disabled')
