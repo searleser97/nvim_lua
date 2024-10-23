@@ -28,14 +28,7 @@ vim.keymap.set('n', '<leader>ts', function() require('treesj').toggle({ split = 
 vim.keymap.set({'n', 'x'}, '<C-r>', '<nop>', { noremap = true })
 vim.keymap.set({'n', 'x'}, 'R', '<C-r>', { noremap = true })
 
-local getPathToGitDirOr = function(defaultPath)
-  local gitCommandResult = vim.system({ 'git', 'rev-parse', '--show-toplevel' }, { text = true }):wait()
-  if gitCommandResult.code == 0 then
-    return gitCommandResult.stdout:gsub("\n", "")
-  else
-    return defaultPath
-  end
-end
+local utils = require('myutils')
 
 if not vim.g.vscode then
   vim.keymap.set({'n', 'x'}, '<C-u>', '<C-u>M')
@@ -54,16 +47,6 @@ if not vim.g.vscode then
     end
   end, { nargs = "*" })
 
-  vim.api.nvim_create_user_command("DiffviewFileHistoryToggle", function(e)
-    local view = require("diffview.lib").get_current_view()
-
-    if view then
-      vim.cmd("DiffviewClose")
-    else
-      vim.cmd("DiffviewFileHistory " .. e.args)
-    end
-  end, { nargs = "*" })
-
   -- fine-grained undo
   vim.keymap.set('i', '<space>', '<space><c-g>u', { noremap = true })
   vim.keymap.set('i', '<tab>', '<tab><c-g>u', { noremap = true })
@@ -75,71 +58,6 @@ if not vim.g.vscode then
   vim.keymap.set({'i', 'x', 'n', 't'}, '<C-Down>', '<C-w><Down>', { noremap = true })
   vim.keymap.set({'i', 'x', 'n', 't'}, '<C-Right>', '<C-w><Right>', { noremap = true })
   vim.keymap.set({'i', 'x', 'n', 't'}, '<C-Left>', '<C-w><Left>', { noremap = true })
-
-  local telescope_builtin = require('telescope.builtin')
-  local telescope = require("telescope")
-  local live_grep_args_shortcuts = require("telescope-live-grep-args.shortcuts")
-
-  vim.keymap.set('n', '<c-s>f', function()
-    telescope_builtin.find_files({
-      cwd = getPathToGitDirOr(vim.loop.cwd()),
-      hidden = true,
-      no_ignore = true,
-      no_ignore_parent = true
-    })
-  end , { noremap = true, desc = "search files" })
-  vim.keymap.set('n', '<c-r>f', telescope.extensions.recent_files.pick, { noremap = true, desc = "recent files" })
-  vim.keymap.set('n', '<c-f>b', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', { noremap = true, desc = "File Browser" })
-  vim.keymap.set('n', '<c-s>m', telescope_builtin.marks, { noremap = true, desc = "search marks" })
-  vim.keymap.set('x', '<c-s>p', function ()
-    live_grep_args_shortcuts.grep_visual_selection({ cwd = getPathToGitDirOr(vim.loop.cwd()), postfix = " -g \"*.*\""})
-  end
-  , { noremap = true, desc = "search pattern" })
-  vim.keymap.set('n', '<c-s>p', function ()
-    telescope.extensions.live_grep_args.live_grep_args({ cwd = getPathToGitDirOr(vim.loop.cwd()), postfix = " -g \"*.*\"" })
-  end, { noremap = true, desc = "search pattern" })
-  vim.keymap.set('n', '<F1>', telescope_builtin.help_tags, { noremap = true })
-  vim.keymap.set('n', '<c-s>s', telescope_builtin.treesitter, { noremap = true, desc = "show symbols" })
-
-  local action_state = require "telescope.actions.state"
-  local actions = require "telescope.actions"
-  local pickers = require "telescope.pickers"
-  local finders = require "telescope.finders"
-  local make_entry = require "telescope.make_entry"
-  local conf = require"telescope.config".values
-
-  local sessions = require("sessions")
-  local scan = require'plenary.scandir'
-  local path = require'plenary.path'
-  local files = scan.scan_dir(vim.fn.stdpath("data") .. "/sessions", { depth = 1, })
-  local filenames = {}
-  for index, filepath in ipairs(files) do
-    local splitpath = vim.split(filepath, path.path.sep)
-    table.insert(filenames, splitpath[#splitpath])
-  end
-  local open_session_action = function ()
-    pickers.new({}, {
-      previewer = false,
-      prompt_title = "Open Session",
-      finder = finders.new_table({
-        results = filenames,
-        entry_maker = make_entry.gen_from_file({})
-      }),
-      sorter = conf.file_sorter(),
-      attach_mappings = function (_, map)
-        map("i", "<cr>", function (prompt_bufnr)
-          actions.close(prompt_bufnr)
-          sessions.load(string.sub(action_state.get_selected_entry()[1], 1, -9))
-        end)
-        return true
-      end
-    }):find()
-  end
-  vim.keymap.set("n", "<c-o>s", open_session_action, { noremap = true, desc = "open session" })
-  vim.keymap.set("n", "<c-s>S", ":SessionsSave ", { noremap = true, desc = "Save new Session" })
-
-  vim.keymap.set('n', '<leader>gl', function() require("gitlinker").get_buf_range_url("n", {action_callback = require("gitlinker.actions").open_in_browser}) end, {silent = true})
-  vim.keymap.set('v', '<leader>gl', function() require("gitlinker").get_buf_range_url("v", {action_callback = require("gitlinker.actions").open_in_browser}) end, {silent = true})
 
   local contrastantColors = {
     ["purple"] = "white",
@@ -176,22 +94,6 @@ if not vim.g.vscode then
     end
   end, { nargs = 1 })
 
-  local gs = package.loaded.gitsigns
-
-  -- Navigation
-  vim.keymap.set('n', ']c', function()
-    if vim.wo.diff then return ']c' end
-
-    vim.schedule(function() gs.next_hunk() end)
-    return '<Ignore>'
-  end, {expr=true, desc = "Next Change"})
-
-  vim.keymap.set('n', '[c', function()
-    if vim.wo.diff then return '[c' end
-    vim.schedule(function() gs.prev_hunk() end)
-    return '<Ignore>'
-  end, {expr=true, desc = "Previous Change"})
-
   local Terminal  = require('toggleterm.terminal').Terminal
   local gitTermConfig =  {
     autochdir = true,
@@ -220,7 +122,7 @@ if not vim.g.vscode then
       GitTerm:send(gitCommandFull)
     end
   end
-  
+
   local gitPrettyFormat = "commit %C(#FFDE59)%h%Creset %aI %aN  %s"
   local gitPrettyFormatWithDescription = gitPrettyFormat .. "%n%n%b"
   vim.keymap.set({'n', 't'}, "<c-g>D", function() execGitCommand("diff --staged") end, {noremap = true, silent = true, desc = "git diff --staged"})
@@ -234,9 +136,7 @@ if not vim.g.vscode then
   vim.keymap.set({'n', 't'}, '<c-g>F', function() execGitCommand("push --force-with-lease") end, { noremap = true, desc = "git push force" })
   vim.keymap.set({'n', 't'}, '<c-g>f', function() execGitCommand("fetch") end, { noremap = true, desc = "git fetch" })
   vim.keymap.set({'n', 't'}, '<leader>gh', function() execGitCommand('log -p --follow --pretty=format:"' .. gitPrettyFormatWithDescription .. '" -- ' .. vim.api.nvim_buf_get_name(0)) end, { noremap = true, desc = "git file history" })
-  vim.keymap.set({'n', 't'}, '<c-g>B', telescope_builtin.git_branches, { noremap = true, desc = "git branches" })
   vim.keymap.set({'n', 't'}, '<c-g>s', "<cmd>DiffviewToggle<cr>", { noremap = true, desc = "git status" })
-  vim.keymap.set({'n', 't'}, '<c-g>S', telescope_builtin.git_stash, { noremap = true, desc = "git stash" })
   vim.keymap.set({'n', 't'}, '<c-g>t', function() GitTerm:toggle() end, { noremap = true, desc = "git terminal" })
   vim.keymap.set({'n', 't'}, '<leader>gb', function() gs.blame_line{full=true} end, { desc = "git blame" })
 
@@ -304,24 +204,13 @@ if not vim.g.vscode then
     local count = vim.v.count > 0 and vim.v.count or 1
     vim.cmd(count .. "TermExec cmd=\"pwd\"")
     vim.schedule(function()
-      vim.cmd(count .. "TermExec cmd=\"cd " .. getPathToGitDirOr(vim.loop.cwd()) .. "\"")
+      vim.cmd(count .. "TermExec cmd=\"cd " .. utils.getPathToGitDirOr(vim.loop.cwd()) .. "\"")
     end)
   end, { noremap = true })
 
-  -- Actions
-  vim.keymap.set('n', '<leader>hs', gs.stage_hunk, {desc = "hunk stage"})
-  vim.keymap.set('n', '<leader>hr', gs.reset_hunk, {desc = "hunk reset"})
-  vim.keymap.set('x', '<leader>hs', function() gs.stage_hunk {vim.fn.line('.'), vim.fn.line('v')} end, { desc = "hunk stage" })
-  vim.keymap.set('x', '<leader>hr', function() gs.reset_hunk {vim.fn.line('.'), vim.fn.line('v')} end, { desc = "hunk reset" })
-  vim.keymap.set('n', '<leader>su', gs.undo_stage_hunk, { desc = "stage undo" })
-  vim.keymap.set('n', '<leader>hp', gs.preview_hunk, { desc = "hunk preview" })
-  vim.keymap.set('n', '<leader>td', gs.toggle_deleted, { desc = "toggle deleted lines" })
-
-  -- Text object
-  vim.keymap.set({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
 
   return {
-    open_session_action = open_session_action
+    open_session_action = require('session_utils').open_session_action
   }
 else
   -- all vscode ctrl+... keybindings are defined in the keybindings.json file of vscode
@@ -329,20 +218,14 @@ else
   vim.keymap.set("n", "gr", function() vscode.call("editor.action.goToReferences") end)
   vim.keymap.set("n", "gi", function() vscode.call("editor.action.goToImplementation") end)
   vim.keymap.set("n", "zh", function()
-    vscode.call("scrollLeft")
-    vscode.call("scrollLeft")
-    vscode.call("scrollLeft")
-    vscode.call("scrollLeft")
-    vscode.call("scrollLeft")
-    vscode.call("scrollLeft")
+    for _ = 1, 6 do
+      vscode.call("scrollLeft")
+    end
   end)
   vim.keymap.set("n", "zl", function()
-    vscode.call("scrollRight")
-    vscode.call("scrollRight")
-    vscode.call("scrollRight")
-    vscode.call("scrollRight")
-    vscode.call("scrollRight")
-    vscode.call("scrollRight")
+    for _ = 1, 6 do
+      vscode.call("scrollRight")
+    end
   end)
   vim.keymap.set("n", "<c-t>", function()
     local dirPath = vim.fn.expand("%:p:h"):gsub("^vscode%-userdata:", ""):gsub("%%20", " ")
@@ -409,5 +292,4 @@ else
     vscode.call("vscode-neovim.ctrl-d")
     vim.defer_fn(function() vscode.call("cursorMove", { args = { to = "viewPortCenter" } }) end, 80)
   end)
-  
 end

@@ -14,6 +14,8 @@ function Is_Windows()
   return package.config:sub(1,1) == "\\";
 end
 
+local utils = require('myutils')
+
 require("lazy").setup({
   {
     "https://github.com/ggandor/flit.nvim",
@@ -70,11 +72,54 @@ require("lazy").setup({
     cond = not vim.g.vscode
   },
   {
+    keys = {
+      {
+        '<c-s>f',
+        function()
+          require('telescope.builtin').find_files({
+            cwd = utils.getPathToGitDirOr(vim.loop.cwd()),
+            hidden = true,
+            no_ignore = true,
+            no_ignore_parent = true
+          })
+        end,
+        noremap = true, desc = "search files"
+      },
+      {
+        '<c-s>m',
+        function() require('telescope.builtin').marks() end,
+        noremap = true, desc = "search marks"
+      },
+      {
+        '<c-g>B',
+        function() require('telescope.builtin').git_branches() end,
+        noremap = true, desc = "git branches"
+      },
+      {
+        '<c-g>S',
+        function() require('telescope.builtin').git_stash() end,
+        noremap = true, desc = "git stash"
+      },
+      {
+        '<F1>',
+        function() require('telescope.builtin').help_tags() end,
+        noremap = true
+      },
+      {
+        '<c-s>s',
+        function() require('telescope.builtin').treesitter() end,
+        noremap = true, desc = "show symbols"
+      },
+      {
+        '<c-f>b',
+        ':Telescope file_browser path=%:p:h select_buffer=true<CR>',
+        noremap = true, desc = "File Browser"
+      }
+    },
     "nvim-telescope/telescope.nvim",
     dependencies = {
       "nvim-lua/plenary.nvim"
     },
-    lazy = true,
     cond = not vim.g.vscode,
     config = function()
       local telescope = require("telescope");
@@ -129,18 +174,51 @@ require("lazy").setup({
     config = function ()
       require("telescope").load_extension("file_browser")
     end,
-    lazy = true
   },
   {
     "nvim-telescope/telescope-live-grep-args.nvim",
+    keys = {
+      {
+        '<c-s>p',
+        function()
+          print("entro")
+          print("entro")
+          print("entro")
+          require("telescope-live-grep-args.shortcuts").grep_visual_selection({
+            cwd = require('myutils').getPathToGitDirOr(vim.loop.cwd()),
+            postfix = " -g \"*.*\"",
+          })
+        end,
+        mode = 'x', noremap = true, desc = "search pattern"
+      },
+      {
+        '<c-s>p',
+        function()
+          require('telescope').extensions.live_grep_args.live_grep_args({
+            cwd = require('myutils').getPathToGitDirOr(vim.loop.cwd()),
+            postfix = " -g \"*.*\"",
+          })
+        end,
+        mode = 'n', noremap = true, desc = "search pattern"
+      }
+    },
     cond = not vim.g.vscode,
+    dependencies = {
+      "nvim-telescope/telescope.nvim"
+    },
     config = function()
       require("telescope").load_extension("live_grep_args")
     end,
-    lazy = true
   },
   {
     "smartpde/telescope-recent-files",
+    keys = {
+      {
+        '<c-r>f',
+        function() require('telescope').extensions.recent_files.pick() end,
+        noremap = true, desc = "recent files"
+      }
+    },
     config = function()
       require("telescope").load_extension("recent_files")
     end,
@@ -152,17 +230,22 @@ require("lazy").setup({
     "https://github.com/ThePrimeagen/harpoon",
     branch = "harpoon2",
     keys = {
-      {'<c-h>a', function() require('harpoon'):list():add() end, { mode = 'n', noremap = true, desc = "harpoon add" }},
-      {'<c-h>l', function()
-        require('harpoon').ui:toggle_quick_menu(require('harpoon'):list(), { ui_width_ratio = 0.95 })
-      end,
-          { mode = 'n', noremap = true, desc = "harpoon list" }},
+      {'<c-h>a', function() require('harpoon'):list():add() end, noremap = true, desc = "harpoon add" },
+      {
+        '<c-h>l',
+        function()
+          require('harpoon').ui:toggle_quick_menu(require('harpoon'):list(), { ui_width_ratio = 0.95 })
+        end,
+        noremap = true, desc = "harpoon list"
+      },
       unpack((function()
         local key_mappings = {}
         for i = 1, 9 do
-          table.insert(key_mappings, {'<C-' .. i .. '>', function()
-            require('harpoon'):list():select(i)
-          end, { mode = 'n', noremap = true }})
+          table.insert(key_mappings, {
+            '<C-' .. i .. '>',
+            function() require('harpoon'):list():select(i) end,
+            noremap = true,
+          })
         end
         return key_mappings
       end)())
@@ -244,7 +327,7 @@ require("lazy").setup({
       {
         '<leader>ct',
         '<Plug>(comment_toggle_linewise_current)',
-        mode = 'n', noremap = true, desc = "comment toggle"
+        noremap = true, desc = "comment toggle"
       }
     },
     config = function()
@@ -366,6 +449,45 @@ require("lazy").setup({
   },
   {
     "lewis6991/gitsigns.nvim",
+    keys = {
+      -- Actions
+      {'<leader>hs', function() require('gitsigns').stage_hunk() end, desc = "hunk stage" },
+      {'<leader>hr', function() require('gitsigns').reset_hunk() end, desc = "hunk reset" },
+      {'<leader>su', function() require('gitsigns').undo_stage_hunk() end, desc = "stage undo" },
+      {'<leader>hp', function() require('gitsigns').preview_hunk() end, desc = "hunk preview" },
+      {'<leader>td', function() require('gitsigns').toggle_deleted() end, desc = "toggle deleted lines" },
+      {
+        '<leader>hs',
+        function() require('gitsigns').stage_hunk { vim.fn.line('.'), vim.fn.line('v') } end,
+        desc = "hunk stage", mode = "x"
+      },
+      {
+        '<leader>hr',
+        function()
+          require('gitsigns').reset_hunk {vim.fn.line('.'), vim.fn.line('v')}
+        end,
+        desc = "hunk reset" , mode = "x"
+      },
+      {
+        ']c',
+        function()
+          if vim.wo.diff then return ']c' end
+
+          vim.schedule(function() require('gitsigns').next_hunk() end)
+          return '<Ignore>'
+        end,
+        expr = true, desc = "Next Change"
+      },
+      {
+        '[c',
+        function()
+          if vim.wo.diff then return '[c' end
+          vim.schedule(function() require('gitsigns').prev_hunk() end)
+          return '<Ignore>'
+        end,
+        expr = true, desc = "Previous Change"
+      }
+    },
     cond = not vim.g.vscode,
     config = function ()
       require('gitsigns').setup()
@@ -373,6 +495,22 @@ require("lazy").setup({
   },
   {
     "ruifm/gitlinker.nvim",
+    keys = {
+      {
+        '<leader>gl',
+        function()
+          require("gitlinker").get_buf_range_url("n", {action_callback = require("gitlinker.actions").open_in_browser})
+        end,
+        silent = true
+      },
+      {
+        '<leader>gl',
+        function()
+          require("gitlinker").get_buf_range_url("v", {action_callback = require("gitlinker.actions").open_in_browser})
+        end,
+        silent = true, mode = 'v'
+      }
+    },
     cond = not vim.g.vscode,
     config = function ()
       require("gitlinker").setup({
@@ -394,18 +532,27 @@ require("lazy").setup({
         }
       })
     end,
-    lazy = true
   },
   {
     "searleser97/sessions.nvim",
-    cond = not vim.g.vscode,
+    keys = {
+      { "<c-o>s", function() require('session_utils').open_session_action() end, noremap = true, desc = "open session" },
+      { "<c-s>S", ":SessionsSave ", noremap = true, desc = "Save new Session" }
+    },
     lazy = false,
+    cond = not vim.g.vscode,
+    dependencies = {
+      "nvim-telescope/telescope.nvim"
+    },
     config = function()
       require("sessions").setup({
         use_unique_session_names = true,
         session_filepath = vim.fn.stdpath("data") .. "/sessions",
         absolute = true,
       })
+      if (vim.fn.argc() == 0) then
+        vim.schedule(require('session_utils').open_session_action)
+      end
     end
   },
   {
