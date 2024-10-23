@@ -373,6 +373,9 @@ require("lazy").setup({
   },
   {
     'Wansmer/treesj',
+    keys = {
+     {'<leader>ts', function() require('treesj').toggle({ split = { recursive = true } }) end, noremap = true, desc = "toggle split" }
+    },
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
     config = function()
       require('treesj').setup({
