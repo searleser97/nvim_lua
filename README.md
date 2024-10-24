@@ -7,10 +7,4 @@ Neovim configuration in lua
 if it is and the cursor is in another window, then move the cursor to the terminal
 otherwise, if the cursor is inside the terminal close/hide the terminal
 
-- (in progress) move keybindings to plugins.lua file, so that plugins can be really loaded lazyly
-
 - PR to toggleterm to stack terminals on top of each other
-
-- center after direct jump to implementation/definition/reference/...
-
-- fix repeat operation when using leap to jump to text locations
