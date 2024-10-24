@@ -18,16 +18,12 @@ local utils = require('myutils')
 
 require("lazy").setup({
   {
-    "ggandor/flit.nvim",
+    "ggandor/leap.nvim",
     dependencies = {
       "ggandor/leap.nvim",
       "tpope/vim-repeat"
     },
     keys = {
-      { 'f' },
-      { 'F' },
-      { 't' },
-      { 'T' },
       { ']]', '<Plug>(leap-forward)', mode = { 'n', 'x' } },
       { '[[', '<Plug>(leap-backward)', mode = { 'n', 'x' } },
     },
@@ -36,10 +32,21 @@ require("lazy").setup({
       -- remove lower case `s`
       table.remove(leap.opts.safe_labels, 1)
       table.remove(leap.opts.labels, 1)
-      require("flit").setup({
-        labeled_modes = "nv"
-      })
     end
+  },
+  {
+    "ggandor/flit.nvim",
+    dependencies = {
+      "ggandor/leap.nvim",
+      "tpope/vim-repeat"
+    },
+    keys = {
+      { 'f', mode = { 'n', 'x' } },
+      { 'F', mode = { 'n', 'x' } },
+      { 't', mode = { 'n', 'x' } },
+      { 'T', mode = { 'n', 'x' } },
+    },
+    opts = { labeled_modes = "nv" }
   },
   {
     'VonHeikemen/lsp-zero.nvim',
