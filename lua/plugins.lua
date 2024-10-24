@@ -127,7 +127,7 @@ require("lazy").setup({
     cond = not vim.g.vscode,
     config = function()
       require("nvim-treesitter.configs").setup({
-        ensure_installed = { "bash", "lua", "vim", "vimdoc", "query", "dart", "typescript", "javascript", "json", "tsx", "c_sharp" }
+        ensure_installed = { "bash", "lua", "vim", "vimdoc", "rust", "typescript", "javascript", "json", "tsx", "c_sharp" }
       })
     end
   },

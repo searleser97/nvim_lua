@@ -80,8 +80,8 @@ if wezterm.GLOBAL.isInitialLoad == nil then
   wezterm.GLOBAL.isInitialLoad = true
 end
 
-wezterm.on('window-config-reloaded', function(window, pane)
--- wezterm.on('update-status', function(window, pane)
+-- wezterm.on('window-config-reloaded', function(window, pane)
+wezterm.on('update-status', function(window, pane)
   if wezterm.GLOBAL.isInitialLoad then
     wezterm.GLOBAL.isInitialLoad = false
     wezterm.emit('user-var-changed', window, pane, vim_keybindings_status_var_name, 'disabled')
