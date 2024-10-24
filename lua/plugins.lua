@@ -61,7 +61,7 @@ require("lazy").setup({
       {'L3MON4D3/LuaSnip'},     -- Required
     },
     cond = not vim.g.vscode,
-    lazy = false,
+    event = { 'VeryLazy' },
     config = function()
 
       local lsp_zero = require("lsp-zero").preset({})
@@ -113,14 +113,17 @@ require("lazy").setup({
   },
   {
     "https://github.com/mbbill/undotree",
+    event = { 'VeryLazy' },
     cond = not vim.g.vscode
   },
   {
     "https://github.com/tpope/vim-fugitive",
+    event = { 'VeryLazy' },
     cond = not vim.g.vscode
   },
   {
     "nvim-treesitter/nvim-treesitter",
+    event = { 'VeryLazy' },
     build = ":TSUpdate",
     cond = not vim.g.vscode,
     config = function()
@@ -134,6 +137,7 @@ require("lazy").setup({
     cond = not vim.g.vscode
   },
   {
+    "nvim-telescope/telescope.nvim",
     keys = {
       {
         '<c-s>f',
@@ -173,7 +177,6 @@ require("lazy").setup({
         noremap = true, desc = "show symbols"
       }
     },
-    "nvim-telescope/telescope.nvim",
     dependencies = {
       "nvim-lua/plenary.nvim"
     },
@@ -332,6 +335,7 @@ require("lazy").setup({
       "https://github.com/hrsh7th/cmp-buffer"
     },
     cond = not vim.g.vscode,
+    event = { 'VeryLazy' },
     config = function()
       local cmp = require("cmp")
       cmp.setup({
@@ -354,7 +358,7 @@ require("lazy").setup({
   },
   {
     "folke/tokyonight.nvim",
-    lazy = false,
+    event = { 'VeryLazy' },
     name = "tokyonight",
     priority = 1000,
     cond = not vim.g.vscode,
@@ -415,7 +419,7 @@ require("lazy").setup({
       })
     end,
     cond = not vim.g.vscode,
-    lazy = true
+    event = { 'VeryLazy' }
   },
   {
     "notjedi/nvim-rooter.lua",
@@ -428,6 +432,7 @@ require("lazy").setup({
   },
   {
     "https://github.com/nvim-treesitter/nvim-treesitter-context",
+    event = { 'VeryLazy' },
     cond = not vim.g.vscode,
     config = function()
       require("treesitter-context").setup({
@@ -452,7 +457,7 @@ require("lazy").setup({
   },
   {
     'akinsho/flutter-tools.nvim',
-    lazy = true,
+    event = { 'VeryLazy' },
     dependencies = {
         'nvim-lua/plenary.nvim',
         -- 'stevearc/dressing.nvim', -- optional for vim.ui.select
@@ -471,7 +476,7 @@ require("lazy").setup({
       -- "antoinemadec/FixCursorHold.nvim",
       "sidlatau/neotest-dart"
     },
-    lazy = true,
+    event = { 'VeryLazy' },
     cond = not vim.g.vscode,
     config = function ()
       require("neotest").setup({
@@ -487,10 +492,10 @@ require("lazy").setup({
   {
     "lukas-reineke/indent-blankline.nvim",
     cond = not vim.g.vscode,
+    event = { 'VeryLazy' },
     config = function ()
       require("ibl").setup()
     end,
-    lazy = false
   },
   {
     "sindrets/diffview.nvim",
@@ -515,6 +520,7 @@ require("lazy").setup({
   },
   {
     "nvim-tree/nvim-web-devicons",
+    event = { 'VeryLazy' },
     cond = not vim.g.vscode
   },
   {
@@ -558,7 +564,7 @@ require("lazy").setup({
         expr = true, desc = "Hunk Prev"
       }
     },
-    event = { 'CursorMoved' },
+    event = { 'VeryLazy' },
     cond = not vim.g.vscode,
     config = function ()
       require('gitsigns').setup()
@@ -610,7 +616,7 @@ require("lazy").setup({
       { "<c-o>s", function() require('session_utils').open_session_action() end, noremap = true, desc = "open session" },
       { "<c-s>S", ":SessionsSave ", noremap = true, desc = "Save new Session" }
     },
-    event = 'VeryLazy',
+    lazy = false,
     cond = not vim.g.vscode,
     dependencies = {
       "nvim-telescope/telescope.nvim"
@@ -633,13 +639,20 @@ require("lazy").setup({
       vim.o.timeout = true
       vim.o.timeoutlen = 300
     end,
-    lazy = 'VeryLazy'
+    event = { 'VeryLazy' }
   },
-  { "rickhowe/diffchar.vim" },
+  {
+    "rickhowe/diffchar.vim",
+    event = { 'VeryLazy' }
+  },
   {
     "nvim-lualine/lualine.nvim",
     event = 'VeryLazy',
-    dependencies = { 'nvim-tree/nvim-web-devicons', opt = true },
+    dependencies = {
+      'nvim-tree/nvim-web-devicons',
+      'folke/tokyonight.nvim',
+      opt = true,
+    },
     cond = not vim.g.vscode,
     config = function ()
       local autoTheme = require('lualine.themes.auto')
@@ -707,7 +720,7 @@ require("lazy").setup({
     "Decodetalkers/csharpls-extended-lsp.nvim",
     dir = Is_Windows() and "E:\\forks\\csharpls-extended-lsp.nvim" or nil,
     cond = not vim.g.vscode,
-    lazy = false
+    lazy = 'VeryLazy'
   },
   {
     "zbirenbaum/copilot-cmp",

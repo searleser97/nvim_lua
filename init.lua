@@ -1,7 +1,6 @@
 require("settings")
 require("plugins")
 require("mappings")
-require("parsers")
 
 vim.api.nvim_create_autocmd({ 'CursorMoved' }, {
   desc = 'Center When Cursor Line Significantly Changed',
