@@ -14,8 +14,6 @@ function Is_Windows()
   return package.config:sub(1,1) == "\\";
 end
 
-local utils = require('myutils')
-
 require("lazy").setup({
   {
     "ggandor/leap.nvim",
@@ -141,7 +139,7 @@ require("lazy").setup({
         '<c-s>f',
         function()
           require('telescope.builtin').find_files({
-            cwd = utils.getPathToGitDirOr(vim.loop.cwd()),
+            cwd = require('myutils').getPathToGitDirOr(vim.loop.cwd()),
             hidden = true,
             no_ignore = true,
             no_ignore_parent = true
@@ -440,14 +438,17 @@ require("lazy").setup({
   {
     'Wansmer/treesj',
     keys = {
-     {'<leader>ts', function() require('treesj').toggle({ split = { recursive = true } }) end, noremap = true, desc = "toggle split" }
+     {
+       '<leader>ts',
+       function() require('treesj').toggle({ split = { recursive = true } }) end,
+       noremap = true, desc = "toggle split",
+     }
     },
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
-    config = function()
-      require('treesj').setup({
-        use_default_keymaps = false
-      })
-    end,
+    opts = {
+      use_default_keymaps = false,
+      max_join_length = 1000
+    }
   },
   {
     'akinsho/flutter-tools.nvim',
@@ -557,6 +558,7 @@ require("lazy").setup({
         expr = true, desc = "Hunk Prev"
       }
     },
+    event = { 'CursorMoved' },
     cond = not vim.g.vscode,
     config = function ()
       require('gitsigns').setup()
@@ -631,7 +633,7 @@ require("lazy").setup({
       vim.o.timeout = true
       vim.o.timeoutlen = 300
     end,
-    lazy = false
+    lazy = 'VeryLazy'
   },
   { "rickhowe/diffchar.vim" },
   {
@@ -723,22 +725,12 @@ require("lazy").setup({
     "pteroctopus/faster.nvim",
     lazy = false,
     cond = not vim.g.vscode,
-    config = function()
-      require('faster').setup()
-    end
   },
   {
     "CopilotC-Nvim/CopilotChat.nvim",
     cmd = "CopilotChat",
     keys = {
-      {
-        '<c-g><c-c>',
-        function ()
-          local cc = require("CopilotChat")
-          cc.toggle()
-        end,
-        mode = {'n', 'x'}, noremap = true
-      }
+      { '<c-g><c-c>', function() require("CopilotChat").toggle() end, mode = { 'n', 'x' }, noremap = true }
     },
     branch = "canary",
     dependencies = {
@@ -747,7 +739,7 @@ require("lazy").setup({
     },
     build = "make tiktoken", -- Only on MacOS or Linux
     opts = {
-      debug = true, -- Enable debugging
+      debug = false, -- Enable debugging
       window = { layout = 'float' }
     },
     -- See Commands section for default commands if you want to lazy load on them
