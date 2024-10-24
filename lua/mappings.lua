@@ -5,6 +5,7 @@ if package.config:sub(1,1) == "\\" then
 else
   vim.keymap.set({'n', 'x'}, '<C-c>', '"+y', { noremap = true })
 end
+
 vim.keymap.set({'n', 'x'}, '<C-v>', '"+p', { noremap = true })
 vim.keymap.set({'i', 'c'}, '<C-v>', '<c-r>+', { noremap = true })
 vim.keymap.set({'n', 'x'}, '<C-b>', '<C-v>', { noremap = true })
@@ -20,10 +21,6 @@ vim.keymap.set('n', 'zh', "15zh", { noremap = true })
 vim.keymap.set('n', 'n', "nzz", { noremap = true })
 vim.keymap.set('n', 'N', "Nzz", { noremap = true })
 vim.keymap.set('n', '<c-q>', "<cmd>close<cr>")
-
-vim.keymap.set({'n', 'x', 'o'}, 'f', '<Plug>(leap-forward-to)')
-vim.keymap.set({'n', 'x', 'o'}, 'F', '<Plug>(leap-backward-to)')
-
 vim.keymap.set({'n', 'x'}, '<C-r>', '<nop>', { noremap = true })
 vim.keymap.set({'n', 'x'}, 'R', '<C-r>', { noremap = true })
 
@@ -36,6 +33,17 @@ if not vim.g.vscode then
   vim.keymap.set({'n', 'x'}, 'N', 'Nzz')
   vim.keymap.set("n", "<c-p>", "<c-o>zz", { noremap = true })
   vim.keymap.set("n", "<c-n>", "<c-i>zz", { noremap = true })
+  -- fine-grained undo
+  vim.keymap.set('i', '<space>', '<space><c-g>u', { noremap = true })
+  vim.keymap.set('i', '<tab>', '<tab><c-g>u', { noremap = true })
+  vim.keymap.set('i', '<cr>', '<cr><c-g>u', { noremap = true })
+  -- end fine-grained undo
+  -- window mappings
+  vim.keymap.set({'i', 'x', 'n', 't'}, '<C-Up>', '<C-w><Up>', { noremap = true })
+  vim.keymap.set({'i', 'x', 'n', 't'}, '<C-Down>', '<C-w><Down>', { noremap = true })
+  vim.keymap.set({'i', 'x', 'n', 't'}, '<C-Right>', '<C-w><Right>', { noremap = true })
+  vim.keymap.set({'i', 'x', 'n', 't'}, '<C-Left>', '<C-w><Left>', { noremap = true })
+
   vim.api.nvim_create_user_command("DiffviewToggle", function(e)
     local view = require("diffview.lib").get_current_view()
 
@@ -45,53 +53,6 @@ if not vim.g.vscode then
       vim.cmd("DiffviewOpen " .. e.args)
     end
   end, { nargs = "*" })
-
-  -- fine-grained undo
-  vim.keymap.set('i', '<space>', '<space><c-g>u', { noremap = true })
-  vim.keymap.set('i', '<tab>', '<tab><c-g>u', { noremap = true })
-  vim.keymap.set('i', '<cr>', '<cr><c-g>u', { noremap = true })
-  -- end fine-grained undo
-
-  -- window mappings
-  vim.keymap.set({'i', 'x', 'n', 't'}, '<C-Up>', '<C-w><Up>', { noremap = true })
-  vim.keymap.set({'i', 'x', 'n', 't'}, '<C-Down>', '<C-w><Down>', { noremap = true })
-  vim.keymap.set({'i', 'x', 'n', 't'}, '<C-Right>', '<C-w><Right>', { noremap = true })
-  vim.keymap.set({'i', 'x', 'n', 't'}, '<C-Left>', '<C-w><Left>', { noremap = true })
-
-  local contrastantColors = {
-    ["purple"] = "white",
-    ["red"] = "white",
-    ["green"] = "white",
-    ["blue"] = "white",
-    ["black"] = "white",
-    ["magenta"] = "white",
-    ["grey"] = "white",
-    ["darkgrey"] = "white",
-    ["darkblue"] = "white",
-    ["darkred"] = "white",
-    ["darkgreen"] = "white",
-    ["orange"] = "black",
-    ["yellow"] = "black",
-    ["white"] = "black",
-    ["cyan"] = "black",
-    ["light_grey"] = "black",
-  }
-
-  vim.api.nvim_create_user_command('SetStatusLineBG', function(opts)
-    -- The following line tells lua to re-require the module, otherwise it just returns the cached module value
-    package.loaded["lualine.themes.auto"] = nil
-    local autoTheme = require('lualine.themes.auto')
-    autoTheme.normal.c.gui = "bold"
-    if opts.fargs[1] == "auto" then
-      require('lualine').setup({ options = { theme = autoTheme } })
-    else
-      autoTheme.normal.c.bg = opts.fargs[1]
-      if contrastantColors[opts.fargs[1]] then
-        autoTheme.normal.c.fg = contrastantColors[opts.fargs[1]]
-      end
-      require('lualine').setup({ options = { theme = autoTheme } })
-    end
-  end, { nargs = 1 })
 
   local Terminal  = require('toggleterm.terminal').Terminal
   local gitTermConfig =  {
@@ -206,11 +167,6 @@ if not vim.g.vscode then
       vim.cmd(count .. "TermExec cmd=\"cd " .. utils.getPathToGitDirOr(vim.loop.cwd()) .. "\"")
     end)
   end, { noremap = true })
-
-
-  return {
-    open_session_action = require('session_utils').open_session_action
-  }
 else
   -- all vscode ctrl+... keybindings are defined in the keybindings.json file of vscode
   local vscode = require("vscode-neovim")

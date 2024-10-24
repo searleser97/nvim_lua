@@ -18,10 +18,18 @@ local utils = require('myutils')
 
 require("lazy").setup({
   {
-    "https://github.com/ggandor/flit.nvim",
+    "ggandor/flit.nvim",
     dependencies = {
-      "https://github.com/ggandor/leap.nvim",
-      "https://github.com/tpope/vim-repeat"
+      "ggandor/leap.nvim",
+      "tpope/vim-repeat"
+    },
+    keys = {
+      { 'f' },
+      { 'F' },
+      { 't' },
+      { 'T' },
+      { ']]', '<Plug>(leap-forward)', mode = { 'n', 'x' } },
+      { '[[', '<Plug>(leap-backward)', mode = { 'n', 'x' } },
     },
     config = function()
       local leap = require("leap")
@@ -109,11 +117,6 @@ require("lazy").setup({
         '<c-s>s',
         function() require('telescope.builtin').treesitter() end,
         noremap = true, desc = "show symbols"
-      },
-      {
-        '<c-f>b',
-        ':Telescope file_browser path=%:p:h select_buffer=true<CR>',
-        noremap = true, desc = "File Browser"
       }
     },
     "nvim-telescope/telescope.nvim",
@@ -167,6 +170,13 @@ require("lazy").setup({
   },
   {
     "nvim-telescope/telescope-file-browser.nvim",
+    keys = {
+      {
+        '<c-f>b',
+        ':Telescope file_browser path=%:p:h select_buffer=true<CR>',
+        noremap = true, desc = "File Browser"
+      }
+    },
     dependencies = {
       "nvim-telescope/telescope.nvim",
     },
@@ -479,7 +489,7 @@ require("lazy").setup({
           vim.schedule(function() require('gitsigns').next_hunk() end)
           return '<Ignore>'
         end,
-        expr = true, desc = "Next Change"
+        expr = true, desc = "Hunk Next"
       },
       {
         '[c',
@@ -488,7 +498,7 @@ require("lazy").setup({
           vim.schedule(function() require('gitsigns').prev_hunk() end)
           return '<Ignore>'
         end,
-        expr = true, desc = "Previous Change"
+        expr = true, desc = "Hunk Prev"
       }
     },
     cond = not vim.g.vscode,
@@ -542,7 +552,7 @@ require("lazy").setup({
       { "<c-o>s", function() require('session_utils').open_session_action() end, noremap = true, desc = "open session" },
       { "<c-s>S", ":SessionsSave ", noremap = true, desc = "Save new Session" }
     },
-    lazy = false,
+    event = 'VeryLazy',
     cond = not vim.g.vscode,
     dependencies = {
       "nvim-telescope/telescope.nvim"
@@ -570,7 +580,7 @@ require("lazy").setup({
   { "rickhowe/diffchar.vim" },
   {
     "nvim-lualine/lualine.nvim",
-    lazy = false,
+    event = 'VeryLazy',
     dependencies = { 'nvim-tree/nvim-web-devicons', opt = true },
     cond = not vim.g.vscode,
     config = function ()
@@ -598,6 +608,41 @@ require("lazy").setup({
           lualine_a = {'mode'}
         }
       })
+
+      local contrastantColors = {
+        ["purple"] = "white",
+        ["red"] = "white",
+        ["green"] = "white",
+        ["blue"] = "white",
+        ["black"] = "white",
+        ["magenta"] = "white",
+        ["grey"] = "white",
+        ["darkgrey"] = "white",
+        ["darkblue"] = "white",
+        ["darkred"] = "white",
+        ["darkgreen"] = "white",
+        ["orange"] = "black",
+        ["yellow"] = "black",
+        ["white"] = "black",
+        ["cyan"] = "black",
+        ["light_grey"] = "black",
+      }
+
+      vim.api.nvim_create_user_command('SetStatusLineBG', function(opts)
+        -- The following line tells lua to re-require the module, otherwise it just returns the cached module value
+        package.loaded["lualine.themes.auto"] = nil
+        local autoThemeLocal = require('lualine.themes.auto')
+        autoThemeLocal.normal.c.gui = "bold"
+        if opts.fargs[1] == "auto" then
+          require('lualine').setup({ options = { theme = autoThemeLocal } })
+        else
+          autoThemeLocal.normal.c.bg = opts.fargs[1]
+          if contrastantColors[opts.fargs[1]] then
+            autoThemeLocal.normal.c.fg = contrastantColors[opts.fargs[1]]
+          end
+          require('lualine').setup({ options = { theme = autoThemeLocal } })
+        end
+      end, { nargs = 1 })
     end
   },
   {
