@@ -616,7 +616,7 @@ require("lazy").setup({
       { "<c-o>s", function() require('session_utils').open_session_action() end, noremap = true, desc = "open session" },
       { "<c-s>S", ":SessionsSave ", noremap = true, desc = "Save new Session" }
     },
-    lazy = false,
+    lazy = vim.fn.argc() > 0,
     cond = not vim.g.vscode,
     dependencies = {
       "nvim-telescope/telescope.nvim"
@@ -738,6 +738,15 @@ require("lazy").setup({
     "pteroctopus/faster.nvim",
     lazy = false,
     cond = not vim.g.vscode,
+    opts = {
+      behaviours = {
+        bigfile = {
+          extra_patterns = {
+            { filesize = 0, pattern = "COMMIT_EDITMSG" }
+          }
+        }
+      }
+    }
   },
   {
     "CopilotC-Nvim/CopilotChat.nvim",
