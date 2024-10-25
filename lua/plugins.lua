@@ -725,7 +725,7 @@ require("lazy").setup({
   {
     "zbirenbaum/copilot-cmp",
     dependencies = "zbirenbaum/copilot.lua",
-    cmd = "Copilot",
+    event = "VeryLazy",
     config = function ()
       require("copilot").setup({
         suggestion = { enabled = false },

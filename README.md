@@ -9,3 +9,4 @@ if it is and the cursor is in another window, then move the cursor to the termin
 otherwise, if the cursor is inside the terminal close/hide the terminal
 
 - PR to toggleterm to stack terminals on top of each other
+- Create cherry-pick UI within neovim
