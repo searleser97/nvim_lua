@@ -78,8 +78,71 @@ require("lazy").setup({
           vim.diagnostic.open_float() -- the second call moves my cursor inside the diagnostic window
         end, { noremap = true, desc = "show diagnostics" })
         vim.keymap.set('n', 'H', function()
-          vim.lsp.buf.hover()
-          vim.lsp.buf.hover()
+          local hoverContents = (function()
+            local params = vim.lsp.util.make_position_params()
+            local results, err = vim.lsp.buf_request_sync(0, 'textDocument/hover', params)
+            if err then
+              print("Error: ", err)
+              return {}
+            end
+            if not results then
+              return {}
+            else
+              local hoverContents = {}
+              for _, result in pairs(results) do
+                if result and result.result and result.result.contents then
+                  for _, content in pairs(vim.lsp.util.convert_input_to_markdown_lines(result.result.contents)) do
+                    table.insert(hoverContents, content)
+                  end
+                end
+              end
+              return hoverContents
+            end
+          end)()
+          local cursor = vim.api.nvim_win_get_cursor(0)
+          local line = cursor[1] - 1
+          local diagnostics = vim.diagnostic.get(0, { lnum = line })
+          local combined = {}
+          local highlights = {}
+          local highlightYOffset = 2
+          local highlightXOffset = 3
+          if #diagnostics > 0 then
+            table.insert(combined, "# Diagnostics")
+            table.insert(combined, "")
+          end
+
+          for i, diagnostic in pairs(diagnostics) do
+            local formattedDiagnosticMsg = i .. ". " .. diagnostic.message .. " [" .. diagnostic.code .. "]"
+            print(vim.inspect(diagnostic.severity))
+            table.insert(highlights, { line = i + highlightYOffset - 1, severity = diagnostic.severity, endCol = highlightXOffset + #diagnostic.message + 1, startCol = highlightXOffset })
+            table.insert(combined, formattedDiagnosticMsg)
+          end
+
+          if #combined > 0 and  #hoverContents > 0 then
+            table.insert(combined, "----------------")
+            table.insert(combined, "# LSP Info")
+          end
+
+          for _, hoverContent in pairs(hoverContents) do
+            table.insert(combined, hoverContent)
+          end
+
+          if vim.tbl_isempty(combined) then
+            return
+          end
+
+          local highlight_map = {
+            [vim.diagnostic.severity.ERROR] = 'DiagnosticFloatingError',
+            [vim.diagnostic.severity.WARN] = 'DiagnosticFloatingWarn',
+            [vim.diagnostic.severity.INFO] = 'DiagnosticFloatingInfo',
+            [vim.diagnostic.severity.HINT] = 'DiagnosticFloatingHint',
+          }
+
+          local buf, win = vim.lsp.util.open_floating_preview(combined, "markdown", { border = 'rounded', focusable = true, focus = true })
+          vim.api.nvim_set_current_win(win)
+          for _, highlight in pairs(highlights) do
+            vim.api.nvim_buf_add_highlight(buf, -1,  highlight_map[highlight.severity], highlight.line, highlight.startCol, highlight.endCol)
+          end
         end, { noremap = true, desc = "hover info" })
         vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { noremap = true, desc = "code action" }) end)
 
