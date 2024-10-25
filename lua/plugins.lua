@@ -117,11 +117,6 @@ require("lazy").setup({
     cond = not vim.g.vscode
   },
   {
-    "https://github.com/tpope/vim-fugitive",
-    event = { 'VeryLazy' },
-    cond = not vim.g.vscode
-  },
-  {
     "nvim-treesitter/nvim-treesitter",
     event = { 'VeryLazy' },
     build = ":TSUpdate",
@@ -431,7 +426,10 @@ require("lazy").setup({
     cond = not vim.g.vscode
   },
   {
-    "https://github.com/nvim-treesitter/nvim-treesitter-context",
+    "nvim-treesitter/nvim-treesitter-context",
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter"
+    },
     event = { 'VeryLazy' },
     cond = not vim.g.vscode,
     config = function()
@@ -742,7 +740,8 @@ require("lazy").setup({
       behaviours = {
         bigfile = {
           extra_patterns = {
-            { filesize = 0, pattern = "COMMIT_EDITMSG" }
+            { filesize = 0, pattern = "COMMIT_EDITMSG" },
+            { filesize = 0, pattern = "git-rebase-todo" }
           }
         }
       }
