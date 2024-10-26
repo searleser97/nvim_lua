@@ -105,17 +105,32 @@ require("lazy").setup({
           local combined = {}
           local highlights = {}
           local highlightYOffset = 2
-          local highlightXOffset = 3
           if #diagnostics > 0 then
             table.insert(combined, "# Diagnostics")
             table.insert(combined, "")
           end
-
+          local lineCnt = 0
           for i, diagnostic in pairs(diagnostics) do
-            local formattedDiagnosticMsg = i .. ". " .. diagnostic.message .. " [" .. diagnostic.code .. "]"
-            print(vim.inspect(diagnostic.severity))
-            table.insert(highlights, { line = i + highlightYOffset - 1, severity = diagnostic.severity, endCol = highlightXOffset + #diagnostic.message + 1, startCol = highlightXOffset })
-            table.insert(combined, formattedDiagnosticMsg)
+            local startOfDiagnostic = i .. ". "
+            local msgLines = vim.lsp.util.convert_input_to_markdown_lines(diagnostic.message)
+            for j, msgLine in pairs(msgLines) do
+              local formattedMsgLine = ""
+              if j == 1 then
+                formattedMsgLine = startOfDiagnostic
+              end
+              if j > 1 then
+                for _ = 1, #startOfDiagnostic do
+                  formattedMsgLine = formattedMsgLine .. " "
+                end
+              end
+              formattedMsgLine = formattedMsgLine .. msgLine
+              if j == #msgLines then
+                formattedMsgLine = formattedMsgLine .. " [" .. diagnostic.code .. "]"
+              end
+              table.insert(combined, formattedMsgLine)
+              table.insert(highlights, { line = lineCnt + highlightYOffset, severity = diagnostic.severity, endCol = #startOfDiagnostic + #msgLine + 1, startCol = #startOfDiagnostic })
+              lineCnt = lineCnt + 1
+            end
           end
 
           if #combined > 0 and  #hoverContents > 0 then
@@ -143,7 +158,7 @@ require("lazy").setup({
           for _, highlight in pairs(highlights) do
             vim.api.nvim_buf_add_highlight(buf, -1,  highlight_map[highlight.severity], highlight.line, highlight.startCol, highlight.endCol)
           end
-        end, { noremap = true, desc = "hover info" })
+        end, { noremap = true, desc = "Hover Info" })
         vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { noremap = true, desc = "code action" }) end)
 
         require("mason").setup({})
