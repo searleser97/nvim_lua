@@ -819,7 +819,8 @@ require("lazy").setup({
   },
   {
     "pteroctopus/faster.nvim",
-    lazy = false,
+    lazy = vim.fn.argc() == 0,
+    event = { 'VeryLazy' },
     cond = not vim.g.vscode,
     opts = {
       behaviours = {
