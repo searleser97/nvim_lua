@@ -8,6 +8,7 @@ end
 
 vim.keymap.set({'n', 'x'}, '<C-v>', '"+p', { noremap = true })
 vim.keymap.set({'i', 'c'}, '<C-v>', '<c-r>+', { noremap = true })
+vim.keymap.set('i', '<c-p>', '<c-r>"', { noremap = true })
 vim.keymap.set({'n', 'x'}, '<C-b>', '<C-v>', { noremap = true })
 vim.keymap.set({'x', 'n'}, '<M-p>', '"ap', { noremap = true })
 vim.keymap.set({'x', 'n'}, '<M-P>', '"aP', { noremap = true })

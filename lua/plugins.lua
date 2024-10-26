@@ -411,6 +411,7 @@ require("lazy").setup({
     event = { 'VeryLazy' },
     config = function()
       local cmp = require("cmp")
+      local types = require("cmp.types")
       cmp.setup({
         sources = {
           { name = "copilot", group_index = 2 },
@@ -423,9 +424,15 @@ require("lazy").setup({
         completion = {
           completeopt = 'menu,menuone,noinsert'
         },
-        mapping = cmp.mapping.preset.insert({
-          ['<tab>'] = cmp.mapping.confirm({select = true}),
-        })
+        mapping = {
+          ['<tab>'] = { i = cmp.mapping.confirm({select = true}) },
+          ['<Down>'] = {
+            i = cmp.mapping.select_next_item({ behavior = types.cmp.SelectBehavior.Select }),
+          },
+          ['<Up>'] = {
+            i = cmp.mapping.select_prev_item({ behavior = types.cmp.SelectBehavior.Select }),
+          },
+        }
       })
     end
   },
