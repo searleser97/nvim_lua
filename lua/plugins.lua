@@ -416,11 +416,11 @@ require("lazy").setup({
       cmp.setup({
         sources = {
           { name = "copilot", group_index = 2 },
-          { name = 'nvim_lsp_signature_help' },
-          { name = 'async_path' },
-          { name = 'nvim_lsp' },
-          { name = 'buffer' },
-          { name = 'nvim_lua' },
+          { name = 'nvim_lsp_signature_help', group_index = 2 },
+          { name = 'async_path', group_index = 2 },
+          { name = 'nvim_lsp', group_index = 2  },
+          { name = 'buffer', group_index = 2 },
+          { name = 'nvim_lua', group_index = 2  },
         },
         preselect = 'item',
         completion = {
