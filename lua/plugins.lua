@@ -405,7 +405,8 @@ require("lazy").setup({
     dependencies = {
       "https://github.com/FelipeLema/cmp-async-path",
       "https://github.com/hrsh7th/cmp-nvim-lua",
-      "https://github.com/hrsh7th/cmp-buffer"
+      "https://github.com/hrsh7th/cmp-buffer",
+      "https://github.com/hrsh7th/cmp-nvim-lsp-signature-help"
     },
     cond = not vim.g.vscode,
     event = { 'VeryLazy' },
@@ -415,6 +416,7 @@ require("lazy").setup({
       cmp.setup({
         sources = {
           { name = "copilot", group_index = 2 },
+          { name = 'nvim_lsp_signature_help' },
           { name = 'async_path' },
           { name = 'nvim_lsp' },
           { name = 'buffer' },
