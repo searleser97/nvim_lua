@@ -8,7 +8,7 @@ end
 
 vim.keymap.set({'n', 'x'}, '<C-v>', '"+p', { noremap = true })
 vim.keymap.set({'i', 'c'}, '<C-v>', '<c-r>+', { noremap = true })
-vim.keymap.set('i', '<c-p>', '<c-r>"', { noremap = true })
+
 vim.keymap.set({'n', 'x'}, '<C-b>', '<C-v>', { noremap = true })
 vim.keymap.set({'x', 'n'}, '<M-p>', '"ap', { noremap = true })
 vim.keymap.set({'x', 'n'}, '<M-P>', '"aP', { noremap = true })
@@ -25,9 +25,29 @@ vim.keymap.set('n', '<c-q>', "<cmd>close<cr>")
 vim.keymap.set({'n', 'x'}, '<C-r>', '<nop>', { noremap = true })
 vim.keymap.set({'n', 'x'}, 'R', '<C-r>', { noremap = true })
 
-local utils = require('myutils')
-
 if not vim.g.vscode then
+
+  local pastedInInsertMode = false
+
+  vim.api.nvim_create_autocmd("TextChangedI", {
+    desc = "set nopaste after text has been completely copied",
+    pattern = "*",
+    callback = function()
+      if pastedInInsertMode then
+        pastedInInsertMode = false
+        vim.schedule(function() vim.cmd('set nopaste!') end)
+      end
+    end
+  })
+
+  vim.keymap.set('i', '<c-p>', function()
+    vim.cmd('set paste!')
+    pastedInInsertMode = true
+    vim.schedule(function()
+      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<c-r>"', true, true, true), 'i', true)
+    end)
+  end, { noremap = true })
+
   vim.keymap.set({'n', 'x'}, '<C-u>', '<C-u>M')
   vim.keymap.set({'n', 'x'}, '<C-d>', '<C-d>M')
   vim.keymap.set({'n', 'x'}, 'n', 'nzz')
@@ -45,129 +65,13 @@ if not vim.g.vscode then
   vim.keymap.set({'i', 'x', 'n', 't'}, '<C-Right>', '<C-w><Right>', { noremap = true })
   vim.keymap.set({'i', 'x', 'n', 't'}, '<C-Left>', '<C-w><Left>', { noremap = true })
 
-  vim.api.nvim_create_user_command("DiffviewToggle", function(e)
-    local view = require("diffview.lib").get_current_view()
-
-    if view then
-      vim.cmd("DiffviewClose")
-    else
-      vim.cmd("DiffviewOpen " .. e.args)
-    end
-  end, { nargs = "*" })
-
-  local Terminal  = require('toggleterm.terminal').Terminal
-  local gitTermConfig =  {
-    autochdir = true,
-    direction = "float",
-    float_opts = {
-      border = "double",
-    },
-    count = 9,
-  }
-
-  GitTerm = Terminal:new(gitTermConfig);
-
-  local execGitCommand = function(command)
-    local gitCommandFull = "git"
-    if (vim.api.nvim_win_get_width(0) < 150) then
-      gitCommandFull = gitCommandFull .. " -c delta.side-by-side=false"
-    else
-      gitCommandFull = gitCommandFull .. " -c delta.side-by-side=true"
-    end
-    gitCommandFull = gitCommandFull .. " " .. command
-    if (GitTerm:is_open()) then
-      GitTerm:send(gitCommandFull)
-    else
-      GitTerm:open()
-      GitTerm:change_dir(vim.loop.cwd())
-      GitTerm:send(gitCommandFull)
-    end
-  end
-
-  local gitPrettyFormat = "commit %C(#FFDE59)%h%Creset %aI %aN  %s"
-  local gitPrettyFormatWithDescription = gitPrettyFormat .. "%n%n%b"
-  vim.keymap.set({'n', 't'}, "<c-g>D", function() execGitCommand("diff --staged") end, {noremap = true, silent = true, desc = "git diff --staged"})
-  vim.keymap.set({'n', 't'}, "<c-g>d", function() execGitCommand("diff") end, {noremap = true, silent = true, desc = "git diff"})
-  vim.keymap.set({'n', 't'}, "<c-g>l", function() execGitCommand('log -p --pretty=format:"' .. gitPrettyFormatWithDescription .. '"') end, {noremap = true, silent = true, desc = "git log"})
-  vim.keymap.set({'n', 't'}, "<c-g>g", function() execGitCommand('log --graph --pretty=format:"' .. gitPrettyFormat .. '"') end, {noremap = true, silent = true, desc = "git graph"})
-  vim.keymap.set({'n', 't'}, '<c-g>c', function() execGitCommand("commit") end, { noremap = true, desc = "git commit" })
-  vim.keymap.set({'n', 't'}, '<c-g>a', function() execGitCommand("commit --amend") end, { noremap = true, desc = "git commit --amend" })
-  vim.keymap.set({'n', 't'}, '<c-g>P', function() execGitCommand("push") end, { noremap = true, desc = "git push" })
-  vim.keymap.set({'n', 't'}, '<c-g>p', function() execGitCommand("pull") end, { noremap = true, desc = "git git pull" })
-  vim.keymap.set({'n', 't'}, '<c-g>F', function() execGitCommand("push --force-with-lease") end, { noremap = true, desc = "git push force" })
-  vim.keymap.set({'n', 't'}, '<c-g>f', function() execGitCommand("fetch") end, { noremap = true, desc = "git fetch" })
-  vim.keymap.set({'n', 't'}, '<leader>gh', function() execGitCommand('log -p --follow --pretty=format:"' .. gitPrettyFormatWithDescription .. '" -- ' .. vim.api.nvim_buf_get_name(0)) end, { noremap = true, desc = "git file history" })
-  vim.keymap.set({'n', 't'}, '<c-g>s', "<cmd>DiffviewToggle<cr>", { noremap = true, desc = "git status" })
-  vim.keymap.set({'n', 't'}, '<c-g>t', function() GitTerm:toggle() end, { noremap = true, desc = "git terminal" })
-  vim.keymap.set({'n', 't'}, '<leader>gb', function() gs.blame_line{full=true} end, { desc = "git blame" })
-
   vim.keymap.set('t', '<c-e>', [[<C-\><C-n>]], { noremap = true, desc = "exit terminal mode" })
   vim.keymap.set('t', '<c-w>p', [[<C-\><C-n><C-w><C-p>]], { desc = "got to previous window" })
-  vim.keymap.set('t', '<c-t>', function()
-    return [[<C-\><C-n><cmd>ToggleTermToggleAll<cr>]];
-  end, { expr = true, desc = "toggle all terminals" })
   vim.keymap.set('t', '<c-q>', [[<C-\><C-n><cmd>close<cr>]], { desc = "close terminal" })
   vim.keymap.set('t', '<c-Up>', [[<C-\><C-n><C-w><Up>]], { desc = "move cursor to the window above" })
   vim.keymap.set('t', '<c-Down>', [[<C-\><C-n><C-w><Down>]], { desc = "move cursor to the window below" })
   vim.keymap.set('t', '<c-Left>', [[<C-\><C-n><C-w><Left>]], { desc = "move cursor to the window on the left" })
   vim.keymap.set('t', '<c-Right>', [[<C-\><C-n><C-w><Right>]], { desc = "move cursor to the window on the right" })
-
-  vim.api.nvim_create_autocmd({ 'BufEnter' }, {
-    desc = 'Insert mode in terminal when entering it',
-    pattern = 'term://*',
-    callback = function()
-      vim.defer_fn(function()
-        vim.cmd('startinsert!')
-      end, 100)
-    end
-  })
-
-  function OpenToggleTerms(ids_to_ignore)
-    local maxBufferIndex = vim.fn.bufnr("$")
-    local toggleTermBuffers = vim.fn.filter(vim.fn.range(1, maxBufferIndex), function(idx, val)
-      local termId = string.match(string.match(vim.fn.bufname(val), "toggleterm#%d+") or "", "%d+")
-        return termId ~= nil and ids_to_ignore[termId] == nil;
-    end)
-    local corruptedBuffersExcluded = vim.fn.filter(toggleTermBuffers, function (_key, val) return vim.fn.getbufinfo(val)[1].variables.term_title ~= "exit"; end)
-    return corruptedBuffersExcluded;
-  end
-
-  -- I need this function
-  function ToggleAllTerms(ignore)
-    local openTerms = OpenToggleTerms(ignore)
-    print(vim.inspect(openTerms))
-    for _key, value in pairs(openTerms) do
-      local termId = string.match(string.match(vim.fn.bufname(value), "toggleterm#%d+"), "%d+")
-      vim.cmd(termId .."ToggleTerm")
-    end
-  end
-
-  vim.keymap.set('n', '<c-t>', function()
-    if vim.v.count ~= 0 then
-      vim.cmd(vim.v.count .. "ToggleTerm");
-    else
-      local openTermsCount = #OpenToggleTerms({ ["".. GitTerm.id] = true })
-      if openTermsCount < 1 then
-        vim.cmd("1ToggleTerm");
-      else
-        ToggleAllTerms({ ["" .. GitTerm.id] = true })
-      end
-    end
-  end, { noremap = true })
-
-  vim.keymap.set('n', '<F5>', function()
-    local dirPath = vim.fn.expand("%:p:h"):gsub("%%20", " ")
-    local count = vim.v.count > 0 and vim.v.count or 1
-    vim.cmd(count .. "TermExec cmd=\"cd " .. dirPath .. "\"")
-  end, { noremap = true })
-
-  vim.keymap.set('n', '<F6>', function()
-    local count = vim.v.count > 0 and vim.v.count or 1
-    vim.cmd(count .. "TermExec cmd=\"pwd\"")
-    vim.schedule(function()
-      vim.cmd(count .. "TermExec cmd=\"cd " .. utils.getPathToGitDirOr(vim.loop.cwd()) .. "\"")
-    end)
-  end, { noremap = true })
 else
   -- all vscode ctrl+... keybindings are defined in the keybindings.json file of vscode
   local vscode = require("vscode-neovim")

@@ -415,12 +415,12 @@ require("lazy").setup({
       local types = require("cmp.types")
       cmp.setup({
         sources = {
-          { name = "copilot", group_index = 2 },
-          { name = 'nvim_lsp_signature_help', group_index = 2 },
-          { name = 'async_path', group_index = 2 },
-          { name = 'nvim_lsp', group_index = 2  },
-          { name = 'buffer', group_index = 2 },
-          { name = 'nvim_lua', group_index = 2  },
+          { name = "copilot", group_index = 1 },
+          { name = 'nvim_lsp_signature_help', group_index = 1 },
+          { name = 'async_path', group_index = 1 },
+          { name = 'nvim_lsp', group_index = 1  },
+          { name = 'buffer', group_index = 1 },
+          { name = 'nvim_lua', group_index = 1  },
         },
         preselect = 'item',
         completion = {
@@ -491,14 +491,22 @@ require("lazy").setup({
   },
   {
     "akinsho/toggleterm.nvim",
+    keys = require('toggleterm_utils').keys,
     config = function()
       require("toggleterm").setup({
-        -- direction = "t"
-        on_open = function(term)
-          vim.cmd("startinsert!")
-        end,
         autochdir = true
       })
+
+      vim.api.nvim_create_autocmd({ 'BufEnter' }, {
+        desc = 'Insert mode in terminal when entering it',
+        pattern = 'term://*',
+        callback = function()
+          vim.defer_fn(function()
+            vim.cmd('startinsert!')
+          end, 100)
+        end
+      })
+
     end,
     cond = not vim.g.vscode,
     event = { 'VeryLazy' }
@@ -585,6 +593,13 @@ require("lazy").setup({
   {
     "sindrets/diffview.nvim",
     cond = not vim.g.vscode,
+    keys = {
+      {
+        '<c-g>s',
+        "<cmd>DiffviewToggle<cr>",
+        noremap = true, desc = "git status", mode = { 'n', 't' }
+      }
+    },
     config = function ()
       require("diffview").setup({
         enhanced_diff_hl = true,
@@ -600,8 +615,17 @@ require("lazy").setup({
           }
         }
       })
-    end,
-    lazy = true
+
+      vim.api.nvim_create_user_command("DiffviewToggle", function(e)
+        local view = require("diffview.lib").get_current_view()
+
+        if view then
+          vim.cmd("DiffviewClose")
+        else
+          vim.cmd("DiffviewOpen " .. e.args)
+        end
+      end, { nargs = "*" })
+    end
   },
   {
     "nvim-tree/nvim-web-devicons",
@@ -624,16 +648,21 @@ require("lazy").setup({
       },
       {
         '<leader>hr',
-        function()
-          require('gitsigns').reset_hunk {vim.fn.line('.'), vim.fn.line('v')}
-        end,
+        function() require('gitsigns').reset_hunk {vim.fn.line('.'), vim.fn.line('v')} end,
         desc = "hunk reset" , mode = "x"
+      },
+      {
+        '<leader>gb',
+        function()
+          require('gitsigns').blame_line({ full=true })
+          require('gitsigns').blame_line({ full=true })
+        end,
+        desc = "git blame", mode = 'n'
       },
       {
         ']c',
         function()
           if vim.wo.diff then return ']c' end
-
           vim.schedule(function() require('gitsigns').next_hunk() end)
           return '<Ignore>'
         end,
@@ -867,6 +896,11 @@ require("lazy").setup({
         end
       })
     end
+  },
+  {
+    "kylechui/nvim-surround",
+    event = { 'VeryLazy' },
+    opts = {}
   }
 })
 

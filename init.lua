@@ -13,7 +13,7 @@ vim.api.nvim_create_autocmd({ 'CursorMoved' }, {
       local curr_cursor_pos = vim.fn.getcurpos()
       local currLine = curr_cursor_pos[2]
       local currWindow = vim.api.nvim_get_current_win()
-      if math.abs(prevLine - currLine) > 10 and prevWindow == currWindow then
+      if math.abs(prevLine - currLine) > 13 and prevWindow == currWindow then
         vim.cmd("norm! zz")
       end
       prevLine = currLine
