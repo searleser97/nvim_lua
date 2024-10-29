@@ -51,13 +51,27 @@ function OpenToggleTerms(ids_to_ignore)
   return corruptedBuffersExcluded;
 end
 
--- I need this function
 function ToggleAllTerms(ignore)
   local openTerms = OpenToggleTerms(ignore)
-  print(vim.inspect(openTerms))
   for _, value in pairs(openTerms) do
     local termId = string.match(string.match(vim.fn.bufname(value), "toggleterm#%d+"), "%d+")
     vim.cmd(termId .."ToggleTerm")
+  end
+end
+
+local function is_buffer_visible(bufnr)
+  -- Get the list of windows displaying the buffer
+  local windows = vim.fn.win_findbuf(bufnr)
+  -- If the list is not empty, the buffer is visible
+  return #windows > 0
+end
+
+function CloseAllVisibleTerms(ignore)
+  local allTerms = require('toggleterm.terminal').get_all(false)
+  for _, term in ipairs(allTerms) do
+    if is_buffer_visible(term.bufnr) and ignore[term.id] == nil then
+      term:close()
+    end
   end
 end
 
@@ -164,8 +178,8 @@ return {
     },
     {
       '<c-t>',
-      function() return [[<C-\><C-n><cmd>ToggleTermToggleAll<cr>]]; end,
-      expr = true, desc = "toggle all terminals", mode = 't'
+      function() CloseAllVisibleTerms({}) end,
+      desc = "toggle all terminals", mode = 't'
     }
   }
 }

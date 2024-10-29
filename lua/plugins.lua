@@ -494,7 +494,9 @@ require("lazy").setup({
     keys = require('toggleterm_utils').keys,
     config = function()
       require("toggleterm").setup({
-        autochdir = true
+        autochdir = true,
+        start_in_insert = true,
+        persist_mode = false
       })
 
       vim.api.nvim_create_autocmd({ 'BufEnter' }, {
@@ -503,6 +505,19 @@ require("lazy").setup({
         callback = function()
           vim.defer_fn(function()
             vim.cmd('startinsert!')
+          end, 100)
+        end
+      })
+
+      vim.api.nvim_create_autocmd({ 'BufLeave' }, {
+        desc = 'Normal mode when leaving a terminal buffer',
+        pattern = 'term://*',
+        callback = function()
+          vim.defer_fn(function()
+            local current_buf = vim.api.nvim_get_current_buf()
+            if (not string.match(vim.fn.bufname(current_buf), "toggleterm#%d+")) then
+              vim.cmd('stopinsert!')
+            end
           end, 100)
         end
       })
