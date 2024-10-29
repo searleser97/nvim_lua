@@ -36,7 +36,7 @@ local set_keybindings_for_main_process = function(config)
 end
 
 local set_universal_keybindings = function(config)
-  table.insert(config.keys, { key = 'n', mods = 'SUPER|SHIFT', action = wezterm.action.SpawnWindow })
+  table.insert(config.keys, { key = 'n', mods = 'SUPER|SHIFT', action = act.SpawnWindow })
 end
 
 local set_keybindings_for_vim_like_process = function(config)
@@ -76,17 +76,17 @@ wezterm.on('user-var-changed', function(window, pane, name, value)
   end
 end)
 
-if wezterm.GLOBAL.isInitialLoad == nil then
-  wezterm.GLOBAL.isInitialLoad = true
+if wezterm.GLOBAL.hasLoadedConfig == nil then
+  wezterm.GLOBAL.hasLoadedConfig = {}
 end
 
--- wezterm.on('window-config-reloaded', function(window, pane)
-wezterm.on('update-status', function(window, pane)
-  if wezterm.GLOBAL.isInitialLoad then
-    wezterm.GLOBAL.isInitialLoad = false
+wezterm.on('window-config-reloaded', function(window, pane)
+  if wezterm.GLOBAL.hasLoadedConfig[tostring(window:window_id())] == nil then
+    wezterm.GLOBAL.hasLoadedConfig[tostring(window:window_id())] = true
     wezterm.emit('user-var-changed', window, pane, vim_keybindings_status_var_name, 'disabled')
   end
 end)
+
 
 return globalConfig
 
