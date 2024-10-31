@@ -496,7 +496,10 @@ require("lazy").setup({
       require("toggleterm").setup({
         autochdir = true,
         start_in_insert = true,
-        persist_mode = false
+        persist_mode = false,
+        responsiveness = {
+          horizontal_breakpoint = 135
+        }
       })
 
       vim.api.nvim_create_autocmd({ 'BufEnter' }, {
