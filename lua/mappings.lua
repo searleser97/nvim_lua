@@ -7,7 +7,6 @@ else
 end
 
 vim.keymap.set({'n', 'x'}, '<C-v>', '"+p', { noremap = true })
-vim.keymap.set({'i', 'c'}, '<C-v>', '<c-r>+', { noremap = true })
 
 vim.keymap.set({'n', 'x'}, '<C-b>', '<C-v>', { noremap = true })
 vim.keymap.set({'x', 'n'}, '<M-p>', '"ap', { noremap = true })
@@ -39,6 +38,15 @@ if not vim.g.vscode then
       end
     end
   })
+
+  vim.keymap.set('c', '<C-v>', '<c-r>+', { noremap = true })
+  vim.keymap.set('i', '<c-v>', function()
+    vim.cmd('set paste!')
+    pastedInInsertMode = true
+    vim.schedule(function()
+      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<c-r>+', true, true, true), 'i', true)
+    end)
+  end, { noremap = true })
 
   vim.keymap.set('i', '<c-p>', function()
     vim.cmd('set paste!')
