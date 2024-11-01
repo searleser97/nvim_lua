@@ -313,7 +313,7 @@ require("lazy").setup({
         pickers = {
           git_branches = {
             mappings = {
-              i = { ["<cr>"] = actions.git_switch_branch + actions.center,},
+              i = { ["<cr>"] = actions.git_switch_branch + actions.center },
             }
           }
         }
