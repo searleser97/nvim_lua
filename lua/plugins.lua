@@ -14,6 +14,21 @@ function Is_Windows()
   return package.config:sub(1,1) == "\\";
 end
 
+local gitFilePatterns = { "COMMIT_EDITMSG", "git-rebase-todo" }
+local isNeovimOpenedWithGitFile = function()
+  if vim.fn.argc() == 0 then
+    return false
+  else
+    local arg = vim.fn.argv(0)
+    for _, pattern in ipairs(gitFilePatterns) do
+      if type(arg) == "string" and string.match(arg, pattern) then
+        return true
+      end
+    end
+    return false
+  end
+end
+
 require("lazy").setup({
   {
     "ggandor/leap.nvim",
@@ -196,7 +211,7 @@ require("lazy").setup({
   },
   {
     "nvim-treesitter/nvim-treesitter",
-    event = { 'VeryLazy' },
+    event = { 'BufNewFile', 'BufReadPost' },
     build = ":TSUpdate",
     cond = not vim.g.vscode,
     config = function()
@@ -443,7 +458,7 @@ require("lazy").setup({
     event = { 'VeryLazy' },
     name = "tokyonight",
     priority = 1000,
-    cond = not vim.g.vscode,
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     config = function()
       require("tokyonight").setup({
         style = "storm", -- The theme comes in three styles, `storm`, `moon`, a darker variant `night` and `day`
