@@ -275,18 +275,25 @@ require("lazy").setup({
       telescope.setup({
         defaults = {
           dynamic_preview_title = true,
-          layout_strategy = 'vertical',
+          layout_strategy = "flex",
           layout_config = {
-            vertical = { width = 0.95 }
+            vertical = { width = 0.95, height = 0.95, preview_height = 0.6 },
+            horizontal = { width = 0.95, height = 0.95, preview_width = 0.6 }
           },
           path_display = {"tail"}, -- "smart", "tail"
           mappings = {
             i = {
-              ["<CR>"] = actions.select_default + actions.center,
-              ["<C-l>"] = actions.results_scrolling_left,
-              ["<C-r>"] = actions.results_scrolling_right,
-              ["<c-p>"] = actions.cycle_history_prev,
-              ["<c-n>"] = actions.cycle_history_next,
+              ["<cr>"] = actions.select_default + actions.center,
+              ["<c-Left>"] = actions.preview_scrolling_left,
+              ["<c-Right>"] = actions.preview_scrolling_right,
+              ["<c-Up>"] = actions.cycle_history_prev,
+              ["<c-Down>"] = actions.cycle_history_next,
+              ["<c-v>"] = function()
+                vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<c-r>+", true, true, true), 'i' , false)
+              end,
+              ["<c-p>"] = function()
+                vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<c-r>"', true, true, true), 'i' , false)
+              end
             }
           }
         },
