@@ -305,7 +305,7 @@ require("lazy").setup({
             mappings = {
               i = {
                 -- looks like file browser does not support the center action I use in default mappings
-                ["<CR>"] = actions.select_default
+                ["<cr>"] = actions.select_default
               }
             }
           }
