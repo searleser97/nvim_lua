@@ -43,6 +43,9 @@ vim.api.nvim_create_autocmd("BufEnter", {
 
 vim.o.sessionoptions="blank,buffers,curdir,folds,help,tabpages,winsize,winpos,localoptions"
 
+-- used to prevent filetype plugin from adding mappings
+vim.g.no_plugin_maps = 1
+
 if package.config:sub(1,1) == "\\" then -- is windows
   vim.opt.shell = vim.fn.executable "pwsh" == 1 and "pwsh" or "powershell"
   vim.opt.shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;"
@@ -51,4 +54,3 @@ if package.config:sub(1,1) == "\\" then -- is windows
   vim.opt.shellquote = ""
   vim.opt.shellxquote = ""
 end
-

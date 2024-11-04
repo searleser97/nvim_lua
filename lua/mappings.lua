@@ -1,5 +1,3 @@
-vim.cmd("unmap [%")
-
 if package.config:sub(1,1) == "\\" then
   vim.keymap.set({'n', 'x'}, '<C-c>', '"*y', { noremap = true })
 else
