@@ -195,7 +195,13 @@ require("lazy").setup({
               local lua_opts = lsp_zero.nvim_lua_ls()
               lua_opts.settings.Lua.workspace.library = {
                 vim.env.VIMRUNTIME,
-                os.getenv('HOME') .. '/.config/luvit-meta'
+                (function()
+                  if Is_Windows() then
+                    return os.getenv('USERPROFILE') .. '\\AppData\\Local\\luvit-meta'
+                  else
+                    return os.getenv('HOME') .. '/.config/luvit-meta'
+                  end
+                end)()
               }
               require("lspconfig").lua_ls.setup(lua_opts)
             end
@@ -800,7 +806,7 @@ require("lazy").setup({
   },
   {
     "nvim-lualine/lualine.nvim",
-    event = 'VeryLazy',
+    event = { 'VeryLazy' },
     dependencies = {
       'nvim-tree/nvim-web-devicons',
       'folke/tokyonight.nvim',
@@ -873,12 +879,12 @@ require("lazy").setup({
     "Decodetalkers/csharpls-extended-lsp.nvim",
     dir = Is_Windows() and "E:\\forks\\csharpls-extended-lsp.nvim" or nil,
     cond = not vim.g.vscode,
-    lazy = 'VeryLazy'
+    lazy = { 'VeryLazy' }
   },
   {
     "zbirenbaum/copilot-cmp",
     dependencies = "zbirenbaum/copilot.lua",
-    event = "VeryLazy",
+    event = { "VeryLazy" },
     config = function ()
       require("copilot").setup({
         suggestion = { enabled = false },
