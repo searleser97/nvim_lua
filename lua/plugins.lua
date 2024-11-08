@@ -923,7 +923,7 @@ require("lazy").setup({
     build = Is_Windows() and nil or "make tiktoken", -- Only on MacOS or Linux
     opts = {
       debug = false, -- Enable debugging
-      window = { layout = 'float' }
+      window = { layout = 'float', width = 0.8, height = 0.8 }
     },
     -- See Commands section for default commands if you want to lazy load on them
   },
