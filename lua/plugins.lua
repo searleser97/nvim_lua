@@ -856,6 +856,7 @@ require("lazy").setup({
         ["white"] = "black",
         ["cyan"] = "black",
         ["light_grey"] = "black",
+        ["auto"] = "auto"
       }
 
       vim.api.nvim_create_user_command('SetStatusLineBG', function(opts)
@@ -872,7 +873,12 @@ require("lazy").setup({
           end
           require('lualine').setup({ options = { theme = autoThemeLocal } })
         end
-      end, { nargs = 1 })
+      end, {
+        nargs = 1,
+        complete = function()
+          return vim.tbl_keys(contrastantColors)
+        end
+      })
     end
   },
   {
@@ -943,6 +949,7 @@ require("lazy").setup({
       require("CopilotChat.integrations.cmp").setup()
       require("CopilotChat").setup({
         debug = false, -- Enable debugging
+        context = "buffers",
         window = {
           layout = 'float',
           width = 0.8,
@@ -953,6 +960,13 @@ require("lazy").setup({
             insert = '',
           },
         },
+      })
+      vim.api.nvim_create_autocmd("BufEnter", {
+        pattern = 'copilot-*',
+        callback = function()
+          vim.opt_local.relativenumber = true
+          vim.opt_local.number = true
+        end
       })
     end
   },
