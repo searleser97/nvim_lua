@@ -913,19 +913,48 @@ require("lazy").setup({
     "CopilotC-Nvim/CopilotChat.nvim",
     cmd = "CopilotChat",
     keys = {
-      { '<c-g><c-c>', function() require("CopilotChat").toggle() end, mode = { 'n', 'x' }, noremap = true }
+      { '<c-g><c-c>', function() require("CopilotChat").toggle() end, mode = { 'n', 'x' }, noremap = true },
+      {
+        "<leader>ch",
+        function()
+          local actions = require("CopilotChat.actions")
+          require("CopilotChat.integrations.telescope").pick(actions.help_actions())
+        end,
+        desc = "Copilot Help",
+      },
+      {
+        "<leader>cp",
+        function()
+          local actions = require("CopilotChat.actions")
+          require("CopilotChat.integrations.telescope").pick(actions.prompt_actions())
+        end,
+        desc = "Copilot Prompts (predefined)",
+      },
     },
     branch = "canary",
     dependencies = {
       { "zbirenbaum/copilot.lua" }, -- or github/copilot.vim
       { "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
+      { "nvim-telescope/telescope.nvim" },
+      { "hrsh7th/nvim-cmp" }
     },
     build = Is_Windows() and nil or "make tiktoken", -- Only on MacOS or Linux
-    opts = {
-      debug = false, -- Enable debugging
-      window = { layout = 'float', width = 0.8, height = 0.8 }
-    },
-    -- See Commands section for default commands if you want to lazy load on them
+    config = function()
+      require("CopilotChat.integrations.cmp").setup()
+      require("CopilotChat").setup({
+        debug = false, -- Enable debugging
+        window = {
+          layout = 'float',
+          width = 0.8,
+          height = 0.8,
+        },
+        mappings = {
+          complete = {
+            insert = '',
+          },
+        },
+      })
+    end
   },
   {
     "zbirenbaum/copilot.lua",
