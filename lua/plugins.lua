@@ -84,6 +84,7 @@ require("lazy").setup({
         lsp_zero.highlight_symbol(client, buffer)
         local telescope_builtin = require('telescope.builtin')
         vim.keymap.set('n', 'gd', telescope_builtin.lsp_definitions, { noremap = true, desc = "go to definition" })
+        vim.keymap.set('n', 'gt', telescope_builtin.lsp_type_definitions, { noremap = true, desc = "go to type definition" })
         vim.keymap.set('n', 'gi', telescope_builtin.lsp_implementations, { noremap = true, desc = "go to implementation" })
         vim.keymap.set('n', 'gr', telescope_builtin.lsp_references, { noremap = true, desc = "go to references" })
         vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, { noremap = true, desc = "go to references" })
@@ -139,7 +140,10 @@ require("lazy").setup({
               end
               formattedMsgLine = formattedMsgLine .. msgLine
               if j == #msgLines then
-                formattedMsgLine = formattedMsgLine .. " [" .. diagnostic.code .. "]"
+                formattedMsgLine = formattedMsgLine
+                if diagnostic.code then
+                  formattedMsgLine = formattedMsgLine .. " [" .. diagnostic.code .. "]"
+                end
               end
               table.insert(combined, formattedMsgLine)
               table.insert(highlights, { line = lineCnt + highlightYOffset, severity = diagnostic.severity, endCol = #startOfDiagnostic + #msgLine + 1, startCol = #startOfDiagnostic })
