@@ -8,4 +8,9 @@ utils.getPathToGitDirOr = function(defaultPath)
   end
 end
 
+utils.Is_Windows = function()
+  return package.config:sub(1,1) == "\\";
+end
+
+
 return utils

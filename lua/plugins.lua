@@ -10,9 +10,8 @@ if not vim.loop.fs_stat(lazypath) then
   })
 end
 vim.opt.rtp:prepend(lazypath)
-function Is_Windows()
-  return package.config:sub(1,1) == "\\";
-end
+
+local Is_Windows = require('myutils').Is_Windows
 
 local gitFilePatterns = { "COMMIT_EDITMSG", "git-rebase-todo" }
 local isNeovimOpenedWithGitFile = function()
@@ -409,7 +408,7 @@ require("lazy").setup({
         local key_mappings = {}
         for i = 1, 9 do
           table.insert(key_mappings, {
-            '<C-' .. i .. '>',
+            '<leader>' .. i,
             function() require('harpoon'):list():select(i) end,
             noremap = true,
           })
