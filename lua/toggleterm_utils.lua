@@ -87,7 +87,7 @@ return {
         vim.cmd(count .. "TermExec cmd=\"pwd\"")
         vim.schedule(function() vim.cmd(count .. "TermExec cmd=\"cd " .. utils.getPathToGitDirOr(vim.loop.cwd()) .. "\"") end)
       end,
-      noremap = true, mode = 'n', description = 'terminal Here (git root)'
+      noremap = true, mode = 'n', desc = 'terminal Here (git root)'
     },
     {
       '<leader>th',
@@ -96,7 +96,7 @@ return {
         local count = vim.v.count > 0 and vim.v.count or 1
         vim.cmd(count .. "TermExec cmd=\"cd " .. dirPath .. "\"")
       end,
-      noremap = true, mode =  'n', description = 'terminal here (file)'
+      noremap = true, mode =  'n', desc = 'terminal here (file)'
     },
     {
       '<c-t>',
