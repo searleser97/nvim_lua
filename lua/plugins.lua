@@ -263,7 +263,7 @@ require("lazy").setup({
         noremap = true, desc = "git stash"
       },
       {
-        '<F1>',
+        '<leader>help',
         function() require('telescope.builtin').help_tags() end,
         noremap = true
       },
@@ -400,9 +400,9 @@ require("lazy").setup({
     "https://github.com/ThePrimeagen/harpoon",
     branch = "harpoon2",
     keys = {
-      {'<c-h>a', function() require('harpoon'):list():add() end, noremap = true, desc = "harpoon add" },
+      {'<leader>ha', function() require('harpoon'):list():add() end, noremap = true, desc = "harpoon add" },
       {
-        '<c-h>l',
+        '<leader>hl',
         function()
           require('harpoon').ui:toggle_quick_menu(require('harpoon'):list(), { ui_width_ratio = 0.95 })
         end,
@@ -412,7 +412,7 @@ require("lazy").setup({
         local key_mappings = {}
         for i = 1, 9 do
           table.insert(key_mappings, {
-            '<leader>' .. i,
+            '<F' .. i .. '>',
             function() require('harpoon'):list():select(i) end,
             noremap = true,
           })
@@ -998,6 +998,37 @@ require("lazy").setup({
     "kylechui/nvim-surround",
     event = { 'VeryLazy' },
     opts = {}
-  }
+  },
+  {
+  "stevearc/conform.nvim",
+  event = { "BufWritePre" },
+  cmd = { "ConformInfo" },
+  keys = {
+    {
+      "<leader>ff",
+      function() require("conform").format({ async = true }) end,
+      desc = "Format File",
+    },
+  },
+  -- This will provide type hinting with LuaLS
+  ---@module "conform"
+  ---@type conform.setupOpts
+  opts = {
+    -- Define your formatters
+    formatters_by_ft = {
+      lua = { "stylua" },
+      javascript = { "prettierd", "prettier", stop_after_first = true },
+      rust = { "rustfmt", lsp_format = "fallback" },
+    },
+    -- Set default options
+    default_format_opts = {
+      lsp_format = "fallback",
+    },
+  },
+  init = function()
+    -- If you want the formatexpr, here is the place to set it
+    vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
+  end,
+}
 })
 
