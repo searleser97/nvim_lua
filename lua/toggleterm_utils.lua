@@ -81,22 +81,22 @@ local gitPrettyFormatWithDescription = gitPrettyFormat .. "%n%n%b"
 return {
   keys = {
     {
-      '<F6>',
+      '<leader>tH',
       function()
         local count = vim.v.count > 0 and vim.v.count or 1
         vim.cmd(count .. "TermExec cmd=\"pwd\"")
         vim.schedule(function() vim.cmd(count .. "TermExec cmd=\"cd " .. utils.getPathToGitDirOr(vim.loop.cwd()) .. "\"") end)
       end,
-      noremap = true, mode = 'n'
+      noremap = true, mode = 'n', description = 'terminal Here (git root)'
     },
     {
-      '<F5>',
+      '<leader>th',
       function()
         local dirPath = vim.fn.expand("%:p:h"):gsub("%%20", " ")
         local count = vim.v.count > 0 and vim.v.count or 1
         vim.cmd(count .. "TermExec cmd=\"cd " .. dirPath .. "\"")
       end,
-      noremap = true, mode =  'n'
+      noremap = true, mode =  'n', description = 'terminal here (file)'
     },
     {
       '<c-t>',
