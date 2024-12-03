@@ -400,11 +400,18 @@ require("lazy").setup({
     "https://github.com/ThePrimeagen/harpoon",
     branch = "harpoon2",
     keys = {
-      {'<leader>ha', function() require('harpoon'):list():add() end, noremap = true, desc = "harpoon add" },
       {
-        '<leader>hl',
+        '<leader>ha',
+        function() require('harpoon'):list():add() end,
+        noremap = true,
+        desc = "harpoon add",
+      },
+      {
+        '<c-h>l',
         function()
-          require('harpoon').ui:toggle_quick_menu(require('harpoon'):list(), { ui_width_ratio = 0.95 })
+          require('harpoon').ui:toggle_quick_menu(require('harpoon'):list(), {
+            ui_width_ratio = 0.95,
+          })
         end,
         noremap = true, desc = "harpoon list"
       },
