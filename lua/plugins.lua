@@ -68,6 +68,7 @@ require("lazy").setup({
       {'neovim/nvim-lspconfig'},             -- Required
       {'williamboman/mason.nvim'},           -- Optional
       {'williamboman/mason-lspconfig.nvim'}, -- Optional
+      {'nvim-telescope/telescope.nvim'},
 
       -- Autocompletion
       {'hrsh7th/nvim-cmp'},     -- Required
@@ -187,10 +188,8 @@ require("lazy").setup({
               local config = {
                 handlers = {
                   ["textDocument/definition"] = require('csharpls_extended').handler,
+                  ["textDocument/typeDefinition"] = require('csharpls_extended').handler
                 },
-                on_attach = function (client, bufnr)
-                  vim.keymap.set('n', 'gd', function() require('csharpls_extended').lsp_definitions(); end, { noremap = true, desc = "go to definition", buffer = true })
-                end
               }
               require("lspconfig").csharp_ls.setup(config)
             end,
@@ -210,6 +209,7 @@ require("lazy").setup({
             end
           }
         });
+        require("telescope").load_extension("csharpls_definition")
     end
   },
   {
