@@ -190,6 +190,12 @@ require("lazy").setup({
                   ["textDocument/definition"] = require('csharpls_extended').handler,
                   ["textDocument/typeDefinition"] = require('csharpls_extended').handler
                 },
+                on_attach = function (client, bufnr)                                                
+                  vim.keymap.set('n', 'gd', function()
+                    -- TODO: get data from quickfix list and feed it to telescope here
+                    require('csharpls_extended').lsp_definitions()
+                  end, { noremap = true, desc = "go to definition", buffer = true })                               
+                end
               }
               require("lspconfig").csharp_ls.setup(config)
             end,
