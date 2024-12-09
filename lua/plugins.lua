@@ -700,7 +700,14 @@ require("lazy").setup({
       {'<leader>hs', function() require('gitsigns').stage_hunk() end, desc = "hunk stage" },
       {'<leader>hr', function() require('gitsigns').reset_hunk() end, desc = "hunk reset" },
       {'<leader>su', function() require('gitsigns').undo_stage_hunk() end, desc = "stage undo" },
-      {'<leader>hp', function() require('gitsigns').preview_hunk() end, desc = "hunk preview" },
+      {
+        '<leader>hp',
+        function()
+          require('gitsigns').preview_hunk()
+          require('gitsigns').preview_hunk()
+        end,
+        desc = "hunk preview"
+      },
       {'<leader>td', function() require('gitsigns').toggle_deleted() end, desc = "toggle deleted lines" },
       {
         '<leader>hs',
