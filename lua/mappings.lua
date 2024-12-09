@@ -56,6 +56,8 @@ if not vim.g.vscode then
 
   vim.keymap.set({'n', 'x'}, '<C-u>', '<C-u>M')
   vim.keymap.set({'n', 'x'}, '<C-d>', '<C-d>M')
+  vim.keymap.set({'n', 'x'}, '<PageUp>', '<PageUp>M')
+  vim.keymap.set({'n', 'x'}, '<PageDown>', '<PageDown>M')
   vim.keymap.set({'n', 'x'}, 'n', 'nzz')
   vim.keymap.set({'n', 'x'}, 'N', 'Nzz')
   vim.keymap.set("n", "<c-p>", "<c-o>zz", { noremap = true })
