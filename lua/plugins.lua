@@ -699,7 +699,12 @@ require("lazy").setup({
       -- Actions
       {'<leader>hs', function() require('gitsigns').stage_hunk() end, desc = "hunk stage" },
       {'<leader>hr', function() require('gitsigns').reset_hunk() end, desc = "hunk reset" },
-      {'<leader>su', function() require('gitsigns').undo_stage_hunk() end, desc = "stage undo" },
+      {
+        '<leader>hr',
+        function() require('gitsigns').reset_hunk {vim.fn.line('.'), vim.fn.line('v')} end,
+        desc = "hunk reset" , mode = "x"
+      },
+      {'<leader>us', function() require('gitsigns').undo_stage_hunk() end, desc = "undo stage" },
       {
         '<leader>hp',
         function()
@@ -715,17 +720,12 @@ require("lazy").setup({
         desc = "hunk stage", mode = "x"
       },
       {
-        '<leader>hr',
-        function() require('gitsigns').reset_hunk {vim.fn.line('.'), vim.fn.line('v')} end,
-        desc = "hunk reset" , mode = "x"
-      },
-      {
-        '<leader>gb',
+        '<leader>hb',
         function()
           require('gitsigns').blame_line({ full=true })
-          require('gitsigns').blame_line({ full=true })
+          vim.defer_fn(function() vim.fn.feedkeys(vim.api.nvim_replace_termcodes("<c-w><c-w>", true, true, true), 'n') end, 500)
         end,
-        desc = "git blame", mode = 'n'
+        desc = "hunk blame", mode = 'n'
       },
       {
         ']c',
