@@ -963,7 +963,7 @@ require("lazy").setup({
     "CopilotC-Nvim/CopilotChat.nvim",
     cmd = "CopilotChat",
     keys = {
-      { '<c-g><c-c>', function() require("CopilotChat").toggle() end, mode = { 'n', 'x' }, noremap = true },
+      { '<leader>cc', function() require("CopilotChat").toggle() end, mode = { 'n', 'x' }, noremap = true },
       {
         "<leader>ch",
         function()
@@ -985,6 +985,7 @@ require("lazy").setup({
     dependencies = {
       { "zbirenbaum/copilot.lua" }, -- or github/copilot.vim
       { "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
+      { "nvim-telescope/telescope.nvim" },
     },
     build = Is_Windows() and nil or "make tiktoken", -- Only on MacOS or Linux
     config = function()
