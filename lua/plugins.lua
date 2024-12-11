@@ -985,8 +985,6 @@ require("lazy").setup({
     dependencies = {
       { "zbirenbaum/copilot.lua" }, -- or github/copilot.vim
       { "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
-      { "nvim-telescope/telescope.nvim" },
-      { "hrsh7th/nvim-cmp" }
     },
     build = Is_Windows() and nil or "make tiktoken", -- Only on MacOS or Linux
     config = function()
