@@ -230,7 +230,26 @@ require("lazy").setup({
     cond = not vim.g.vscode,
     config = function()
       require("nvim-treesitter.configs").setup({
-        ensure_installed = { "bash", "lua", "vim", "vimdoc", "rust", "typescript", "javascript", "json", "tsx", "c_sharp" }
+        ensure_installed = { "bash", "lua", "vim", "vimdoc", "rust", "typescript", "javascript", "json", "tsx", "c_sharp" },
+        highlight = { enable = true },
+        indent = { enable = true }
+      })
+      local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
+      parser_config.bond = {
+        install_info = {
+          url = "https://github.com/jorgenbele/tree-sitter-bond", -- local path or git repo
+          files = {"src/parser.c"}, -- note that some parsers also require src/scanner.c or src/scanner.cc
+        },
+        filetype = "bond", -- if filetype does not match the parser name
+      }
+
+      vim.treesitter.language.register('bond', 'bond')
+
+      vim.filetype.add({
+        -- Detect and assign filetype based on the extension of the filename
+        extension = {
+          bond = "bond",
+        },
       })
     end
   },
