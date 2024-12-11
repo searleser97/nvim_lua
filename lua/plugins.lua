@@ -981,7 +981,7 @@ require("lazy").setup({
         desc = "Copilot Prompts (predefined)",
       },
     },
-    branch = "canary",
+    branch = "main",
     dependencies = {
       { "zbirenbaum/copilot.lua" }, -- or github/copilot.vim
       { "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
@@ -990,7 +990,6 @@ require("lazy").setup({
     },
     build = Is_Windows() and nil or "make tiktoken", -- Only on MacOS or Linux
     config = function()
-      require("CopilotChat.integrations.cmp").setup()
       require("CopilotChat").setup({
         debug = false, -- Enable debugging
         context = "buffers",
