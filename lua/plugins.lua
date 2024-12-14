@@ -78,8 +78,15 @@ require("lazy").setup({
     cond = not vim.g.vscode,
     event = { 'VeryLazy' },
     config = function()
-
       local lsp_zero = require("lsp-zero").preset({})
+
+      local code_hl_group = "CodeHighlightGroup"
+      local highlight_map = {
+        [vim.diagnostic.severity.ERROR] = 'DiagnosticFloatingError',
+        [vim.diagnostic.severity.WARN] = 'DiagnosticFloatingWarn',
+        [vim.diagnostic.severity.INFO] = 'DiagnosticFloatingInfo',
+        [vim.diagnostic.severity.HINT] = 'DiagnosticFloatingHint',
+      }
 
       lsp_zero.on_attach(function(client, buffer)
         lsp_zero.highlight_symbol(client, buffer)
@@ -120,22 +127,65 @@ require("lazy").setup({
           local diagnostics = vim.diagnostic.get(0, { lnum = line })
           local combined = {}
           local highlights = {}
-          local highlightYOffset = 2
           if #diagnostics > 0 then
             table.insert(combined, "# Diagnostics")
             table.insert(combined, "")
           end
-          local lineCnt = 0
           for i, diagnostic in pairs(diagnostics) do
-            local startOfDiagnostic = i .. ". "
-            local msgLines = vim.lsp.util.convert_input_to_markdown_lines(diagnostic.message)
+            local diagnosticCodeInRange = vim.api.nvim_buf_get_text(
+              0,
+              diagnostic.lnum,
+              diagnostic.col,
+              diagnostic.end_lnum,
+              diagnostic.end_col,
+              {}
+            )
+            local maxLineLength = 0
+            for j, codeLine in pairs(diagnosticCodeInRange) do
+              local lineLength = (j == 1 and diagnostic.col or 0) + #codeLine
+              if lineLength > maxLineLength then
+                maxLineLength = lineLength
+              end
+            end
+            for j, codeLine in pairs(diagnosticCodeInRange) do
+              if j == 1 then
+                table.insert(combined, "```" .. (#codeLine > 0 and vim.bo.filetype or ""))
+                if diagnostic.lnum < diagnostic.end_lnum then
+                  local leftPadding = string.rep(" ", diagnostic.col - 1);
+                  local rightPadding = string.rep(" ", maxLineLength - #leftPadding - #codeLine)
+                  table.insert(highlights, { line = #combined, hl_group = code_hl_group, endCol = maxLineLength, startCol = 0 })
+                  table.insert(combined, leftPadding .. codeLine .. rightPadding)
+                else -- same line
+                  if #codeLine == 0 then
+                    local colDesc = "in column: " .. diagnostic.col
+                    table.insert(highlights, { line = #combined, hl_group = code_hl_group, endCol = #colDesc, startCol = 0 })
+                    table.insert(combined, colDesc)
+                  else
+                    table.insert(highlights, { line = #combined, hl_group = code_hl_group, endCol = #codeLine, startCol = 0 })
+                    table.insert(combined, codeLine)
+                  end
+                end
+              else
+                table.insert(highlights, { line = #combined, hl_group = code_hl_group, endCol = maxLineLength, startCol = 0 })
+                local rightPadding = string.rep(" ", maxLineLength - #codeLine)
+                table.insert(combined, codeLine .. rightPadding)
+              end
+              if j == #diagnosticCodeInRange then
+                  table.insert(highlights, { line = #combined, hl_group = code_hl_group, endCol = maxLineLength, startCol = 0 })
+                  table.insert(combined, "```")
+              end
+            end
+
+            local startOfDiagnosticMsg = i .. ". "
+            local msgLines = vim.lsp.util
+              .convert_input_to_markdown_lines(diagnostic.message)
             for j, msgLine in pairs(msgLines) do
               local formattedMsgLine = ""
               if j == 1 then
-                formattedMsgLine = startOfDiagnostic
+                formattedMsgLine = startOfDiagnosticMsg
               end
               if j > 1 then
-                for _ = 1, #startOfDiagnostic do
+                for _ = 1, #startOfDiagnosticMsg do
                   formattedMsgLine = formattedMsgLine .. " "
                 end
               end
@@ -146,9 +196,8 @@ require("lazy").setup({
                   formattedMsgLine = formattedMsgLine .. " [" .. diagnostic.code .. "]"
                 end
               end
+              table.insert(highlights, { line = #combined, hl_group = highlight_map[diagnostic.severity], endCol = #startOfDiagnosticMsg + #msgLine + 1, startCol = #startOfDiagnosticMsg })
               table.insert(combined, formattedMsgLine)
-              table.insert(highlights, { line = lineCnt + highlightYOffset, severity = diagnostic.severity, endCol = #startOfDiagnostic + #msgLine + 1, startCol = #startOfDiagnostic })
-              lineCnt = lineCnt + 1
             end
           end
 
@@ -165,41 +214,51 @@ require("lazy").setup({
             return
           end
 
-          local highlight_map = {
-            [vim.diagnostic.severity.ERROR] = 'DiagnosticFloatingError',
-            [vim.diagnostic.severity.WARN] = 'DiagnosticFloatingWarn',
-            [vim.diagnostic.severity.INFO] = 'DiagnosticFloatingInfo',
-            [vim.diagnostic.severity.HINT] = 'DiagnosticFloatingHint',
-          }
-
           local buf, win = vim.lsp.util.open_floating_preview(combined, "markdown", { border = 'rounded', focusable = true, focus = true })
           vim.api.nvim_set_current_win(win)
           for _, highlight in pairs(highlights) do
-            vim.api.nvim_buf_add_highlight(buf, -1,  highlight_map[highlight.severity], highlight.line, highlight.startCol, highlight.endCol)
+            vim.api.nvim_buf_add_highlight(buf, -1,  highlight.hl_group, highlight.line, highlight.startCol, highlight.endCol)
           end
         end, { noremap = true, desc = "Hover Info" })
         vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { noremap = true, desc = "code action" }) end)
 
-        require("mason").setup({})
-        require("mason-lspconfig").setup({
-          handlers = {
-            ["lua_ls"] = function()
-              local lua_opts = lsp_zero.nvim_lua_ls()
-              lua_opts.settings.Lua.workspace.library = {
-                vim.env.VIMRUNTIME,
-                (function()
-                  if Is_Windows() then
-                    return os.getenv('USERPROFILE') .. '\\AppData\\Local\\luvit-meta'
-                  else
-                    return os.getenv('HOME') .. '/.config/luvit-meta'
-                  end
-                end)()
-              }
-              require("lspconfig").lua_ls.setup(lua_opts)
-            end
-          }
-        });
-        require("telescope").load_extension("csharpls_definition")
+      require("mason").setup({})
+      require("mason-lspconfig").setup({
+        handlers = {
+          ["lua_ls"] = function()
+            local lua_opts = lsp_zero.nvim_lua_ls()
+            lua_opts.settings.Lua.workspace.library = {
+              vim.env.VIMRUNTIME,
+              (function()
+                if Is_Windows() then
+                  return os.getenv('USERPROFILE') .. '\\AppData\\Local\\luvit-meta'
+                else
+                  return os.getenv('HOME') .. '/.config/luvit-meta'
+                end
+              end)()
+            }
+            require("lspconfig").lua_ls.setup(lua_opts)
+          end
+        }
+      });
+      vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+        vim.lsp.diagnostic.on_publish_diagnostics,
+        {
+          underline = {
+            severity = {
+              min = vim.diagnostic.severity.HINT,
+            },
+            highlight = "DiagnosticUnderline",
+          },
+        }
+      )
+      vim.cmd [[
+        highlight DiagnosticUnderlineError gui=underline
+        highlight DiagnosticUnderlineWarn gui=underline
+        highlight DiagnosticUnderlineInfo gui=underline
+        highlight DiagnosticUnderlineHint gui=underline
+      ]]
+      vim.api.nvim_set_hl(0, code_hl_group, { bg = '#000000' })
     end
   },
   {
