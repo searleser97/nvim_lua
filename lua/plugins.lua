@@ -183,22 +183,6 @@ require("lazy").setup({
         require("mason").setup({})
         require("mason-lspconfig").setup({
           handlers = {
-            lsp_zero.default_setup,
-            ["csharp_ls"] = function()
-              local config = {
-                handlers = {
-                  ["textDocument/definition"] = require('csharpls_extended').handler,
-                  ["textDocument/typeDefinition"] = require('csharpls_extended').handler
-                },
-                on_attach = function (client, bufnr)                                                
-                  vim.keymap.set('n', 'gd', function()
-                    -- TODO: get data from quickfix list and feed it to telescope here
-                    require('csharpls_extended').lsp_definitions()
-                  end, { noremap = true, desc = "go to definition", buffer = true })                               
-                end
-              }
-              require("lspconfig").csharp_ls.setup(config)
-            end,
             ["lua_ls"] = function()
               local lua_opts = lsp_zero.nvim_lua_ls()
               lua_opts.settings.Lua.workspace.library = {
@@ -1039,35 +1023,42 @@ require("lazy").setup({
     opts = {}
   },
   {
-  "stevearc/conform.nvim",
-  event = { "BufWritePre" },
-  cmd = { "ConformInfo" },
-  keys = {
-    {
-      "<leader>ff",
-      function() require("conform").format({ async = true }) end,
-      desc = "Format File",
+    "stevearc/conform.nvim",
+    event = { "BufWritePre" },
+    cmd = { "ConformInfo" },
+    keys = {
+      {
+        "<leader>ff",
+        function() require("conform").format({ async = true }) end,
+        desc = "Format File",
+      },
     },
+    -- This will provide type hinting with LuaLS
+    ---@module "conform"
+    ---@type conform.setupOpts
+    opts = {
+      -- Define your formatters
+      formatters_by_ft = {
+        lua = { "stylua" },
+        javascript = { "prettierd", "prettier", stop_after_first = true },
+        rust = { "rustfmt", lsp_format = "fallback" },
+      },
+      -- Set default options
+      default_format_opts = {
+        lsp_format = "fallback",
+      },
+    },
+    init = function()
+      -- If you want the formatexpr, here is the place to set it
+      vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
+    end,
   },
-  -- This will provide type hinting with LuaLS
-  ---@module "conform"
-  ---@type conform.setupOpts
-  opts = {
-    -- Define your formatters
-    formatters_by_ft = {
-      lua = { "stylua" },
-      javascript = { "prettierd", "prettier", stop_after_first = true },
-      rust = { "rustfmt", lsp_format = "fallback" },
-    },
-    -- Set default options
-    default_format_opts = {
-      lsp_format = "fallback",
-    },
-  },
-  init = function()
-    -- If you want the formatexpr, here is the place to set it
-    vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
-  end,
-}
+  {
+    "seblj/roslyn.nvim",
+    ft = "cs",
+    opts = {
+        -- your configuration comes here; leave empty for default settings
+    }
+  }
 })
 
