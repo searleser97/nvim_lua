@@ -171,7 +171,6 @@ require("lazy").setup({
                 table.insert(combined, codeLine .. rightPadding)
               end
               if j == #diagnosticCodeInRange then
-                  table.insert(highlights, { line = #combined, hl_group = code_hl_group, endCol = maxLineLength, startCol = 0 })
                   table.insert(combined, "```")
               end
             end
@@ -1116,7 +1115,8 @@ require("lazy").setup({
     "seblj/roslyn.nvim",
     ft = "cs",
     opts = {
-        -- your configuration comes here; leave empty for default settings
+      filewatching = false,
+      lock_target = true
     }
   }
 })
