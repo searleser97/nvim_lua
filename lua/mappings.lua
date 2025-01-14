@@ -82,6 +82,7 @@ if not vim.g.vscode then
   vim.keymap.set('t', '<c-Left>', [[<C-\><C-n><C-w><Left>]], { noremap = true, desc = "move cursor to the window on the left" })
   vim.keymap.set('t', '<c-Right>', [[<C-\><C-n><C-w><Right>]], { noremap = true, desc = "move cursor to the window on the right" })
 else
+  local utils = require('myutils')
   -- all vscode ctrl+... keybindings are defined in the keybindings.json file of vscode
   local vscode = require("vscode-neovim")
   vim.keymap.set("n", "gr", function() vscode.call("editor.action.goToReferences") end)
@@ -96,12 +97,22 @@ else
       vscode.call("scrollRight")
     end
   end)
-  vim.keymap.set("n", "<c-t>", function()
-    local dirPath = vim.fn.expand("%:p:h"):gsub("^vscode%-userdata:", ""):gsub("%%20", " ")
+
+  vim.keymap.set("n", "<leader>th", function()
+    vscode.call("workbench.action.terminal.toggleTerminal");
+    vscode.call("workbench.action.terminal.sendSequence",
+      { args = { text = "cd \"" .. utils.getPathToGitDirOr(vim.loop.cwd()) .. "\"\n"} }
+    )
+  end, { desc = "terminal here (git root)" })
+
+  vim.keymap.set("n", "<leader>tH", function()
+    local dirPath = vim.fn.expand("%:p:h"):gsub("%%20", " ")
+    vscode.call("workbench.action.terminal.toggleTerminal");
     vscode.call("workbench.action.terminal.sendSequence",
       { args = { text = "cd \"" .. dirPath .. "\"\n"} }
     )
-  end)
+  end, { desc = "terminal here (file)" })
+
   vim.keymap.set("n", "]c", function()
     vscode.call("workbench.action.editor.nextChange")
   end)
@@ -160,5 +171,34 @@ else
   vim.keymap.set("n", "<c-d>", function()
     vscode.call("vscode-neovim.ctrl-d")
     vim.defer_fn(function() vscode.call("cursorMove", { args = { to = "viewPortCenter" } }) end, 80)
+  end)
+
+  vim.keymap.set("n", "<PageUp>", function()
+    vscode.call("vscode-neovim.ctrl-u")
+    vim.defer_fn(function() vscode.call("cursorMove", { args = { to = "viewPortCenter" } }) end, 80)
+  end)
+
+  vim.keymap.set("n", "<PageDown>", function()
+    vscode.call("vscode-neovim.ctrl-d")
+    vim.defer_fn(function() vscode.call("cursorMove", { args = { to = "viewPortCenter" } }) end, 80)
+  end)
+
+  vim.keymap.set("n", "<leader>cc", function()
+    vscode.call("workbench.panel.chat.view.copilot.focus")
+  end)
+
+  -- for loop that iterates from 1 to 9 to set keymaps for F keys, like F1, F2, ...
+  for i = 1, 9 do
+    vim.keymap.set("n", "<F" .. i .. ">", function()
+      vscode.call("vscode-harpoon.gotoEditor" .. i)
+    end)
+  end
+
+  vim.keymap.set("n", "<leader>ha", function()
+    vscode.call("vscode-harpoon.addEditor")
+  end)
+
+  vim.keymap.set("n","<leader>ca", function()
+    vscode.call("editor.action.quickFix")
   end)
 end
