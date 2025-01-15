@@ -16,8 +16,6 @@ vim.keymap.set('n', '<leader><leader>rec', 'q')
 vim.keymap.set('n', 'q', "<nop>", { noremap = true })
 vim.keymap.set('n', '<leader><right>', "15zl", { noremap = true })
 vim.keymap.set('n', '<leader><left>', "15zh", { noremap = true })
-vim.keymap.set('n', 'n', "nzz", { noremap = true })
-vim.keymap.set('n', 'N', "Nzz", { noremap = true })
 vim.keymap.set('n', '<c-q>', "<cmd>close<cr>")
 vim.keymap.set({'n', 'x'}, '<C-r>', '<nop>', { noremap = true })
 vim.keymap.set({'n', 'x'}, 'R', '<C-r>', { noremap = true })
@@ -54,14 +52,12 @@ if not vim.g.vscode then
     end)
   end, { noremap = true })
 
-  vim.keymap.set({'n', 'x'}, '<C-u>', '<C-u>M')
-  vim.keymap.set({'n', 'x'}, '<C-d>', '<C-d>M')
+  vim.keymap.set({'n', 'x'}, '<C-u>', '<C-u>M', { noremap = true })
+  vim.keymap.set({'n', 'x'}, '<C-d>', '<C-d>M', { noremap = true })
   vim.keymap.set({'n', 'x'}, '<PageUp>', '<C-u>M', { noremap = true })
   vim.keymap.set({'n', 'x'}, '<PageDown>', '<C-d>M', { noremap = true })
-  vim.keymap.set({'n', 'x'}, 'n', 'nzz')
-  vim.keymap.set({'n', 'x'}, 'N', 'Nzz')
-  vim.keymap.set("n", "<c-p>", "<c-o>zz", { noremap = true })
-  vim.keymap.set("n", "<c-n>", "<c-i>zz", { noremap = true })
+  vim.keymap.set("n", "<c-p>", "<c-o>", { noremap = true })
+  vim.keymap.set("n", "<c-n>", "<c-i>", { noremap = true })
   -- fine-grained undo
   vim.keymap.set('i', '<space>', '<space><c-g>u', { noremap = true })
   vim.keymap.set('i', '<tab>', '<tab><c-g>u', { noremap = true })
@@ -87,12 +83,12 @@ else
   local vscode = require("vscode-neovim")
   vim.keymap.set("n", "gr", function() vscode.call("editor.action.goToReferences") end)
   vim.keymap.set("n", "gi", function() vscode.call("editor.action.goToImplementation") end)
-  vim.keymap.set("n", "zh", function()
+  vim.keymap.set("n", "<leader><left>", function()
     for _ = 1, 6 do
       vscode.call("scrollLeft")
     end
   end)
-  vim.keymap.set("n", "zl", function()
+  vim.keymap.set("n", "<leader><right>", function()
     for _ = 1, 6 do
       vscode.call("scrollRight")
     end
@@ -133,31 +129,11 @@ else
     end, delay)
   end
 
-  -- Centers the viewport. This needs to be delayed for the cursor position to be
-  -- correct after the nvim_feedkeys operations.
-  local center_viewport = function(delay)
-    vim.defer_fn(function()
-      local current_line = vim.api.nvim_win_get_cursor(0)[1]
-      vscode.call("revealLine", {args = {lineNumber = current_line, at = "center"}})
-    end, delay)
-  end
-
-  vim.keymap.set("n", "n", function()
-    nvim_feedkeys("n", 0)
-    center_viewport(20)
-  end)
-
-  vim.keymap.set("n", "N", function()
-    nvim_feedkeys("N", 0)
-    center_viewport(20)
-  end)
   vim.keymap.set("n", "<c-p>", function()
     vscode.call("workbench.action.navigateBack")
-    center_viewport(100)
   end)
   vim.keymap.set("n", "<c-n>", function()
     vscode.call("workbench.action.navigateForward")
-    center_viewport(100)
   end)
 
   local verticalMovementsCountWithinTimeFrame = 0
@@ -171,6 +147,7 @@ else
       end
     end
   end
+
   vim.keymap.set("n", "<c-u>", function()
     vscode.call("vscode-neovim.ctrl-u")
     verticalMovementsCountWithinTimeFrame = verticalMovementsCountWithinTimeFrame + 1

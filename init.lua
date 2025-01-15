@@ -14,7 +14,13 @@ vim.api.nvim_create_autocmd({ 'CursorMoved' }, {
       local currLine = curr_cursor_pos[2]
       local currWindow = vim.api.nvim_get_current_win()
       if math.abs(prevLine - currLine) > 13 and prevWindow == currWindow then
-        vim.cmd("norm! zz")
+        if vim.g.vscode then
+          local vscode = require("vscode-neovim")
+          local current_line = vim.api.nvim_win_get_cursor(0)[1]
+          vscode.call("revealLine", {args = {lineNumber = current_line, at = "center"}})
+        else
+          vim.cmd("norm! zz")
+        end
       end
       prevLine = currLine
       prevWindow = currWindow
