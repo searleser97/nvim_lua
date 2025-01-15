@@ -106,7 +106,7 @@ else
   end, { desc = "terminal here (git root)" })
 
   vim.keymap.set("n", "<leader>tH", function()
-    local dirPath = vim.fn.expand("%:p:h"):gsub("%%20", " ")
+    local dirPath = vim.fn.expand("%:p:h"):gsub("^vscode%-userdata:", ""):gsub("%%20", " ")
     vscode.call("workbench.action.terminal.toggleTerminal");
     vscode.call("workbench.action.terminal.sendSequence",
       { args = { text = "cd \"" .. dirPath .. "\"\n"} }
@@ -160,27 +160,27 @@ else
     center_viewport(100)
   end)
 
-  -- TODO: Improve this keybiding so that it behaves like in [neo]vim, i.e. staying in the same visual position (not text position)
-  -- this could be probably achievaple by passing the newCursorPosition (based on file line number) in the "to" param of the cursorMove command
-  -- the newCursorPosition could be computed by knowing how many lines will be scrolled, and adding that value to the current cursor position
+  local verticalMovementsCountWithinTimeFrame = 0
+  local timeBeforeCenteringCursorInMs = 300
+
+  local centerCursor = function(verticalMovementNumberWithinTimeFrame)
+    return function()
+      if verticalMovementNumberWithinTimeFrame == verticalMovementsCountWithinTimeFrame then
+        verticalMovementsCountWithinTimeFrame = 0
+        vscode.call("cursorMove", { args = { to = "viewPortCenter" } })
+      end
+    end
+  end
   vim.keymap.set("n", "<c-u>", function()
     vscode.call("vscode-neovim.ctrl-u")
-    vim.defer_fn(function() vscode.call("cursorMove", { args = { to = "viewPortCenter" } }) end, 80)
+    verticalMovementsCountWithinTimeFrame = verticalMovementsCountWithinTimeFrame + 1
+    vim.defer_fn(centerCursor(verticalMovementsCountWithinTimeFrame), timeBeforeCenteringCursorInMs)
   end)
 
   vim.keymap.set("n", "<c-d>", function()
     vscode.call("vscode-neovim.ctrl-d")
-    vim.defer_fn(function() vscode.call("cursorMove", { args = { to = "viewPortCenter" } }) end, 80)
-  end)
-
-  vim.keymap.set("n", "<PageUp>", function()
-    vscode.call("vscode-neovim.ctrl-u")
-    vim.defer_fn(function() vscode.call("cursorMove", { args = { to = "viewPortCenter" } }) end, 80)
-  end)
-
-  vim.keymap.set("n", "<PageDown>", function()
-    vscode.call("vscode-neovim.ctrl-d")
-    vim.defer_fn(function() vscode.call("cursorMove", { args = { to = "viewPortCenter" } }) end, 80)
+    verticalMovementsCountWithinTimeFrame = verticalMovementsCountWithinTimeFrame + 1
+    vim.defer_fn(centerCursor(verticalMovementsCountWithinTimeFrame), timeBeforeCenteringCursorInMs)
   end)
 
   vim.keymap.set("n", "<leader>cc", function()

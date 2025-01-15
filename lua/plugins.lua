@@ -976,6 +976,7 @@ require("lazy").setup({
   {
     "zbirenbaum/copilot-cmp",
     dependencies = "zbirenbaum/copilot.lua",
+    cond = not vim.g.vscode,
     event = { "VeryLazy" },
     config = function ()
       require("copilot").setup({
