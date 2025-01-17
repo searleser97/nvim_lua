@@ -178,4 +178,8 @@ else
   vim.keymap.set("n","<leader>ca", function()
     vscode.call("editor.action.quickFix")
   end)
+
+  vim.keymap.set("n", "H", function()
+    vscode.call("editor.action.showHover")
+  end)
 end
