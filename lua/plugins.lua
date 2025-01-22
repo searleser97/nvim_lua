@@ -31,8 +31,8 @@ end
 require("lazy").setup({
   {
     "ggandor/leap.nvim",
+    commit = '5ae080b646021bbb6e1d8715b155b1e633e28166',
     dependencies = {
-      "ggandor/leap.nvim",
       "tpope/vim-repeat"
     },
     keys = {
@@ -665,10 +665,18 @@ require("lazy").setup({
      }
     },
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
-    opts = {
-      use_default_keymaps = false,
-      max_join_length = 1000
-    }
+    config = function()
+      local treesj = require('treesj')
+      local lang_utils = require('treesj.langs.utils')
+      local cpp = require('treesj.langs.cpp')
+      treesj.setup({
+        use_default_keymaps = false,
+        max_join_length = 1000,
+        langs = {
+          c_sharp = lang_utils.merge_preset(cpp, {})
+        }
+      })
+    end,
   },
   {
     'akinsho/flutter-tools.nvim',
@@ -1034,6 +1042,7 @@ require("lazy").setup({
     config = function()
       require("CopilotChat").setup({
         debug = false, -- Enable debugging
+        chat_autocomplete = true,
         context = "buffers",
         window = {
           layout = 'float',
@@ -1043,6 +1052,25 @@ require("lazy").setup({
         mappings = {
           complete = {
             insert = '',
+          },
+        },
+        contexts = {
+          file = {
+            input = function(callback)
+              local telescope = require("telescope.builtin")
+              local actions = require("telescope.actions")
+              local action_state = require("telescope.actions.state")
+              telescope.find_files({
+                attach_mappings = function(prompt_bufnr)
+                  actions.select_default:replace(function()
+                    actions.close(prompt_bufnr)
+                    local selection = action_state.get_selected_entry()
+                    callback(selection[1])
+                  end)
+                  return true
+                end,
+              })
+            end,
           },
         },
       })
@@ -1116,7 +1144,7 @@ require("lazy").setup({
     "seblj/roslyn.nvim",
     ft = "cs",
     opts = {
-      filewatching = false,
+      filewatching = true,
       lock_target = true
     }
   }
