@@ -976,12 +976,6 @@ require("lazy").setup({
     end
   },
   {
-    "Decodetalkers/csharpls-extended-lsp.nvim",
-    dir = Is_Windows() and "E:\\forks\\csharpls-extended-lsp.nvim" or nil,
-    cond = not vim.g.vscode,
-    lazy = { 'VeryLazy' }
-  },
-  {
     "zbirenbaum/copilot-cmp",
     dependencies = "zbirenbaum/copilot.lua",
     cond = not vim.g.vscode,
@@ -1142,10 +1136,11 @@ require("lazy").setup({
   },
   {
     "seblj/roslyn.nvim",
-    ft = "cs",
+    event = { "VeryLazy" },
     opts = {
       filewatching = true,
-      lock_target = true
+      lock_target = false,
+      broad_search = true
     }
   }
 })
