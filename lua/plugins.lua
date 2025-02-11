@@ -89,7 +89,7 @@ require("lazy").setup({
       }
 
       lsp_zero.on_attach(function(client, buffer)
-        lsp_zero.highlight_symbol(client, buffer)
+        -- lsp_zero.highlight_symbol(client, buffer)
         local telescope_builtin = require('telescope.builtin')
         vim.keymap.set('n', 'gd', telescope_builtin.lsp_definitions, { noremap = true, desc = "go to definition" })
         vim.keymap.set('n', 'gt', telescope_builtin.lsp_type_definitions, { noremap = true, desc = "go to type definition" })
@@ -1138,7 +1138,7 @@ require("lazy").setup({
     "seblj/roslyn.nvim",
     event = { "VeryLazy" },
     opts = {
-      filewatching = true,
+      filewatching = false,
       lock_target = false,
       broad_search = true
     }
