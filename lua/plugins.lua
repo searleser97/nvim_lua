@@ -452,7 +452,7 @@ require("lazy").setup({
     keys = {
       {
         '<c-r>f',
-        function() require('telescope').extensions.recent_files.pick() end,
+        "<Cmd>Telescope frecency workspace=CWD<CR>",
         noremap = true, desc = "recent files"
       }
     },
