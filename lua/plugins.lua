@@ -101,7 +101,7 @@ require("lazy").setup({
         end, { noremap = true, desc = "show diagnostics" })
         vim.keymap.set('n', 'H', function()
           local hoverContents = (function()
-            local params = vim.lsp.util.make_position_params()
+            local params = vim.lsp.util.make_position_params(0, 'utf-8')
             local results, err = vim.lsp.buf_request_sync(0, 'textDocument/hover', params)
             if err then
               print("Error: ", err)
@@ -236,6 +236,11 @@ require("lazy").setup({
               end)()
             }
             require("lspconfig").lua_ls.setup(lua_opts)
+          end,
+          ["rust_analyzer"] = function()
+            local rust_opts = {
+            }
+            require("lspconfig").rust_analyzer.setup(rust_opts)
           end
         }
       });
@@ -651,7 +656,7 @@ require("lazy").setup({
     cond = not vim.g.vscode,
     config = function()
       require("treesitter-context").setup({
-        multiline_threshold = 2
+        max_lines = 5
       })
     end
   },
