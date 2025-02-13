@@ -448,7 +448,7 @@ require("lazy").setup({
     end,
   },
   {
-    "smartpde/telescope-recent-files",
+    "nvim-telescope/telescope-frecency.nvim",
     keys = {
       {
         '<c-r>f',
@@ -456,12 +456,13 @@ require("lazy").setup({
         noremap = true, desc = "recent files"
       }
     },
+    -- install the latest stable version
+    version = "*",
     config = function()
-      require("telescope").load_extension("recent_files")
+      require("telescope").load_extension("frecency")
     end,
     dependencies = { "nvim-telescope/telescope.nvim" },
     cond = not vim.g.vscode,
-    lazy = true
   },
   {
     "https://github.com/ThePrimeagen/harpoon",
