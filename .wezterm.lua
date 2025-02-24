@@ -9,6 +9,11 @@ if package.config:sub(1,1) == '\\' then
   globalConfig.default_prog = { 'C:\\Program Files\\PowerShell\\7\\pwsh.exe' }
 end
 
+globalConfig.prefer_egl = true
+globalConfig.front_end = "Software"
+globalConfig.animation_fps = 1
+globalConfig.cursor_blink_ease_in = 'Constant'
+globalConfig.cursor_blink_ease_out = 'Constant'
 globalConfig.disable_default_key_bindings = true
 globalConfig.window_background_opacity = 0.8
 globalConfig.hide_tab_bar_if_only_one_tab = true
