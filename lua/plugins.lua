@@ -323,9 +323,22 @@ require("lazy").setup({
         function()
           require('telescope.builtin').find_files({
             cwd = require('myutils').getPathToGitDirOr(vim.loop.cwd()),
-            hidden = true,
-            no_ignore = true,
-            no_ignore_parent = true
+            find_command = function(prompt)
+              return {
+                "rg",
+                -- "--no-ignore",
+                "--files",
+                "--hidden",
+                "--follow",
+                "--no-heading",    -- Don't group matches by each file
+                "--with-filename", -- Print the file path with the matched lines
+                "--line-number",   -- Show line numbers
+                "--column",        -- Show column numbers
+                "--smart-case",    -- Smart case search
+                "--glob",
+                "!**/.git/*",
+              }
+            end
           })
         end,
         noremap = true, desc = "search files"
@@ -434,9 +447,6 @@ require("lazy").setup({
       {
         '<c-s>p',
         function()
-          print("entro")
-          print("entro")
-          print("entro")
           require("telescope-live-grep-args.shortcuts").grep_visual_selection({
             cwd = require('myutils').getPathToGitDirOr(vim.loop.cwd()),
             postfix = " -g \"*.*\"",
