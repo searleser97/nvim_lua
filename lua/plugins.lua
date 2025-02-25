@@ -241,6 +241,18 @@ require("lazy").setup({
             local rust_opts = {
             }
             require("lspconfig").rust_analyzer.setup(rust_opts)
+          end,
+          ["vtsls"] = function()
+            require("lspconfig").vtsls.setup({
+              filetypes = {
+                "typescript",
+                "typescriptreact",
+                "typescript.tsx",
+                "javascript",
+                "javascriptreact",
+                "javascript.jsx",
+              },
+            })
           end
         }
       });
