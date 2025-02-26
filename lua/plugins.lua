@@ -1187,7 +1187,7 @@ require("lazy").setup({
     keys = {
       {
         '<c-f>b',
-        function() vim.cmd("Neotree toggle") end,
+        function() vim.cmd("Neotree toggle reveal_file=%:p") end,
         noremap = true, desc = "File Browser"
       }
     },
@@ -1201,9 +1201,15 @@ require("lazy").setup({
           },
         },
         mappings = {
-          ["<C-d>"] = { "scroll_preview", config = { direction = -10 } },
-          ["<C-u>"] = { "scroll_preview", config = { direction = 10 } },
+          ["<PageDown>"] = { "scroll_preview", config = { direction = -10 } },
+          ["<PageUp>"] = { "scroll_preview", config = { direction = 10 } },
         }
+      },
+      filesystem = {
+        follow_current_file = {
+          enabled = true,
+          leave_dirs_open = false,
+        },
       }
     }
   }
