@@ -936,7 +936,6 @@ require("lazy").setup({
     cond = not vim.g.vscode,
     config = function ()
       local autoTheme = require('lualine.themes.auto')
-      autoTheme.normal.c.gui = "bold"
       require('lualine').setup({
         options = {
           theme = autoTheme,
@@ -950,8 +949,12 @@ require("lazy").setup({
           lualine_z = {"vim.fn.expand('%')"},
         },
         inactive_sections = {
-          lualine_x = {"vim.fn.expand('%')"},
-          lualine_c = {"location", "progress"}
+          lualine_a = {"location"},
+          lualine_b = {"progress"},
+          lualine_c = {"filetype", "fileformat", "encoding"},
+          lualine_x = {},
+          lualine_y = {},
+          lualine_z = {"vim.fn.expand('%')"},
         },
         tabline = {
           lualine_z = {'tabs'},
@@ -976,7 +979,7 @@ require("lazy").setup({
         ["yellow"] = "black",
         ["white"] = "black",
         ["cyan"] = "black",
-        ["light_grey"] = "black",
+        ["light_grey"] = "white",
         ["auto"] = "auto"
       }
 
@@ -984,13 +987,17 @@ require("lazy").setup({
         -- The following line tells lua to re-require the module, otherwise it just returns the cached module value
         package.loaded["lualine.themes.auto"] = nil
         local autoThemeLocal = require('lualine.themes.auto')
+        autoThemeLocal.inactive = autoThemeLocal.normal
         autoThemeLocal.normal.c.gui = "bold"
+        autoThemeLocal.inactive.c.gui = "bold"
         if opts.fargs[1] == "auto" then
           require('lualine').setup({ options = { theme = autoThemeLocal } })
         else
           autoThemeLocal.normal.c.bg = opts.fargs[1]
+          autoThemeLocal.inactive.c.bg = opts.fargs[1]
           if contrastantColors[opts.fargs[1]] then
             autoThemeLocal.normal.c.fg = contrastantColors[opts.fargs[1]]
+            autoThemeLocal.inactive.c.fg = contrastantColors[opts.fargs[1]]
           end
           require('lualine').setup({ options = { theme = autoThemeLocal } })
         end
@@ -1000,6 +1007,7 @@ require("lazy").setup({
           return vim.tbl_keys(contrastantColors)
         end
       })
+      vim.cmd("SetStatusLineBG light_grey")
     end
   },
   {
