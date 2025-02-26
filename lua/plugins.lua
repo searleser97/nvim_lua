@@ -474,18 +474,16 @@ require("lazy").setup({
     end,
   },
   {
-    "nvim-telescope/telescope-frecency.nvim",
+    "smartpde/telescope-recent-files",
     keys = {
       {
         '<c-r>f',
-        "<Cmd>Telescope frecency workspace=CWD<CR>",
+        require('telescope').extensions.recent_files.pick(),
         noremap = true, desc = "recent files"
       }
     },
-    -- install the latest stable version
-    version = "*",
     config = function()
-      require("telescope").load_extension("frecency")
+      require("telescope").load_extension("recent_files")
     end,
     dependencies = { "nvim-telescope/telescope.nvim" },
     cond = not vim.g.vscode,
