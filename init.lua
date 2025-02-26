@@ -32,7 +32,7 @@ if require('myutils').Is_Windows() then
   vim.api.nvim_create_autocmd('QuitPre', {
     -- the following callback blocks neovim, so no other action can occur until it finishes
     callback = function()
-      os.execute('del /Q "' .. vim.fn.stdpath("data") .. '\\shada\\main.shada.tmp.*"')
+      os.execute('del "' .. vim.fn.stdpath("data") .. '\\shada\\main.shada.tmp.*"')
     end,
   })
 end

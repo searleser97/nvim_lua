@@ -478,7 +478,7 @@ require("lazy").setup({
     keys = {
       {
         '<c-r>f',
-        require('telescope').extensions.recent_files.pick(),
+        function() require('telescope').extensions.recent_files.pick() end,
         noremap = true, desc = "recent files"
       }
     },
