@@ -30,9 +30,35 @@ vim.api.nvim_create_autocmd({ 'CursorMoved' }, {
 
 if require('myutils').Is_Windows() then
   vim.api.nvim_create_autocmd('QuitPre', {
-    -- the following callback blocks neovim, so no other action can occur until it finishes
     callback = function()
+
+      local log_file_path = vim.fn.stdpath("data") .. "\\shada_cleanup.log"
+      local log_file = io.open(log_file_path, "a")
+      if log_file then
+        log_file:write(os.date() .. " - Cleanup started\n")
+        log_file:close()
+      end
       os.execute('del "' .. vim.fn.stdpath("data") .. '\\shada\\main.shada.tmp.*"')
-    end,
+      -- delete all tmp shada tmp files
+      -- for i = string.byte('f'), string.byte('z') do
+      --   local shadafile = vim.fn.stdpath("data") .. "\\shada\\main.shada.tmp." .. string.char(i)
+      --   local file = io.open(shadafile, "w")
+      --   if file then
+      --     file:write("Dummy content for " .. shadafile)
+      --     file:close()
+      --   end
+      -- end
+      -- vim.opt.shadafile = vim.fn.stdpath("data") .. "\\shada\\main.shada.tmp." .. os.time()
+      -- local ok, err = pcall(vim.cmd, 'wshada')
+      -- if not ok and err:match("E138: main%.shada%.tmp%.%d+ files exist") then
+        -- vim.opt.shadafile = vim.fn.stdpath("data") .. "\\shada\\main.shada.tmp." .. os.time()
+        -- vim.cmd('wshada')
+      -- end
+      log_file = io.open(log_file_path, "a")
+      if log_file then
+        log_file:write(os.date() .. " - Cleanup completed\n")
+        log_file:close()
+      end
+    end
   })
 end
