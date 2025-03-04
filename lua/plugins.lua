@@ -253,6 +253,18 @@ require("lazy").setup({
                 "javascript.jsx",
               },
             })
+          end,
+          ["eslint"] = function()
+            require("lspconfig").eslint.setup({
+              filetypes = {
+                "typescript",
+                "typescriptreact",
+                "typescript.tsx",
+                "javascript",
+                "javascriptreact",
+                "javascript.jsx",
+              },
+            })
           end
         }
       });
@@ -319,10 +331,39 @@ require("lazy").setup({
     "nvim-telescope/telescope.nvim",
     keys = {
       {
-        '<c-s>f',
+        '<c-s>fr',
         function()
           require('telescope.builtin').find_files({
             cwd = require('myutils').getPathToGitDirOr(vim.loop.cwd()),
+            find_command = function(prompt)
+              return {
+                "rg",
+                -- "--no-ignore",
+                "--files",
+                "--hidden",
+                "--follow",
+                "--no-heading",    -- Don't group matches by each file
+                "--with-filename", -- Print the file path with the matched lines
+                "--line-number",   -- Show line numbers
+                "--column",        -- Show column numbers
+                "--smart-case",    -- Smart case search
+                "--glob",
+                "!**/.git/*",
+              }
+            end
+          })
+        end,
+        noremap = true, desc = "search files"
+      },
+      {
+        '<c-s>fp',
+        function()
+          require('telescope.builtin').find_files({
+            cwd = require('myutils').getPathToProjectOr(
+              require('myutils').getPathToGitDirOr(
+                vim.loop.cwd()),
+                { "*.csproj", "package.json", ".git" }
+            ),
             find_command = function(prompt)
               return {
                 "rg",
@@ -387,7 +428,7 @@ require("lazy").setup({
           path_display = {"tail"}, -- "smart", "tail"
           mappings = {
             i = {
-              ["<cr>"] = actions.select_default + actions.center,
+              ["<cr>"] = actions.select_default,
               ["<c-Left>"] = actions.preview_scrolling_left,
               ["<c-Right>"] = actions.preview_scrolling_right,
               ["<c-Up>"] = actions.cycle_history_prev,
@@ -406,12 +447,8 @@ require("lazy").setup({
             respect_gitignore = false,
             no_ignore = true,
             hidden = true,
-            mappings = {
-              i = {
-                -- looks like file browser does not support the center action I use in default mappings
-                ["<cr>"] = actions.select_default
-              }
-            }
+            depth = 5,
+            grouped = true,
           }
         },
         pickers = {
@@ -424,23 +461,6 @@ require("lazy").setup({
       });
     end
   },
-  --[[ {
-    "nvim-telescope/telescope-file-browser.nvim",
-    keys = {
-      {
-        '<c-f>b',
-        ':Telescope file_browser path=%:p:h select_buffer=true<CR>',
-        noremap = true, desc = "File Browser"
-      }
-    },
-    dependencies = {
-      "nvim-telescope/telescope.nvim",
-    },
-    cond = not vim.g.vscode,
-    config = function ()
-      require("telescope").load_extension("file_browser")
-    end,
-  },]]
   {
     "nvim-telescope/telescope-live-grep-args.nvim",
     keys = {
@@ -852,14 +872,14 @@ require("lazy").setup({
       {
         '<leader>gl',
         function()
-          require("gitlinker").get_buf_range_url("n", {action_callback = require("gitlinker.actions").open_in_browser})
+          require("gitlinker").get_buf_range_url("n", {action_callback = require("gitlinker.actions").copy_to_clipboard})
         end,
         silent = true
       },
       {
         '<leader>gl',
         function()
-          require("gitlinker").get_buf_range_url("v", {action_callback = require("gitlinker.actions").open_in_browser})
+          require("gitlinker").get_buf_range_url("v", {action_callback = require("gitlinker.actions").copy_to_clipboard})
         end,
         silent = true, mode = 'v'
       }
@@ -1186,9 +1206,9 @@ require("lazy").setup({
     },
     keys = {
       {
-        '<c-f>b',
+        '<c-f>t',
         function() vim.cmd("Neotree toggle reveal_file=%:p") end,
-        noremap = true, desc = "File Browser"
+        noremap = true, desc = "File Tree"
       }
     },
     opts = {
