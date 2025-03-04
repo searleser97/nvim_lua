@@ -353,7 +353,7 @@ require("lazy").setup({
             end
           })
         end,
-        noremap = true, desc = "search files"
+        noremap = true, desc = "search files in repo"
       },
       {
         '<c-s>fp',
@@ -382,7 +382,7 @@ require("lazy").setup({
             end
           })
         end,
-        noremap = true, desc = "search files"
+        noremap = true, desc = "search files in project"
       },
       {
         '<c-s>m',
