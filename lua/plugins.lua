@@ -1090,7 +1090,7 @@ require("lazy").setup({
       require("CopilotChat").setup({
         debug = false, -- Enable debugging
         chat_autocomplete = true,
-        context = "buffers",
+        context = "quickfix",
         window = {
           layout = 'float',
           width = 0.8,
@@ -1102,23 +1102,6 @@ require("lazy").setup({
           },
         },
         contexts = {
-          file = {
-            input = function(callback)
-              local telescope = require("telescope.builtin")
-              local actions = require("telescope.actions")
-              local action_state = require("telescope.actions.state")
-              telescope.find_files({
-                attach_mappings = function(prompt_bufnr)
-                  actions.select_default:replace(function()
-                    actions.close(prompt_bufnr)
-                    local selection = action_state.get_selected_entry()
-                    callback(selection[1])
-                  end)
-                  return true
-                end,
-              })
-            end,
-          },
         },
       })
       vim.api.nvim_create_autocmd("BufEnter", {
@@ -1229,6 +1212,38 @@ require("lazy").setup({
         follow_current_file = {
           enabled = true,
           leave_dirs_open = false,
+        },
+      }
+    }
+  },
+  {
+    'stevearc/quicker.nvim',
+    ft = 'qf',
+    event = "FileType qf",
+    keys = {
+      {
+        "<leader>q",
+        function()
+          require("quicker").toggle()
+        end,
+        desc = "Toggle quickfix context",
+      },
+    },
+    opts = {
+      keys = {
+        {
+          ">",
+          function()
+            require("quicker").expand({ before = 2, after = 2, add_to_existing = true })
+          end,
+          desc = "Expand quickfix context",
+        },
+        {
+          "<",
+          function()
+            require("quicker").collapse()
+          end,
+          desc = "Collapse quickfix context",
         },
       }
     }
