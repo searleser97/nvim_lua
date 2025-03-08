@@ -1113,6 +1113,7 @@ require("lazy").setup({
     build = Is_Windows() and nil or "make tiktoken", -- Only on MacOS or Linux
     config = function()
       require("CopilotChat").setup({
+        model = "claude-3.7-sonnet",
         debug = false, -- Enable debugging
         chat_autocomplete = true,
         context = "quickfix",
