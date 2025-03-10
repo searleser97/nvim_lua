@@ -13,7 +13,7 @@ vim.api.nvim_create_autocmd({ 'CursorMoved' }, {
       local curr_cursor_pos = vim.fn.getcurpos()
       local currLine = curr_cursor_pos[2]
       local currWindow = vim.api.nvim_get_current_win()
-      if vim.bo.buftype ~= 'terminal' and math.abs(prevLine - currLine) > 13 and prevWindow == currWindow then
+      if vim.bo.buftype ~= 'terminal' and vim.bo.buftype ~= 'nofile' and math.abs(prevLine - currLine) > 13 and prevWindow == currWindow then
         if vim.g.vscode then
           local vscode = require("vscode-neovim")
           local current_line = vim.api.nvim_win_get_cursor(0)[1]
