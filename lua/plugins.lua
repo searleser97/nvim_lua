@@ -74,7 +74,7 @@ require("lazy").setup({
       {'hrsh7th/cmp-nvim-lsp'}, -- Required
       {'L3MON4D3/LuaSnip'},     -- Required
     },
-    cond = not vim.g.vscode,
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     event = { 'VeryLazy' },
     config = function()
       local lsp_zero = require("lsp-zero").preset({})
@@ -297,7 +297,7 @@ require("lazy").setup({
     "nvim-treesitter/nvim-treesitter",
     event = { 'BufNewFile', 'BufReadPost' },
     build = ":TSUpdate",
-    cond = not vim.g.vscode,
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     config = function()
       require("nvim-treesitter.configs").setup({
         ensure_installed = { "bash", "lua", "vim", "vimdoc", "rust", "typescript", "javascript", "json", "tsx", "c_sharp" },
@@ -438,7 +438,7 @@ require("lazy").setup({
     dependencies = {
       "nvim-lua/plenary.nvim"
     },
-    cond = not vim.g.vscode,
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     config = function()
       local telescope = require("telescope");
       local actions = require("telescope.actions");
@@ -510,7 +510,7 @@ require("lazy").setup({
         mode = 'n', noremap = true, desc = "search pattern"
       }
     },
-    cond = not vim.g.vscode,
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     dependencies = {
       "nvim-telescope/telescope.nvim"
     },
@@ -567,7 +567,7 @@ require("lazy").setup({
     dependencies = {
       "nvim-telescope/telescope.nvim"
     },
-    cond = not vim.g.vscode,
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     config = function()
       -- harpoon depends on the current working directory remaining static through out the session
       -- therefore, in nvim-rooter, we are just setting directories related to source-control
@@ -700,7 +700,7 @@ require("lazy").setup({
       })
 
     end,
-    cond = not vim.g.vscode,
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     event = { 'VeryLazy' }
   },
   {
@@ -770,7 +770,7 @@ require("lazy").setup({
       "sidlatau/neotest-dart"
     },
     event = { 'VeryLazy' },
-    cond = not vim.g.vscode,
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     config = function ()
       require("neotest").setup({
         adapters = {
@@ -784,7 +784,7 @@ require("lazy").setup({
   },
   {
     "lukas-reineke/indent-blankline.nvim",
-    cond = not vim.g.vscode,
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     event = { 'VeryLazy' },
     config = function ()
       require("ibl").setup()
@@ -792,7 +792,7 @@ require("lazy").setup({
   },
   {
     "sindrets/diffview.nvim",
-    cond = not vim.g.vscode,
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     keys = {
       {
         '<c-g>s',
@@ -830,7 +830,7 @@ require("lazy").setup({
   {
     "nvim-tree/nvim-web-devicons",
     event = { 'VeryLazy' },
-    cond = not vim.g.vscode
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile()
   },
   {
     "lewis6991/gitsigns.nvim",
@@ -886,7 +886,7 @@ require("lazy").setup({
       }
     },
     event = { 'VeryLazy' },
-    cond = not vim.g.vscode,
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     config = function ()
       require('gitsigns').setup()
     end
@@ -909,7 +909,7 @@ require("lazy").setup({
         silent = true, mode = 'v'
       }
     },
-    cond = not vim.g.vscode,
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     config = function ()
       local handler = function(url_data)
         local base_url = require"gitlinker.hosts".get_base_https_url(url_data)
@@ -940,7 +940,7 @@ require("lazy").setup({
       { "<c-s>S", ":SessionsSave ", noremap = true, desc = "Save new Session" }
     },
     lazy = vim.fn.argc() > 0,
-    cond = not vim.g.vscode,
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     dependencies = {
       "nvim-telescope/telescope.nvim"
     },
@@ -957,7 +957,7 @@ require("lazy").setup({
   },
   {
     "folke/which-key.nvim",
-    cond = not vim.g.vscode,
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     init = function()
       vim.o.timeout = true
       vim.o.timeoutlen = 300
@@ -976,7 +976,7 @@ require("lazy").setup({
       'folke/tokyonight.nvim',
       opt = true,
     },
-    cond = not vim.g.vscode,
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     config = function ()
       local autoTheme = require('lualine.themes.auto')
       require('lualine').setup({
@@ -1070,7 +1070,7 @@ require("lazy").setup({
     "pteroctopus/faster.nvim",
     lazy = vim.fn.argc() == 0,
     event = { 'VeryLazy' },
-    cond = not vim.g.vscode,
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     opts = {
       behaviours = {
         bigfile = {
@@ -1084,6 +1084,7 @@ require("lazy").setup({
   },
   {
     "CopilotC-Nvim/CopilotChat.nvim",
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     cmd = "CopilotChat",
     keys = {
       { '<leader>cc', function() require("CopilotChat").toggle() end, mode = { 'n', 'x' }, noremap = true },
@@ -1167,6 +1168,7 @@ require("lazy").setup({
   },
   {
     "stevearc/conform.nvim",
+    cond = not isNeovimOpenedWithGitFile(),
     event = { "BufWritePre" },
     cmd = { "ConformInfo" },
     keys = {
@@ -1199,6 +1201,7 @@ require("lazy").setup({
   {
     "seblj/roslyn.nvim",
     event = { "VeryLazy" },
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     opts = {
       filewatching = false,
       lock_target = false,
@@ -1207,6 +1210,7 @@ require("lazy").setup({
   },
   {
     "nvim-neo-tree/neo-tree.nvim",
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     branch = "v3.x",
     dependencies = {
       "nvim-lua/plenary.nvim",
@@ -1244,6 +1248,7 @@ require("lazy").setup({
   },
   {
     'stevearc/quicker.nvim',
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     ft = 'qf',
     event = "FileType qf",
     keys = {
