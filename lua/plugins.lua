@@ -468,13 +468,20 @@ require("lazy").setup({
           }
         },
         extensions = {
-          -- file_browser = {
-          --   respect_gitignore = false,
-          --   no_ignore = true,
-          --   hidden = true,
-          --   depth = 5,
-          --   grouped = true,
-          -- }
+          file_browser = {
+            respect_gitignore = true,
+            hidden = false,
+            grouped = true,
+            depth = 1,
+            mappings = {
+              ["i"] = {
+                ["<C-o>"] = Is_Windows() and require("myutils").my_open or nil
+              },
+              ["n"] = {
+                ["o"] = Is_Windows() and require("myutils").my_open or nil
+              }
+            }
+          }
         },
         pickers = {
           git_branches = {
@@ -1285,12 +1292,19 @@ require("lazy").setup({
         "<c-f>br",
         function()
           require("telescope").extensions.file_browser.file_browser({
-            -- path = "%:p:h",
             cwd = require('myutils').getPathToGitDirOr(vim.loop.cwd()),
             respect_gitignore = true,
             hidden = false,
             grouped = true,
             depth = 1,
+            mappings = {
+              ["i"] = {
+                ["<C-o>"] = require("myutils").my_open
+              },
+              ["n"] = {
+                ["o"] = require("myutils").my_open
+              }
+            }
           })
         end,
         noremap = true, desc = "File Browser in Repository"
@@ -1299,7 +1313,6 @@ require("lazy").setup({
         "<c-f>bp",
         function()
           require("telescope").extensions.file_browser.file_browser({
-            -- path = "%:p:h",
             cwd = require('myutils').getPathToProjectOr(
               require('myutils').getPathToGitDirOr(
                 vim.loop.cwd()),
@@ -1309,6 +1322,14 @@ require("lazy").setup({
             hidden = false,
             grouped = true,
             depth = 1,
+            mappings = {
+              ["i"] = {
+                ["<c-o>"] = require("myutils").my_open
+              },
+              ["n"] = {
+                ["o"] = require("myutils").my_open
+              }
+            }
           })
         end,
         noremap = true, desc = "File Browser in Project"
@@ -1317,12 +1338,7 @@ require("lazy").setup({
         "<c-f>bh",
         function()
           require("telescope").extensions.file_browser.file_browser({
-            -- path = "%:p:h",
             cwd = require('myutils').getPathToCurrentDir(),
-            respect_gitignore = true,
-            hidden = false,
-            grouped = true,
-            depth = 1,
           })
         end,
         noremap = true, desc = "File Browser here"

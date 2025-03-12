@@ -41,4 +41,21 @@ utils.getPathToCurrentDir = function()
   return currentDir
 end
 
+utils.my_open = function(prompt_bufnr)
+  local action_state = require("telescope.actions.state")
+  local actions = require("telescope.actions")
+  local fb_utils = require("telescope._extensions.file_browser.utils")
+  local quiet = action_state.get_current_picker(prompt_bufnr).finder.quiet
+  local selections = fb_utils.get_selected_files(prompt_bufnr, true)
+  if vim.tbl_isempty(selections) then
+    fb_utils.notify("actions.open", { msg = "No selection to be opened!", level = "INFO", quiet = quiet })
+    return
+  end
+
+  for _, selection in ipairs(selections) do
+    vim.cmd(string.format('silent !start "%s"', selection:absolute()))
+  end
+  actions.close(prompt_bufnr)
+end
+
 return utils
