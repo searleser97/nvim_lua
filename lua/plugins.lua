@@ -1293,18 +1293,6 @@ require("lazy").setup({
         function()
           require("telescope").extensions.file_browser.file_browser({
             cwd = require('myutils').getPathToGitDirOr(vim.loop.cwd()),
-            respect_gitignore = true,
-            hidden = false,
-            grouped = true,
-            depth = 1,
-            mappings = {
-              ["i"] = {
-                ["<C-o>"] = require("myutils").my_open
-              },
-              ["n"] = {
-                ["o"] = require("myutils").my_open
-              }
-            }
           })
         end,
         noremap = true, desc = "File Browser in Repository"
@@ -1318,18 +1306,6 @@ require("lazy").setup({
                 vim.loop.cwd()),
                 { "*.csproj", "package.json", ".git" }
             ),
-            respect_gitignore = true,
-            hidden = false,
-            grouped = true,
-            depth = 1,
-            mappings = {
-              ["i"] = {
-                ["<c-o>"] = require("myutils").my_open
-              },
-              ["n"] = {
-                ["o"] = require("myutils").my_open
-              }
-            }
           })
         end,
         noremap = true, desc = "File Browser in Project"
