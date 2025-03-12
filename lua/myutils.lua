@@ -35,7 +35,7 @@ utils.getPathToProjectOr = function(defaultPath, projectFilePatterns)
   return defaultPath
 end
 
-utils.getPathToCurrentDir = function(defaultPath)
+utils.getPathToCurrentDir = function()
   local currentFile = vim.fn.expand('%:p')
   local currentDir = vim.fn.fnamemodify(currentFile, ":h")
   return currentDir
