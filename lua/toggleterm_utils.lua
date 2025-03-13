@@ -124,11 +124,11 @@ return {
       function() execGitCommand("diff") end,
       noremap = true, silent = true, desc = "git diff", mode = { 'n', 't' }
     },
-    {
-      "<c-g>l",
-      function() execGitCommand('log -p --pretty=format:"' .. gitPrettyFormatWithDescription .. '"') end,
-      noremap = true, silent = true, desc = "git log", mode = { 'n', 't' }
-    },
+    -- {
+    --   "<c-g>L",
+    --   function() execGitCommand('log -p --pretty=format:"' .. gitPrettyFormatWithDescription .. '"') end,
+    --   noremap = true, silent = true, desc = "git log", mode = { 'n', 't' }
+    -- },
     {
       "<c-g>g",
       function() execGitCommand('log --graph --pretty=format:"' .. gitPrettyFormat .. '"') end,
@@ -164,11 +164,13 @@ return {
       function() execGitCommand("fetch") end,
       noremap = true, desc = "git fetch", mode = { 'n', 't' }
     },
-    {'<leader>gh', function()
-      execGitCommand(
-        'log -p --follow --pretty=format:"' .. gitPrettyFormatWithDescription .. '" -- ' .. vim.api.nvim_buf_get_name(0)
-      )
-    end,noremap = true, desc = "git file history", mode = {'n', 't'}},
+    -- {
+    --   '<c-g>H', function()
+    --     execGitCommand(
+    --       'log -p --follow --pretty=format:"' .. gitPrettyFormatWithDescription .. '" -- ' .. vim.api.nvim_buf_get_name(0)
+    --     )
+    --   end,noremap = true, desc = "git file history", mode = {'n', 't'}
+    -- },
     {
       '<c-g>t',
       function()

@@ -473,6 +473,7 @@ require("lazy").setup({
             hidden = false,
             grouped = true,
             depth = 1,
+            hijack_netrw = true,
             mappings = {
               ["i"] = {
                 ["<C-o>"] = Is_Windows() and require("myutils").my_open or nil
@@ -805,7 +806,17 @@ require("lazy").setup({
         '<c-g>s',
         "<cmd>DiffviewToggle<cr>",
         noremap = true, desc = "git status", mode = { 'n', 't' }
-      }
+      },
+      {
+        '<c-g>lb',
+        "<cmd>DiffviewFileHistory<cr>",
+        noremap = true, desc = "log branch", mode = { 'n', 't' }
+      },
+      {
+        '<c-g>lf',
+        "<cmd>DiffviewFileHistory %<cr>",
+        noremap = true, desc = "log file", mode = { 'n', 't' }
+      },
     },
     config = function ()
       require("diffview").setup({
