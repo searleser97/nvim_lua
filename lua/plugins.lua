@@ -961,18 +961,18 @@ require("lazy").setup({
     "ruifm/gitlinker.nvim",
     keys = {
       {
-        '<leader>gl',
+        '<leader>cl',
         function()
           require("gitlinker").get_buf_range_url("n", {action_callback = require("gitlinker.actions").copy_to_clipboard})
         end,
-        silent = true
+        silent = true, description = "copy link to current line"
       },
       {
-        '<leader>gl',
+        '<leader>cl',
         function()
           require("gitlinker").get_buf_range_url("v", {action_callback = require("gitlinker.actions").copy_to_clipboard})
         end,
-        silent = true, mode = 'v'
+        silent = true, mode = 'v', description = "copy link to selected lines"
       }
     },
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
