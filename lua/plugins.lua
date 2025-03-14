@@ -498,24 +498,72 @@ require("lazy").setup({
     "nvim-telescope/telescope-live-grep-args.nvim",
     keys = {
       {
-        '<c-s>p',
+        '<c-s>pr',
         function()
           require("telescope-live-grep-args.shortcuts").grep_visual_selection({
             cwd = require('myutils').getPathToGitDirOr(vim.loop.cwd()),
             postfix = " -g \"*.*\"",
           })
         end,
-        mode = 'x', noremap = true, desc = "search pattern"
+        mode = 'x', noremap = true, desc = "search pattern repo"
       },
       {
-        '<c-s>p',
+        '<c-s>pp',
+        function()
+          require("telescope-live-grep-args.shortcuts").grep_visual_selection({
+            cwd = require('myutils').getPathToProjectOr(
+              require('myutils').getPathToGitDirOr(
+                vim.loop.cwd()),
+                { "*.csproj", "package.json", ".git" }
+            ),
+            postfix = " -g \"*.*\"",
+          })
+        end,
+        mode = 'x', noremap = true, desc = "search pattern project"
+      },
+      {
+        '<c-s>ph',
+        function()
+          require("telescope-live-grep-args.shortcuts").grep_visual_selection({
+            cwd = require('myutils').getPathToCurrentDir(),
+            postfix = " -g \"*.*\"",
+          })
+        end,
+        mode = 'x', noremap = true, desc = "search pattern here"
+      },
+      {
+        '<c-s>pr',
         function()
           require('telescope').extensions.live_grep_args.live_grep_args({
             cwd = require('myutils').getPathToGitDirOr(vim.loop.cwd()),
             postfix = " -g \"*.*\"",
           })
         end,
-        mode = 'n', noremap = true, desc = "search pattern"
+        mode = 'n', noremap = true, desc = "search pattern repo"
+      },
+      {
+        '<c-s>pp',
+        function()
+          require('telescope').extensions.live_grep_args.live_grep_args({
+            cwd = require('myutils').getPathToProjectOr(
+              require('myutils').getPathToGitDirOr(
+                vim.loop.cwd()),
+                { "*.csproj", "package.json", ".git" }
+            ),
+            postfix = " -g \"*.*\"",
+          })
+        end,
+        mode = 'n', noremap = true, desc = "search pattern project"
+      },
+      {
+        '<c-s>ph',
+        function()
+          require('telescope').extensions.live_grep_args.live_grep_args({
+            cwd = require('myutils').getPathToCurrentDir(),
+            postfix = " -g \"*.*\"",
+          })
+        end,
+        mode = 'n', noremap = true, desc = "search pattern here"
       }
     },
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
