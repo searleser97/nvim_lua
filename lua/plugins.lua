@@ -979,8 +979,10 @@ require("lazy").setup({
     config = function ()
       local handler = function(url_data)
         local base_url = require"gitlinker.hosts".get_base_https_url(url_data)
-        print(vim.inspect(url_data))
-        local url = base_url .. "?path=/" .. url_data.file
+        local normalized_file_path = url_data.file:gsub("\\", "/")
+        local repo_path = require('myutils').getPathToGitDirOr(vim.loop.cwd())
+        local relative_file_path = normalized_file_path:gsub("^" .. vim.pesc(repo_path) .. "[/\\]?", "")
+        local url = base_url .. "?path=/" .. relative_file_path
         if url_data.lstart then
           url = url .. "&version=GC" .. url_data.rev
           url = url .. "&line=" .. url_data.lstart
