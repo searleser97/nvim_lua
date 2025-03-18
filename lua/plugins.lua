@@ -861,7 +861,7 @@ require("lazy").setup({
         noremap = true, desc = "log branch", mode = { 'n', 't' }
       },
       {
-        '<c-g>lf',
+        '<leader>lf',
         "<cmd>DiffviewFileHistory %<cr>",
         noremap = true, desc = "log file", mode = { 'n', 't' }
       },
@@ -1383,6 +1383,17 @@ require("lazy").setup({
     },
     "nvim-telescope/telescope-file-browser.nvim",
     dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }
-  }
+  },
+  {
+    keys = {
+      {
+        "<leader>gb",
+        "<cmd>BlameToggle<cr>",
+        noremap = true, desc = "Git Blame"
+      }
+    },
+    "FabijanZulj/blame.nvim",
+    opts = {}
+  },
 })
 
