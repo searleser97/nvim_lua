@@ -610,7 +610,7 @@ require("lazy").setup({
       },
       unpack((function()
         local key_mappings = {}
-        for i = 1, 9 do
+        for i = 1, 10 do
           table.insert(key_mappings, {
             '<F' .. i .. '>',
             function() require('harpoon'):list():select(i) end,
