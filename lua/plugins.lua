@@ -965,14 +965,14 @@ require("lazy").setup({
         function()
           require("gitlinker").get_buf_range_url("n", {action_callback = require("gitlinker.actions").copy_to_clipboard})
         end,
-        silent = true, description = "copy link to current line"
+        silent = true, desc = "copy link to current line"
       },
       {
         '<leader>cl',
         function()
           require("gitlinker").get_buf_range_url("v", {action_callback = require("gitlinker.actions").copy_to_clipboard})
         end,
-        silent = true, mode = 'v', description = "copy link to selected lines"
+        silent = true, mode = 'v', desc = "copy link to selected lines"
       }
     },
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
