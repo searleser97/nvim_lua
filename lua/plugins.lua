@@ -1324,7 +1324,28 @@ require("lazy").setup({
     event = "FileType qf",
     keys = {
       {
-        "<leader>q",
+        '<leader>qa',
+        function()
+          vim.fn.setqflist({
+            {
+              filename = vim.fn.expand('%:p'),
+              text = vim.fn.expand('%:p'),
+            },
+          }, 'a')
+          require("quicker").open()
+        end,
+        desc = "quickfix list add current file", noremap = true
+      },
+      {
+        '<leader>qe',
+        function()
+          vim.fn.setqflist({})
+          require("quicker").open()
+        end,
+        desc = "quickfix empty", noremap = true
+      },
+      {
+        "<leader>qt",
         function()
           require("quicker").toggle()
         end,
