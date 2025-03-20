@@ -22,6 +22,7 @@ vim.keymap.set({'n', 'x'}, 'R', '<C-r>', { noremap = true })
 
 if not vim.g.vscode then
 
+  vim.keymap.set({'n'}, '<leader>tc', '<cmd>tabc<cr>', { noremap = true, desc = "tab close" })
   local pastedInInsertMode = false
 
   vim.api.nvim_create_autocmd("TextChangedI", {

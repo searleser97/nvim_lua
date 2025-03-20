@@ -858,12 +858,12 @@ require("lazy").setup({
       {
         '<c-g>lb',
         "<cmd>DiffviewFileHistory<cr>",
-        noremap = true, desc = "log branch", mode = { 'n', 't' }
+        noremap = true, desc = "git log branch", mode = { 'n', 't' }
       },
       {
-        '<leader>lf',
+        '<leader>glf',
         "<cmd>DiffviewFileHistory %<cr>",
-        noremap = true, desc = "log file", mode = { 'n', 't' }
+        noremap = true, desc = "git log file", mode = { 'n', 't' }
       },
     },
     config = function ()
