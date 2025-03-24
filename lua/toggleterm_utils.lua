@@ -75,7 +75,7 @@ function CloseAllVisibleTerms(ignore)
   end
 end
 
-local gitPrettyFormat = "commit %C(#FFDE59)%h%Creset %aI %aN  %s"
+local gitPrettyFormat = "commit %C(#FFDE59)%h%Creset %aI %C(blue)%aN%Creset %s %C(blue)%D%Creset"
 local gitPrettyFormatWithDescription = gitPrettyFormat .. "%n%n%b"
 
 return {
@@ -131,7 +131,7 @@ return {
     -- },
     {
       "<c-g>g",
-      function() execGitCommand('log --graph --pretty=format:"' .. gitPrettyFormat .. '"') end,
+      function() execGitCommand('log --graph --pretty=format:"' .. gitPrettyFormat .. '" main HEAD') end,
       noremap = true, silent = true, desc = "git graph", mode = { 'n', 't' }
     },
     {

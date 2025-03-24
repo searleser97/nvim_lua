@@ -1275,8 +1275,8 @@ require("lazy").setup({
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     opts = {
       filewatching = false,
-      lock_target = false,
-      broad_search = true
+      lock_target = true,
+      broad_search = false
     }
   },
   {
