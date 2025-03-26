@@ -388,7 +388,7 @@ require("lazy").setup({
         '<c-s>fh',
         function()
           require('telescope.builtin').find_files({
-            cwd = require('myutils').getPathToCurrentDir(),
+            cwd = require('myutils').getPathToCurrentDir({ "__tests?__" }),
             find_command = function(prompt)
               return {
                 "rg",

@@ -35,9 +35,21 @@ utils.getPathToProjectOr = function(defaultPath, projectFilePatterns)
   return defaultPath
 end
 
-utils.getPathToCurrentDir = function()
+utils.getPathToCurrentDir = function(ignore)
   local currentFile = vim.fn.expand('%:p')
   local currentDir = vim.fn.fnamemodify(currentFile, ":h")
+  local path_sep = package.config:sub(1,1)
+  -- Default ignore patterns if none provided
+  ignore = ignore or {}
+
+  -- Check if current directory ends with any of the ignore patterns
+  for _, pattern in ipairs(ignore) do
+    local is_ignored = string.match(currentDir, path_sep .. pattern .. "$")
+    if is_ignored then
+      return vim.fn.fnamemodify(currentDir, ":h")
+    end
+  end
+  
   return currentDir
 end
 
