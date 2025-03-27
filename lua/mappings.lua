@@ -53,10 +53,8 @@ if not vim.g.vscode then
     end)
   end, { noremap = true })
 
-  vim.keymap.set({'n', 'x'}, '<C-u>', '2<C-y>M', { noremap = true })
-  vim.keymap.set({'n', 'x'}, '<C-d>', '2<C-e>M', { noremap = true })
-  vim.keymap.set({'n', 'x'}, '<PageUp>', '<C-u>M', { noremap = true })
-  vim.keymap.set({'n', 'x'}, '<PageDown>', '<C-d>M', { noremap = true })
+  vim.keymap.set({'n', 'x'}, '<PageUp>', '2<C-y>', { noremap = true })
+  vim.keymap.set({'n', 'x'}, '<PageDown>', '2<C-e>', { noremap = true })
   vim.keymap.set("n", "<c-p>", "<c-o>", { noremap = true })
   vim.keymap.set("n", "<c-n>", "<c-i>", { noremap = true })
   -- fine-grained undo
