@@ -30,7 +30,9 @@ session_utils.open_session_action = function ()
     attach_mappings = function (_, map)
       map("i", "<cr>", function (prompt_bufnr)
         actions.close(prompt_bufnr)
-        sessions.load(string.sub(action_state.get_selected_entry()[1], 1, -9))
+        local session_name = string.sub(action_state.get_selected_entry()[1], 1, -9)
+        vim.g.session_name = session_name
+        sessions.load(session_name)
       end)
       return true
     end

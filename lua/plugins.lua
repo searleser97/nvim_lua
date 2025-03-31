@@ -1058,9 +1058,10 @@ require("lazy").setup({
           lualine_z = {"vim.fn.expand('%')"},
         },
         tabline = {
-          lualine_z = {'tabs'},
+          lualine_a = {'mode'},
           lualine_b = {'branch'},
-          lualine_a = {'mode'}
+          lualine_z = {'tabs'},
+          lualine_y = {"vim.g.session_name"}
         }
       })
 
