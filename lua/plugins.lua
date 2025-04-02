@@ -595,14 +595,14 @@ require("lazy").setup({
     keys = {
       {
         '<leader>ha',
-        function() require('harpoon'):list():add() end,
+        function() require('harpoon'):list(vim.g.session_name):add() end,
         noremap = true,
         desc = "harpoon add",
       },
       {
         '<c-h>l',
         function()
-          require('harpoon').ui:toggle_quick_menu(require('harpoon'):list(), {
+          require('harpoon').ui:toggle_quick_menu(require('harpoon'):list(vim.g.session_name), {
             ui_width_ratio = 0.95,
           })
         end,
@@ -613,7 +613,7 @@ require("lazy").setup({
         for i = 1, 10 do
           table.insert(key_mappings, {
             '<F' .. i .. '>',
-            function() require('harpoon'):list():select(i) end,
+            function() require('harpoon'):list(vim.g.session_name):select(i) end,
             noremap = true,
           })
         end
@@ -627,7 +627,13 @@ require("lazy").setup({
     config = function()
       -- harpoon depends on the current working directory remaining static through out the session
       -- therefore, in nvim-rooter, we are just setting directories related to source-control
-      require("harpoon"):setup()
+      require("harpoon"):setup({
+        settings = {
+          key = function()
+            return "single_harpoon_file_for_all_dirs"
+          end,
+        }
+      })
     end
   },
   {
