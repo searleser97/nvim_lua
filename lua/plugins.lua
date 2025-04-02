@@ -590,8 +590,9 @@ require("lazy").setup({
     cond = not vim.g.vscode,
   },
   {
-    "https://github.com/ThePrimeagen/harpoon",
-    branch = "harpoon2",
+    "https://github.com/searleser97/harpoon",
+    -- branch = "harpoon2",
+    branch = "allow_data_to_use_partial_config_key_fn",
     keys = {
       {
         '<leader>ha',
