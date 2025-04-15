@@ -22,7 +22,7 @@ local getGitTerm = _getGitTerm()
 
 local execGitCommand = function(command)
   local gitTerm = getGitTerm()
-  local gitCommandFull = "git"
+  local gitCommandFull = "git -c core.pager='less -S'"
   if (vim.api.nvim_win_get_width(0) < 150) then
     gitCommandFull = gitCommandFull .. " -c delta.side-by-side=false"
   else
