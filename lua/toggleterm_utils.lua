@@ -75,7 +75,7 @@ function CloseAllVisibleTerms(ignore)
   end
 end
 
-local gitPrettyFormat = "commit %C(#FFDE59)%h%Creset %aI %C(blue)%aN%Creset %s %C(blue)%D%Creset"
+local gitPrettyFormat = "%C(#FFDE59)%h%Creset %aI %C(blue)%aN%Creset %s %C(blue)%D%Creset"
 local gitPrettyFormatWithDescription = gitPrettyFormat .. "%n%n%b"
 
 return {
