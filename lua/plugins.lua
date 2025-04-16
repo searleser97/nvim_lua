@@ -856,21 +856,32 @@ require("lazy").setup({
   {
     "sindrets/diffview.nvim",
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
+    cmd = { 'DiffviewOpen', 'DiffviewClose',  'DiffviewFileHistory' },
     keys = {
       {
         '<c-g>s',
         "<cmd>DiffviewOpen<cr>",
-        noremap = true, desc = "git status", mode = { 'n', 't' }
+        noremap = true, desc = "git status", mode = { 'n' }
       },
       {
-        '<c-g>lb',
-        "<cmd>DiffviewFileHistory<cr>",
-        noremap = true, desc = "git log branch", mode = { 'n', 't' }
+        '<c-g>l',
+        "<cmd>DiffviewFileHistory -n=512<cr>",
+        noremap = true, desc = "git log branch", mode = { 'n' }
       },
       {
-        '<leader>glf',
-        "<cmd>DiffviewFileHistory %<cr>",
-        noremap = true, desc = "git log file", mode = { 'n', 't' }
+        '<leader>gl',
+        "<cmd>DiffviewFileHistory % -n=512<cr>",
+        noremap = true, desc = "git log file", mode = { 'n' }
+      },
+      {
+        '<leader>gl',
+        ":DiffviewFileHistory % -L<line1>,<line2> -n=512<CR>",
+        noremap = true, desc = "git log visual range", mode = { 'v' }
+      },
+      {
+        '<c-g>dm',
+        "<cmd>DiffviewOpen main..HEAD<cr>",
+        noremap = true, desc = "git diff with main branch", mode = { 'n' }
       },
     },
     config = function ()

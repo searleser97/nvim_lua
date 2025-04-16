@@ -22,7 +22,10 @@ local getGitTerm = _getGitTerm()
 
 local execGitCommand = function(command)
   local gitTerm = getGitTerm()
-  local gitCommandFull = "git -c core.pager='less -S'"
+  -- -S to disable line wrapping
+  -- -N to show line numbers
+  -- -i to ignore case when searching
+  local gitCommandFull = "git -c core.pager='less -S -N -i'"
   if (vim.api.nvim_win_get_width(0) < 150) then
     gitCommandFull = gitCommandFull .. " -c delta.side-by-side=false"
   else
@@ -114,16 +117,16 @@ return {
       end,
       noremap = true, mode = 'n'
     },
-    {
-      "<c-g>D",
-      function() execGitCommand("diff --staged") end,
-      noremap = true, silent = true, desc = "git diff --staged", mode = { 'n', 't' }
-    },
-    {
-      "<c-g>d",
-      function() execGitCommand("diff") end,
-      noremap = true, silent = true, desc = "git diff", mode = { 'n', 't' }
-    },
+    -- {
+    --   "<c-g>D",
+    --   function() execGitCommand("diff --staged") end,
+    --   noremap = true, silent = true, desc = "git diff --staged", mode = { 'n', 't' }
+    -- },
+    -- {
+    --   "<c-g>d",
+    --   function() execGitCommand("diff") end,
+    --   noremap = true, silent = true, desc = "git diff", mode = { 'n', 't' }
+    -- },
     -- {
     --   "<c-g>L",
     --   function() execGitCommand('log -p --pretty=format:"' .. gitPrettyFormatWithDescription .. '"') end,
