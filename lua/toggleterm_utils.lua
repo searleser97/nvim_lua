@@ -26,11 +26,11 @@ local execGitCommand = function(command)
   -- -N to show line numbers
   -- -i to ignore case when searching
   local gitCommandFull = "git -c core.pager='less -S -N -i'"
-  if (vim.api.nvim_win_get_width(0) < 150) then
-    gitCommandFull = gitCommandFull .. " -c delta.side-by-side=false"
-  else
-    gitCommandFull = gitCommandFull .. " -c delta.side-by-side=true"
-  end
+  -- if (vim.api.nvim_win_get_width(0) < 150) then
+  --   gitCommandFull = gitCommandFull .. " -c delta.side-by-side=false"
+  -- else
+  --   gitCommandFull = gitCommandFull .. " -c delta.side-by-side=true"
+  -- end
   gitCommandFull = gitCommandFull .. " " .. command
   if (gitTerm:is_open()) then
     gitTerm:send(gitCommandFull)
@@ -134,7 +134,7 @@ return {
     -- },
     {
       "<c-g>g",
-      function() execGitCommand('log --graph --pretty=format:"' .. gitPrettyFormat .. '" main HEAD') end,
+      function() execGitCommand('log --pretty=format:"' .. gitPrettyFormat .. '" HEAD main --graph') end,
       noremap = true, silent = true, desc = "git graph", mode = { 'n', 't' }
     },
     {
