@@ -35,7 +35,7 @@ require("lazy").setup({
       "tpope/vim-repeat"
     },
     keys = {
-      { ']]', '<Plug>(leap-forward)', mode = { 'n', 'x' } },
+      { ']]', '<Plug>(leap-forward)',  mode = { 'n', 'x' } },
       { '[[', '<Plug>(leap-backward)', mode = { 'n', 'x' } },
     },
     config = function()
@@ -64,15 +64,15 @@ require("lazy").setup({
     branch = 'v3.x',
     dependencies = {
       -- LSP Support
-      {'neovim/nvim-lspconfig'},             -- Required
-      {'williamboman/mason.nvim'},           -- Optional
-      {'williamboman/mason-lspconfig.nvim'}, -- Optional
-      {'nvim-telescope/telescope.nvim'},
+      { 'neovim/nvim-lspconfig' },             -- Required
+      { 'williamboman/mason.nvim' },           -- Optional
+      { 'williamboman/mason-lspconfig.nvim' }, -- Optional
+      { 'nvim-telescope/telescope.nvim' },
 
       -- Autocompletion
-      {'hrsh7th/nvim-cmp'},     -- Required
-      {'hrsh7th/cmp-nvim-lsp'}, -- Required
-      {'L3MON4D3/LuaSnip'},     -- Required
+      { 'hrsh7th/nvim-cmp' },     -- Required
+      { 'hrsh7th/cmp-nvim-lsp' }, -- Required
+      { 'L3MON4D3/LuaSnip' },     -- Required
     },
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     event = { 'VeryLazy' },
@@ -91,8 +91,10 @@ require("lazy").setup({
         -- lsp_zero.highlight_symbol(client, buffer)
         local telescope_builtin = require('telescope.builtin')
         vim.keymap.set('n', 'gd', telescope_builtin.lsp_definitions, { noremap = true, desc = "go to definition" })
-        vim.keymap.set('n', 'gt', telescope_builtin.lsp_type_definitions, { noremap = true, desc = "go to type definition" })
-        vim.keymap.set('n', 'gi', telescope_builtin.lsp_implementations, { noremap = true, desc = "go to implementation" })
+        vim.keymap.set('n', 'gt', telescope_builtin.lsp_type_definitions,
+          { noremap = true, desc = "go to type definition" })
+        vim.keymap.set('n', 'gi', telescope_builtin.lsp_implementations,
+          { noremap = true, desc = "go to implementation" })
         vim.keymap.set('n', 'gr', telescope_builtin.lsp_references, { noremap = true, desc = "go to references" })
         vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, { noremap = true, desc = "go to references" })
         vim.keymap.set('n', '<leader>sd', function()
@@ -152,31 +154,35 @@ require("lazy").setup({
                 if diagnostic.lnum < diagnostic.end_lnum then
                   local leftPadding = string.rep(" ", diagnostic.col - 1);
                   local rightPadding = string.rep(" ", maxLineLength - #leftPadding - #codeLine)
-                  table.insert(highlights, { line = #combined, hl_group = code_hl_group, endCol = maxLineLength, startCol = 0 })
+                  table.insert(highlights,
+                    { line = #combined, hl_group = code_hl_group, endCol = maxLineLength, startCol = 0 })
                   table.insert(combined, leftPadding .. codeLine .. rightPadding)
                 else -- same line
                   if #codeLine == 0 then
                     local colDesc = "in column: " .. diagnostic.col
-                    table.insert(highlights, { line = #combined, hl_group = code_hl_group, endCol = #colDesc, startCol = 0 })
+                    table.insert(highlights,
+                      { line = #combined, hl_group = code_hl_group, endCol = #colDesc, startCol = 0 })
                     table.insert(combined, colDesc)
                   else
-                    table.insert(highlights, { line = #combined, hl_group = code_hl_group, endCol = #codeLine, startCol = 0 })
+                    table.insert(highlights,
+                      { line = #combined, hl_group = code_hl_group, endCol = #codeLine, startCol = 0 })
                     table.insert(combined, codeLine)
                   end
                 end
               else
-                table.insert(highlights, { line = #combined, hl_group = code_hl_group, endCol = maxLineLength, startCol = 0 })
+                table.insert(highlights,
+                  { line = #combined, hl_group = code_hl_group, endCol = maxLineLength, startCol = 0 })
                 local rightPadding = string.rep(" ", maxLineLength - #codeLine)
                 table.insert(combined, codeLine .. rightPadding)
               end
               if j == #diagnosticCodeInRange then
-                  table.insert(combined, "```")
+                table.insert(combined, "```")
               end
             end
 
             local startOfDiagnosticMsg = i .. ". "
             local msgLines = vim.lsp.util
-              .convert_input_to_markdown_lines(diagnostic.message)
+                .convert_input_to_markdown_lines(diagnostic.message)
             for j, msgLine in pairs(msgLines) do
               local formattedMsgLine = ""
               if j == 1 then
@@ -194,12 +200,19 @@ require("lazy").setup({
                   formattedMsgLine = formattedMsgLine .. " [" .. diagnostic.code .. "]"
                 end
               end
-              table.insert(highlights, { line = #combined, hl_group = highlight_map[diagnostic.severity], endCol = #startOfDiagnosticMsg + #msgLine + 1, startCol = #startOfDiagnosticMsg })
+              table.insert(highlights,
+                {
+                  line = #combined,
+                  hl_group = highlight_map[diagnostic.severity],
+                  endCol = #startOfDiagnosticMsg +
+                      #msgLine + 1,
+                  startCol = #startOfDiagnosticMsg
+                })
               table.insert(combined, formattedMsgLine)
             end
           end
 
-          if #combined > 0 and  #hoverContents > 0 then
+          if #combined > 0 and #hoverContents > 0 then
             table.insert(combined, "----------------")
             table.insert(combined, "# LSP Info")
           end
@@ -212,13 +225,16 @@ require("lazy").setup({
             return
           end
 
-          local buf, win = vim.lsp.util.open_floating_preview(combined, "markdown", { border = 'rounded', focusable = true, focus = true })
+          local buf, win = vim.lsp.util.open_floating_preview(combined, "markdown",
+            { border = 'rounded', focusable = true, focus = true })
           vim.api.nvim_set_current_win(win)
           for _, highlight in pairs(highlights) do
-            vim.api.nvim_buf_add_highlight(buf, -1,  highlight.hl_group, highlight.line, highlight.startCol, highlight.endCol)
+            vim.api.nvim_buf_add_highlight(buf, -1, highlight.hl_group, highlight.line, highlight.startCol,
+              highlight.endCol)
           end
         end, { noremap = true, desc = "Hover Info" })
-        vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { noremap = true, desc = "code action" }) end)
+        vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { noremap = true, desc = "code action" })
+      end)
 
       require("mason").setup({})
       require("mason-lspconfig").setup({
@@ -308,9 +324,9 @@ require("lazy").setup({
       parser_config.bond = {
         install_info = {
           url = "https://github.com/jorgenbele/tree-sitter-bond", -- local path or git repo
-          files = {"src/parser.c"}, -- note that some parsers also require src/scanner.c or src/scanner.cc
+          files = { "src/parser.c" },                             -- note that some parsers also require src/scanner.c or src/scanner.cc
         },
-        filetype = "bond", -- if filetype does not match the parser name
+        filetype = "bond",                                        -- if filetype does not match the parser name
       }
 
       vim.treesitter.language.register('bond', 'bond')
@@ -353,7 +369,8 @@ require("lazy").setup({
             end
           })
         end,
-        noremap = true, desc = "search files in repo"
+        noremap = true,
+        desc = "search files in repo"
       },
       {
         '<c-s>fp',
@@ -362,7 +379,7 @@ require("lazy").setup({
             cwd = require('myutils').getPathToProjectOr(
               require('myutils').getPathToGitDirOr(
                 vim.loop.cwd()),
-                { "*.csproj", "package.json", ".git" }
+              { "*.csproj", "package.json", ".git" }
             ),
             find_command = function(prompt)
               return {
@@ -382,7 +399,8 @@ require("lazy").setup({
             end
           })
         end,
-        noremap = true, desc = "search files in project"
+        noremap = true,
+        desc = "search files in project"
       },
       {
         '<c-s>fh',
@@ -407,22 +425,26 @@ require("lazy").setup({
             end
           })
         end,
-        noremap = true, desc = "search files here"
+        noremap = true,
+        desc = "search files here"
       },
       {
         '<c-s>m',
         function() require('telescope.builtin').marks() end,
-        noremap = true, desc = "search marks"
+        noremap = true,
+        desc = "search marks"
       },
       {
         '<c-g>B',
         function() require('telescope.builtin').git_branches() end,
-        noremap = true, desc = "git branches"
+        noremap = true,
+        desc = "git branches"
       },
       {
         '<c-g>S',
         function() require('telescope.builtin').git_stash() end,
-        noremap = true, desc = "git stash"
+        noremap = true,
+        desc = "git stash"
       },
       {
         '<leader>help',
@@ -432,7 +454,8 @@ require("lazy").setup({
       {
         '<c-s>s',
         function() require('telescope.builtin').treesitter() end,
-        noremap = true, desc = "show symbols"
+        noremap = true,
+        desc = "show symbols"
       }
     },
     dependencies = {
@@ -450,7 +473,7 @@ require("lazy").setup({
             vertical = { width = 0.95, height = 0.95, preview_height = 0.6 },
             horizontal = { width = 0.95, height = 0.95, preview_width = 0.6 }
           },
-          path_display = {"tail"}, -- "smart", "tail"
+          path_display = { "tail" }, -- "smart", "tail"
           mappings = {
             i = {
               ["<cr>"] = actions.select_default,
@@ -459,10 +482,10 @@ require("lazy").setup({
               ["<c-Up>"] = actions.cycle_history_prev,
               ["<c-Down>"] = actions.cycle_history_next,
               ["<c-v>"] = function()
-                vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<c-r>+", true, true, true), 'i' , false)
+                vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<c-r>+", true, true, true), 'i', false)
               end,
               ["<c-p>"] = function()
-                vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<c-r>"', true, true, true), 'i' , false)
+                vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<c-r>"', true, true, true), 'i', false)
               end
             }
           }
@@ -505,7 +528,9 @@ require("lazy").setup({
             postfix = " -g \"*.*\"",
           })
         end,
-        mode = 'x', noremap = true, desc = "search pattern repo"
+        mode = 'x',
+        noremap = true,
+        desc = "search pattern repo"
       },
       {
         '<c-s>pp',
@@ -514,12 +539,14 @@ require("lazy").setup({
             cwd = require('myutils').getPathToProjectOr(
               require('myutils').getPathToGitDirOr(
                 vim.loop.cwd()),
-                { "*.csproj", "package.json", ".git" }
+              { "*.csproj", "package.json", ".git" }
             ),
             postfix = " -g \"*.*\"",
           })
         end,
-        mode = 'x', noremap = true, desc = "search pattern project"
+        mode = 'x',
+        noremap = true,
+        desc = "search pattern project"
       },
       {
         '<c-s>ph',
@@ -529,7 +556,9 @@ require("lazy").setup({
             postfix = " -g \"*.*\"",
           })
         end,
-        mode = 'x', noremap = true, desc = "search pattern here"
+        mode = 'x',
+        noremap = true,
+        desc = "search pattern here"
       },
       {
         '<c-s>pr',
@@ -539,7 +568,9 @@ require("lazy").setup({
             postfix = " -g \"*.*\"",
           })
         end,
-        mode = 'n', noremap = true, desc = "search pattern repo"
+        mode = 'n',
+        noremap = true,
+        desc = "search pattern repo"
       },
       {
         '<c-s>pp',
@@ -548,12 +579,14 @@ require("lazy").setup({
             cwd = require('myutils').getPathToProjectOr(
               require('myutils').getPathToGitDirOr(
                 vim.loop.cwd()),
-                { "*.csproj", "package.json", ".git" }
+              { "*.csproj", "package.json", ".git" }
             ),
             postfix = " -g \"*.*\"",
           })
         end,
-        mode = 'n', noremap = true, desc = "search pattern project"
+        mode = 'n',
+        noremap = true,
+        desc = "search pattern project"
       },
       {
         '<c-s>ph',
@@ -563,7 +596,9 @@ require("lazy").setup({
             postfix = " -g \"*.*\"",
           })
         end,
-        mode = 'n', noremap = true, desc = "search pattern here"
+        mode = 'n',
+        noremap = true,
+        desc = "search pattern here"
       }
     },
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
@@ -580,7 +615,8 @@ require("lazy").setup({
       {
         '<c-r>f',
         function() require('telescope').extensions.recent_files.pick() end,
-        noremap = true, desc = "recent files"
+        noremap = true,
+        desc = "recent files"
       }
     },
     config = function()
@@ -607,7 +643,8 @@ require("lazy").setup({
             ui_width_ratio = 0.95,
           })
         end,
-        noremap = true, desc = "harpoon list"
+        noremap = true,
+        desc = "harpoon list"
       },
       unpack((function()
         local key_mappings = {}
@@ -652,19 +689,19 @@ require("lazy").setup({
       local types = require("cmp.types")
       cmp.setup({
         sources = {
-          { name = "copilot", group_index = 1 },
+          { name = "copilot",                 group_index = 1 },
           { name = 'nvim_lsp_signature_help', group_index = 1 },
-          { name = 'async_path', group_index = 1 },
-          { name = 'nvim_lsp', group_index = 1  },
-          { name = 'buffer', group_index = 1 },
-          { name = 'nvim_lua', group_index = 1  },
+          { name = 'async_path',              group_index = 1 },
+          { name = 'nvim_lsp',                group_index = 1 },
+          { name = 'buffer',                  group_index = 1 },
+          { name = 'nvim_lua',                group_index = 1 },
         },
         preselect = 'item',
         completion = {
           completeopt = 'menu,menuone,noinsert'
         },
         mapping = {
-          ['<tab>'] = { i = cmp.mapping.confirm({select = true}) },
+          ['<tab>'] = { i = cmp.mapping.confirm({ select = true }) },
           ['<Down>'] = {
             i = cmp.mapping.select_next_item({ behavior = types.cmp.SelectBehavior.Select }),
           },
@@ -685,7 +722,7 @@ require("lazy").setup({
       require("tokyonight").setup({
         style = "storm", -- The theme comes in three styles, `storm`, `moon`, a darker variant `night` and `day`
         transparent = true,
-        on_colors = function (colors)
+        on_colors = function(colors)
           colors.diff.add = "#28444d"
           colors.diff.change = colors.none
           colors.diff.text = "#87632f"
@@ -703,18 +740,23 @@ require("lazy").setup({
         '<leader>ct',
         function()
           local mode = vim.fn.mode()
-          if  mode == 'V' then
+          if mode == 'V' then
             return "<Plug>(comment_toggle_linewise_visual)"
           elseif mode == 'v' then
             return "<Plug>(comment_toggle_blockwise_visual)"
           end
         end,
-        mode = 'x', noremap = true, expr = true, replace_keycodes = true, desc = "comment toggle"
+        mode = 'x',
+        noremap = true,
+        expr = true,
+        replace_keycodes = true,
+        desc = "comment toggle"
       },
       {
         '<leader>ct',
         '<Plug>(comment_toggle_linewise_current)',
-        noremap = true, desc = "comment toggle"
+        noremap = true,
+        desc = "comment toggle"
       }
     },
     config = function()
@@ -761,7 +803,6 @@ require("lazy").setup({
           end, 100)
         end
       })
-
     end,
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     event = { 'VeryLazy' }
@@ -791,11 +832,12 @@ require("lazy").setup({
   {
     'Wansmer/treesj',
     keys = {
-     {
-       '<leader>ts',
-       function() require('treesj').toggle({ split = { recursive = true } }) end,
-       noremap = true, desc = "toggle split",
-     }
+      {
+        '<leader>ts',
+        function() require('treesj').toggle({ split = { recursive = true } }) end,
+        noremap = true,
+        desc = "toggle split",
+      }
     },
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
     config = function()
@@ -815,10 +857,10 @@ require("lazy").setup({
     'akinsho/flutter-tools.nvim',
     event = { 'VeryLazy' },
     dependencies = {
-        'nvim-lua/plenary.nvim',
-        -- 'stevearc/dressing.nvim', -- optional for vim.ui.select
+      'nvim-lua/plenary.nvim',
+      -- 'stevearc/dressing.nvim', -- optional for vim.ui.select
     },
-    config = function ()
+    config = function()
       require("flutter-tools").setup()
     end,
     cond = not vim.g.vscode
@@ -834,7 +876,7 @@ require("lazy").setup({
     },
     event = { 'VeryLazy' },
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
-    config = function ()
+    config = function()
       require("neotest").setup({
         adapters = {
           require("neotest-dart") {
@@ -849,42 +891,71 @@ require("lazy").setup({
     "lukas-reineke/indent-blankline.nvim",
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     event = { 'VeryLazy' },
-    config = function ()
+    config = function()
       require("ibl").setup()
     end,
   },
   {
     "sindrets/diffview.nvim",
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
-    cmd = { 'DiffviewOpen', 'DiffviewClose',  'DiffviewFileHistory' },
+    cmd = { 'DiffviewOpen', 'DiffviewClose', 'DiffviewFileHistory' },
     keys = {
       {
         '<c-g>s',
         "<cmd>DiffviewOpen<cr>",
-        noremap = true, desc = "git status", mode = { 'n' }
+        noremap = true,
+        desc = "git status",
+        mode = { 'n' }
       },
       {
         '<c-g>l',
         "<cmd>DiffviewFileHistory -n=512<cr>",
-        noremap = true, desc = "git log branch", mode = { 'n' }
+        noremap = true,
+        desc = "git log branch",
+        mode = { 'n' }
       },
       {
         '<leader>gl',
         "<cmd>DiffviewFileHistory % -n=512<cr>",
-        noremap = true, desc = "git log file", mode = { 'n' }
+        noremap = true,
+        desc = "git log file",
+        mode = { 'n' }
       },
       {
         '<leader>gl',
         ":DiffviewFileHistory % -L<line1>,<line2> -n=512<CR>",
-        noremap = true, desc = "git log visual range", mode = { 'v' }
+        noremap = true,
+        desc = "git log visual range",
+        mode = { 'v' }
       },
       {
         '<c-g>dm',
         "<cmd>DiffviewOpen main..HEAD<cr>",
-        noremap = true, desc = "git diff with main branch", mode = { 'n' }
+        noremap = true,
+        desc = "git diff with given branch",
+        mode = { 'n' }
+      },
+      {
+        '<c-g>im',
+        function()
+          local merge_commit = vim.fn.input("merge commit: ")
+          -- using three dots (...) in the commit range is equivalent to:
+          -- git diff --name-only $(git merge-base merge_commit^2 merge_commit^1) merge_commit^1
+          -- https://stackoverflow.com/questions/7251477/what-are-the-differences-between-double-dot-and-triple-dot-in-git-dif
+          local cmd = "git diff --name-only " .. merge_commit .. "^2..." .. merge_commit .. "^1"
+          local file_paths_output = vim.fn.system(cmd):gsub("\r\n", "\n")
+          local file_paths = vim.fn.map(vim.split(file_paths_output, "\n", { trimempty = true }),
+            function(_, path) return '"' .. path .. '"' end)
+          local joined_file_paths = table.concat(file_paths, " ")
+          local diffview_cmd = "DiffviewOpen " .. merge_commit .. "^1.." .. merge_commit .. " -- " .. joined_file_paths
+          vim.cmd(diffview_cmd)
+        end,
+        noremap = true,
+        desc = "git inspect merge commit",
+        mode = { 'n' }
       },
     },
-    config = function ()
+    config = function()
       require("diffview").setup({
         enhanced_diff_hl = true,
         use_icons = true,
@@ -910,14 +981,15 @@ require("lazy").setup({
     "lewis6991/gitsigns.nvim",
     keys = {
       -- Actions
-      {'<leader>hs', function() require('gitsigns').stage_hunk() end, desc = "hunk stage" },
-      {'<leader>hr', function() require('gitsigns').reset_hunk() end, desc = "hunk reset" },
+      { '<leader>hs', function() require('gitsigns').stage_hunk() end, desc = "hunk stage" },
+      { '<leader>hr', function() require('gitsigns').reset_hunk() end, desc = "hunk reset" },
       {
         '<leader>hr',
-        function() require('gitsigns').reset_hunk {vim.fn.line('.'), vim.fn.line('v')} end,
-        desc = "hunk reset" , mode = "x"
+        function() require('gitsigns').reset_hunk { vim.fn.line('.'), vim.fn.line('v') } end,
+        desc = "hunk reset",
+        mode = "x"
       },
-      {'<leader>us', function() require('gitsigns').undo_stage_hunk() end, desc = "undo stage" },
+      { '<leader>us', function() require('gitsigns').undo_stage_hunk() end, desc = "undo stage" },
       {
         '<leader>hp',
         function()
@@ -926,19 +998,22 @@ require("lazy").setup({
         end,
         desc = "hunk preview"
       },
-      {'<leader>td', function() require('gitsigns').toggle_deleted() end, desc = "toggle deleted lines" },
+      { '<leader>td', function() require('gitsigns').toggle_deleted() end,  desc = "toggle deleted lines" },
       {
         '<leader>hs',
         function() require('gitsigns').stage_hunk { vim.fn.line('.'), vim.fn.line('v') } end,
-        desc = "hunk stage", mode = "x"
+        desc = "hunk stage",
+        mode = "x"
       },
       {
         '<leader>hb',
         function()
-          require('gitsigns').blame_line({ full=true })
-          vim.defer_fn(function() vim.fn.feedkeys(vim.api.nvim_replace_termcodes("<c-w><c-w>", true, true, true), 'n') end, 500)
+          require('gitsigns').blame_line({ full = true })
+          vim.defer_fn(
+            function() vim.fn.feedkeys(vim.api.nvim_replace_termcodes("<c-w><c-w>", true, true, true), 'n') end, 500)
         end,
-        desc = "hunk blame", mode = 'n'
+        desc = "hunk blame",
+        mode = 'n'
       },
       {
         ']c',
@@ -947,7 +1022,8 @@ require("lazy").setup({
           vim.schedule(function() require('gitsigns').next_hunk() end)
           return '<Ignore>'
         end,
-        expr = true, desc = "Hunk Next"
+        expr = true,
+        desc = "Hunk Next"
       },
       {
         '[c',
@@ -956,12 +1032,13 @@ require("lazy").setup({
           vim.schedule(function() require('gitsigns').prev_hunk() end)
           return '<Ignore>'
         end,
-        expr = true, desc = "Hunk Prev"
+        expr = true,
+        desc = "Hunk Prev"
       }
     },
     event = { 'VeryLazy' },
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
-    config = function ()
+    config = function()
       require('gitsigns').setup()
     end
   },
@@ -971,22 +1048,27 @@ require("lazy").setup({
       {
         '<leader>cl',
         function()
-          require("gitlinker").get_buf_range_url("n", {action_callback = require("gitlinker.actions").copy_to_clipboard})
+          require("gitlinker").get_buf_range_url("n",
+            { action_callback = require("gitlinker.actions").copy_to_clipboard })
         end,
-        silent = true, desc = "copy link to current line"
+        silent = true,
+        desc = "copy link to current line"
       },
       {
         '<leader>cl',
         function()
-          require("gitlinker").get_buf_range_url("v", {action_callback = require("gitlinker.actions").copy_to_clipboard})
+          require("gitlinker").get_buf_range_url("v",
+            { action_callback = require("gitlinker.actions").copy_to_clipboard })
         end,
-        silent = true, mode = 'v', desc = "copy link to selected lines"
+        silent = true,
+        mode = 'v',
+        desc = "copy link to selected lines"
       }
     },
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
-    config = function ()
+    config = function()
       local handler = function(url_data)
-        local base_url = require"gitlinker.hosts".get_base_https_url(url_data)
+        local base_url = require "gitlinker.hosts".get_base_https_url(url_data)
         local normalized_file_path = url_data.file:gsub("\\", "/")
         local repo_path = require('myutils').getPathToGitDirOr(vim.loop.cwd())
         local relative_file_path = normalized_file_path:gsub("^" .. vim.pesc(repo_path) .. "[/\\]?", "")
@@ -1013,7 +1095,7 @@ require("lazy").setup({
     "searleser97/sessions.nvim",
     keys = {
       { "<c-o>s", function() require('session_utils').open_session_action() end, noremap = true, desc = "open session" },
-      { "<c-s>S", ":SessionsSave ", noremap = true, desc = "Save new Session" }
+      { "<c-s>S", ":SessionsSave ",                                              noremap = true, desc = "Save new Session" }
     },
     lazy = vim.fn.argc() > 0,
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
@@ -1053,33 +1135,33 @@ require("lazy").setup({
       opt = true,
     },
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
-    config = function ()
+    config = function()
       local autoTheme = require('lualine.themes.auto')
       require('lualine').setup({
         options = {
           theme = autoTheme,
         },
         sections = {
-          lualine_a = {"location"},
-          lualine_b = {"progress"},
-          lualine_c = {"filetype", "fileformat", "encoding"},
+          lualine_a = { "location" },
+          lualine_b = { "progress" },
+          lualine_c = { "filetype", "fileformat", "encoding" },
           lualine_x = {},
           lualine_y = {},
-          lualine_z = {"vim.fn.expand('%')"},
+          lualine_z = { "vim.fn.expand('%')" },
         },
         inactive_sections = {
-          lualine_a = {"location"},
-          lualine_b = {"progress"},
-          lualine_c = {"filetype", "fileformat", "encoding"},
+          lualine_a = { "location" },
+          lualine_b = { "progress" },
+          lualine_c = { "filetype", "fileformat", "encoding" },
           lualine_x = {},
           lualine_y = {},
-          lualine_z = {"vim.fn.expand('%')"},
+          lualine_z = { "vim.fn.expand('%')" },
         },
         tabline = {
-          lualine_a = {'mode'},
-          lualine_b = {'branch'},
-          lualine_z = {'tabs'},
-          lualine_y = {"vim.g.session_name"}
+          lualine_a = { 'mode' },
+          lualine_b = { 'branch' },
+          lualine_z = { 'tabs' },
+          lualine_y = { "vim.g.session_name" }
         }
       })
 
@@ -1135,7 +1217,7 @@ require("lazy").setup({
     dependencies = "zbirenbaum/copilot.lua",
     cond = not vim.g.vscode,
     event = { "VeryLazy" },
-    config = function ()
+    config = function()
       require("copilot").setup({
         suggestion = { enabled = false },
         panel = { enabled = false },
@@ -1185,7 +1267,7 @@ require("lazy").setup({
     branch = "main",
     dependencies = {
       { "zbirenbaum/copilot.lua" }, -- or github/copilot.vim
-      { "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
+      { "nvim-lua/plenary.nvim" },  -- for curl, log wrapper
       { "nvim-telescope/telescope.nvim" },
     },
     build = Is_Windows() and nil or "make tiktoken", -- Only on MacOS or Linux
@@ -1301,11 +1383,12 @@ require("lazy").setup({
       {
         '<c-f>t',
         function() vim.cmd("Neotree toggle reveal_file=%:p") end,
-        noremap = true, desc = "File Tree"
+        noremap = true,
+        desc = "File Tree"
       }
     },
     opts = {
-      window = { -- see https://github.com/MunifTanjim/nui.nvim/tree/main/lua/nui/popup for
+      window = {  -- see https://github.com/MunifTanjim/nui.nvim/tree/main/lua/nui/popup for
         position = "float",
         popup = { -- settings that apply to float position only
           size = {
@@ -1343,7 +1426,8 @@ require("lazy").setup({
           }, 'a')
           require("quicker").open()
         end,
-        desc = "quickfix list add current file", noremap = true
+        desc = "quickfix list add current file",
+        noremap = true
       },
       {
         '<leader>qe',
@@ -1351,7 +1435,8 @@ require("lazy").setup({
           vim.fn.setqflist({})
           require("quicker").open()
         end,
-        desc = "quickfix empty", noremap = true
+        desc = "quickfix empty",
+        noremap = true
       },
       {
         "<leader>qt",
@@ -1389,7 +1474,8 @@ require("lazy").setup({
             cwd = require('myutils').getPathToGitDirOr(vim.loop.cwd()),
           })
         end,
-        noremap = true, desc = "File Browser in Repository"
+        noremap = true,
+        desc = "File Browser in Repository"
       },
       {
         "<c-f>bp",
@@ -1398,11 +1484,12 @@ require("lazy").setup({
             cwd = require('myutils').getPathToProjectOr(
               require('myutils').getPathToGitDirOr(
                 vim.loop.cwd()),
-                { "*.csproj", "package.json", ".git" }
+              { "*.csproj", "package.json", ".git" }
             ),
           })
         end,
-        noremap = true, desc = "File Browser in Project"
+        noremap = true,
+        desc = "File Browser in Project"
       },
       {
         "<c-f>bh",
@@ -1411,7 +1498,8 @@ require("lazy").setup({
             cwd = require('myutils').getPathToCurrentDir(),
           })
         end,
-        noremap = true, desc = "File Browser here"
+        noremap = true,
+        desc = "File Browser here"
       }
     },
     "nvim-telescope/telescope-file-browser.nvim",
@@ -1422,11 +1510,11 @@ require("lazy").setup({
       {
         "<leader>gb",
         "<cmd>BlameToggle<cr>",
-        noremap = true, desc = "Git Blame"
+        noremap = true,
+        desc = "Git Blame"
       }
     },
     "FabijanZulj/blame.nvim",
     opts = {}
   },
 })
-
