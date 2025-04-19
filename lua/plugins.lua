@@ -908,21 +908,21 @@ require("lazy").setup({
         mode = { 'n' }
       },
       {
-        '<c-g>l',
+        '<c-g>L',
         "<cmd>DiffviewFileHistory -n=512<cr>",
         noremap = true,
         desc = "git log branch",
         mode = { 'n' }
       },
       {
-        '<leader>gl',
+        '<leader>gL',
         "<cmd>DiffviewFileHistory % -n=512<cr>",
         noremap = true,
         desc = "git log file",
         mode = { 'n' }
       },
       {
-        '<leader>gl',
+        '<leader>gL',
         ":DiffviewFileHistory % -L<line1>,<line2> -n=512<CR>",
         noremap = true,
         desc = "git log visual range",

@@ -133,6 +133,11 @@ return {
     --   noremap = true, silent = true, desc = "git log", mode = { 'n', 't' }
     -- },
     {
+      "<c-g>l",
+      function() execGitCommand('log --pretty=format:"' .. gitPrettyFormat .. '" HEAD') end,
+      noremap = true, silent = true, desc = "git graph", mode = { 'n', 't' }
+    },
+    {
       "<c-g>g",
       function() execGitCommand('log --pretty=format:"' .. gitPrettyFormat .. '" HEAD main --graph') end,
       noremap = true, silent = true, desc = "git graph", mode = { 'n', 't' }
