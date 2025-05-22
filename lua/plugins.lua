@@ -771,6 +771,7 @@ require("lazy").setup({
   {
     "akinsho/toggleterm.nvim",
     keys = require('toggleterm_utils').keys,
+    cmd = 'ToggleTerm',
     config = function()
       require("toggleterm").setup({
         autochdir = true,
@@ -1009,8 +1010,6 @@ require("lazy").setup({
         '<leader>hb',
         function()
           require('gitsigns').blame_line({ full = true })
-          vim.defer_fn(
-            function() vim.fn.feedkeys(vim.api.nvim_replace_termcodes("<c-w><c-w>", true, true, true), 'n') end, 500)
         end,
         desc = "hunk blame",
         mode = 'n'
