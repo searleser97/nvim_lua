@@ -714,9 +714,8 @@ require("lazy").setup({
   },
   {
     "folke/tokyonight.nvim",
-    event = { 'VeryLazy' },
     name = "tokyonight",
-    priority = 1000,
+    lazy = false,
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     config = function()
       require("tokyonight").setup({
@@ -1092,11 +1091,12 @@ require("lazy").setup({
   },
   {
     "searleser97/sessions.nvim",
+    lazy = vim.fn.argc() > 0,
+    priority = 1000,
     keys = {
       { "<c-o>s", function() require('session_utils').open_session_action() end, noremap = true, desc = "open session" },
       { "<c-s>S", ":SessionsSave ",                                              noremap = true, desc = "Save new Session" }
     },
-    lazy = vim.fn.argc() > 0,
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     dependencies = {
       "nvim-telescope/telescope.nvim"
@@ -1127,7 +1127,7 @@ require("lazy").setup({
   },
   {
     "nvim-lualine/lualine.nvim",
-    event = { 'VeryLazy' },
+    lazy = false,
     dependencies = {
       'nvim-tree/nvim-web-devicons',
       'folke/tokyonight.nvim',
@@ -1226,9 +1226,9 @@ require("lazy").setup({
   },
   {
     "pteroctopus/faster.nvim",
-    lazy = vim.fn.argc() == 0,
-    event = { 'VeryLazy' },
-    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
+    lazy = false,
+    priority = 1000,
+    cond = not vim.g.vscode and vim.fn.argc() > 0,
     opts = {
       behaviours = {
         bigfile = {
@@ -1465,6 +1465,7 @@ require("lazy").setup({
     }
   },
   {
+    "nvim-telescope/telescope-file-browser.nvim",
     keys = {
       {
         "<c-f>br",
@@ -1501,7 +1502,6 @@ require("lazy").setup({
         desc = "File Browser here"
       }
     },
-    "nvim-telescope/telescope-file-browser.nvim",
     dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }
   },
   {
