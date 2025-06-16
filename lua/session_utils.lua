@@ -12,8 +12,7 @@ session_utils.open_session_action = function()
     local splitpath = vim.split(filepath, path.path.sep)
     table.insert(filenames, splitpath[#splitpath])
   end
-  local MiniPick = require('mini.pick')
-  MiniPick.ui_select(filenames, {
+  vim.ui.select(filenames, {
     prompt = "Select a session to open:",
     format_item = function(filename)
       return string.sub(filename, 1, -9)
