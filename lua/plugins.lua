@@ -1099,7 +1099,7 @@ require("lazy").setup({
     },
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     dependencies = {
-      "nvim-telescope/telescope.nvim"
+      "echasnovski/mini.pick"
     },
     config = function()
       require("sessions").setup({
@@ -1466,6 +1466,7 @@ require("lazy").setup({
   },
   {
     "nvim-telescope/telescope-file-browser.nvim",
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     keys = {
       {
         "<c-f>br",
@@ -1505,6 +1506,8 @@ require("lazy").setup({
     dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }
   },
   {
+    "FabijanZulj/blame.nvim",
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     keys = {
       {
         "<leader>gb",
@@ -1513,7 +1516,12 @@ require("lazy").setup({
         desc = "Git Blame"
       }
     },
-    "FabijanZulj/blame.nvim",
     opts = {}
   },
+  {
+    "echasnovski/mini.pick",
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
+    lazy = false,
+    opts = {}
+  }
 })
