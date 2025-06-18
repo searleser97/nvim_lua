@@ -1,13 +1,12 @@
-[core]
-    	commitgraph = true
-    	fsmonitor = true
-    	writeCommitGraph = true
 [feature]
-    manyFiles = true
+        manyFiles = true
 [core]
         editor = nvim
         pager = delta
         longpaths = true
+        commitgraph = true
+    	fsmonitor = true
+    	writeCommitGraph = true
 [push]
         autoSetupRemote = true
 [diff]
