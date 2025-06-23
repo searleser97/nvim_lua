@@ -12,16 +12,33 @@ session_utils.open_session_action = function()
     local splitpath = vim.split(filepath, path.path.sep)
     table.insert(filenames, splitpath[#splitpath])
   end
-  vim.ui.select(filenames, {
-    prompt = "Select a session to open:",
-    format_item = function(filename)
-      return string.sub(filename, 1, -9)
-    end,
-  }, function(selected)
-    local session_name = string.sub(selected, 1, -9)
-    vim.g.session_name = session_name
-    sessions.load(session_name)
-  end)
+  local useNativePicker = false;
+  if useNativePicker then
+    vim.ui.select(filenames, {
+      prompt = "Select a session to open:",
+      format_item = function(filename)
+        return string.sub(filename, 1, -9)
+      end,
+    }, function(selected)
+      local session_name = string.sub(selected, 1, -9)
+      vim.g.session_name = session_name
+      sessions.load(session_name)
+    end)
+  else
+    local MiniPick = require('mini.pick')
+    MiniPick.ui_select(filenames, {
+      prompt = "Select a session to open:",
+      format_item = function(filename)
+        return string.sub(filename, 1, -9)
+      end,
+    }, function(selected)
+      if selected then
+        local session_name = string.sub(selected, 1, -9)
+        vim.g.session_name = session_name
+        sessions.load(session_name)
+      end
+    end)
+  end
 end
 
 return session_utils

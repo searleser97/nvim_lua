@@ -12,6 +12,17 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 local Is_Windows = require('myutils').Is_Windows
+local codeFileTypes = {
+  "typescript",
+  "typescriptreact",
+  "javascript",
+  "javascriptreact",
+  "csharp",
+  "lua",
+  "rust",
+  "cpp",
+  "c"
+}
 
 local gitFilePatterns = { "COMMIT_EDITMSG", "git-rebase-todo" }
 local isNeovimOpenedWithGitFile = function()
@@ -715,7 +726,7 @@ require("lazy").setup({
   {
     "folke/tokyonight.nvim",
     name = "tokyonight",
-    lazy = false,
+    ft = codeFileTypes,
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     config = function()
       require("tokyonight").setup({
@@ -875,7 +886,7 @@ require("lazy").setup({
       "sidlatau/neotest-dart"
     },
     event = { 'VeryLazy' },
-    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
+    cond = false and not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     config = function()
       require("neotest").setup({
         adapters = {
@@ -1099,6 +1110,7 @@ require("lazy").setup({
     },
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     dependencies = {
+      "echasnovski/mini.pick"
     },
     config = function()
       require("sessions").setup({
@@ -1126,7 +1138,7 @@ require("lazy").setup({
   },
   {
     "nvim-lualine/lualine.nvim",
-    lazy = false,
+    ft = codeFileTypes,
     dependencies = {
       'nvim-tree/nvim-web-devicons',
       'folke/tokyonight.nvim',
@@ -1515,6 +1527,12 @@ require("lazy").setup({
         desc = "Git Blame"
       }
     },
+    opts = {}
+  },
+  {
+    "echasnovski/mini.pick",
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
+    lazy = false,
     opts = {}
   }
 })
