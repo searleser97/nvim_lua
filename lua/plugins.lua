@@ -21,7 +21,9 @@ local codeFileTypes = {
   "lua",
   "rust",
   "cpp",
-  "c"
+  "c",
+  "ps1",
+  "cmd"
 }
 
 local gitFilePatterns = { "COMMIT_EDITMSG", "git-rebase-todo" }
@@ -252,15 +254,11 @@ require("lazy").setup({
         handlers = {
           ["lua_ls"] = function()
             local lua_opts = lsp_zero.nvim_lua_ls()
-            lua_opts.settings.Lua.workspace.library = {
-              vim.env.VIMRUNTIME,
-              (function()
-                if Is_Windows() then
-                  return os.getenv('USERPROFILE') .. '\\AppData\\Local\\luvit-meta'
-                else
-                  return os.getenv('HOME') .. '/.config/luvit-meta'
-                end
-              end)()
+            lua_opts.settings.Lua = {
+              runtime = { version = 'LuaJIT' },
+              diagnostics = { globals = { 'vim' } },
+              workspace = { library = vim.api.nvim_get_runtime_file("", true) },
+              telemetry = { enable = false }
             }
             require("lspconfig").lua_ls.setup(lua_opts)
           end,
