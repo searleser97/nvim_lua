@@ -23,7 +23,8 @@ local codeFileTypes = {
   "cpp",
   "c",
   "ps1",
-  "cmd"
+  "cmd",
+  "json"
 }
 
 local gitFilePatterns = { "COMMIT_EDITMSG", "git-rebase-todo" }
@@ -823,7 +824,8 @@ require("lazy").setup({
         rooter_patterns = { '*_root.txt', '.git', '.hg', '.svn' }
       })
     end,
-    cond = not vim.g.vscode
+    cond = not vim.g.vscode,
+    ft = codeFileTypes
   },
   {
     "nvim-treesitter/nvim-treesitter-context",
