@@ -22,6 +22,7 @@ local codeFileTypes = {
   "rust",
   "cpp",
   "c",
+  "cs",
   "ps1",
   "cmd",
   "json"
@@ -250,7 +251,12 @@ require("lazy").setup({
         vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { noremap = true, desc = "code action" })
       end)
 
-      require("mason").setup({})
+      require("mason").setup({
+        registries = {
+          "github:mason-org/mason-registry",
+          "github:Crashdummyy/mason-registry",
+        }
+      })
       require("mason-lspconfig").setup({
         handlers = {
           ["lua_ls"] = function()
@@ -1371,7 +1377,7 @@ require("lazy").setup({
     end,
   },
   {
-    "seblj/roslyn.nvim",
+    "seblyng/roslyn.nvim",
     event = { "VeryLazy" },
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     opts = {
