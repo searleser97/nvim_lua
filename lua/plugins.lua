@@ -12,11 +12,15 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 local Is_Windows = require('myutils').Is_Windows
-local codeFileTypes = {
-  "typescript",
-  "typescriptreact",
+
+local javascriptFiletypes = {
   "javascript",
   "javascriptreact",
+  "typescript",
+  "typescriptreact",
+}
+
+local codeFileTypes = {
   "csharp",
   "lua",
   "rust",
@@ -27,6 +31,11 @@ local codeFileTypes = {
   "cmd",
   "json"
 }
+
+-- Add all javascript filetypes
+for _, v in ipairs(javascriptFiletypes) do
+  table.insert(codeFileTypes, v)
+end
 
 local gitFilePatterns = { "COMMIT_EDITMSG", "git-rebase-todo" }
 local isNeovimOpenedWithGitFile = function()
@@ -101,6 +110,140 @@ require("lazy").setup({
         [vim.diagnostic.severity.INFO] = 'DiagnosticFloatingInfo',
         [vim.diagnostic.severity.HINT] = 'DiagnosticFloatingHint',
       }
+      vim.keymap.set('n', 'H', function()
+        local hoverContents = (function()
+          local params = vim.lsp.util.make_position_params(0, 'utf-8')
+          local results, err = vim.lsp.buf_request_sync(0, 'textDocument/hover', params)
+          if err then
+            print("Error: ", err)
+            return {}
+          end
+          if not results then
+            return {}
+          else
+            local hoverContents = {}
+            for _, result in pairs(results) do
+              if result and result.result and result.result.contents then
+                for _, content in pairs(vim.lsp.util.convert_input_to_markdown_lines(result.result.contents)) do
+                  table.insert(hoverContents, content)
+                end
+              end
+            end
+            return hoverContents
+          end
+        end)()
+        local cursor = vim.api.nvim_win_get_cursor(0)
+        local line = cursor[1] - 1
+        local diagnostics = vim.diagnostic.get(0, { lnum = line })
+        local combined = {}
+        local highlights = {}
+        if #diagnostics > 0 then
+          table.insert(combined, "# Diagnostics")
+          table.insert(combined, "")
+        end
+        for i, diagnostic in pairs(diagnostics) do
+          local diagnosticCodeInRange = vim.api.nvim_buf_get_text(
+            0,
+            diagnostic.lnum,
+            diagnostic.col,
+            diagnostic.end_lnum,
+            diagnostic.end_col,
+            {}
+          )
+          local maxLineLength = 0
+          for j, codeLine in pairs(diagnosticCodeInRange) do
+            local lineLength = (j == 1 and diagnostic.col or 0) + #codeLine
+            if lineLength > maxLineLength then
+              maxLineLength = lineLength
+            end
+          end
+          for j, codeLine in pairs(diagnosticCodeInRange) do
+            if j == 1 then
+              table.insert(combined, "```" .. (#codeLine > 0 and vim.bo.filetype or ""))
+              if diagnostic.lnum < diagnostic.end_lnum then
+                local leftPadding = string.rep(" ", diagnostic.col - 1);
+                local rightPadding = string.rep(" ", maxLineLength - #leftPadding - #codeLine)
+                table.insert(highlights,
+                  { line = #combined, hl_group = code_hl_group, endCol = maxLineLength, startCol = 0 })
+                table.insert(combined, leftPadding .. codeLine .. rightPadding)
+              else -- same line
+                if #codeLine == 0 then
+                  local colDesc = "in column: " .. diagnostic.col
+                  table.insert(highlights,
+                    { line = #combined, hl_group = code_hl_group, endCol = #colDesc, startCol = 0 })
+                  table.insert(combined, colDesc)
+                else
+                  table.insert(highlights,
+                    { line = #combined, hl_group = code_hl_group, endCol = #codeLine, startCol = 0 })
+                  table.insert(combined, codeLine)
+                end
+              end
+            else
+              table.insert(highlights,
+                { line = #combined, hl_group = code_hl_group, endCol = maxLineLength, startCol = 0 })
+              local rightPadding = string.rep(" ", maxLineLength - #codeLine)
+              table.insert(combined, codeLine .. rightPadding)
+            end
+            if j == #diagnosticCodeInRange then
+              table.insert(combined, "```")
+            end
+          end
+
+          local startOfDiagnosticMsg = i .. ". "
+          local msgLines = vim.lsp.util
+              .convert_input_to_markdown_lines(diagnostic.message)
+          for j, msgLine in pairs(msgLines) do
+            local formattedMsgLine = ""
+            if j == 1 then
+              formattedMsgLine = startOfDiagnosticMsg
+            end
+            if j > 1 then
+              for _ = 1, #startOfDiagnosticMsg do
+                formattedMsgLine = formattedMsgLine .. " "
+              end
+            end
+            formattedMsgLine = formattedMsgLine .. msgLine
+            if j == #msgLines then
+              formattedMsgLine = formattedMsgLine
+              if diagnostic.code then
+                formattedMsgLine = formattedMsgLine .. " [" .. diagnostic.code .. "]"
+              end
+            end
+            table.insert(highlights,
+              {
+                line = #combined,
+                hl_group = highlight_map[diagnostic.severity],
+                endCol = #startOfDiagnosticMsg +
+                    #msgLine + 1,
+                startCol = #startOfDiagnosticMsg
+              })
+            table.insert(combined, formattedMsgLine)
+          end
+        end
+
+        if #combined > 0 and #hoverContents > 0 then
+          table.insert(combined, "----------------")
+          table.insert(combined, "# LSP Info")
+        end
+
+        for _, hoverContent in pairs(hoverContents) do
+          table.insert(combined, hoverContent)
+        end
+
+        if vim.tbl_isempty(combined) then
+          return
+        end
+
+        local buf, win = vim.lsp.util.open_floating_preview(combined, "markdown",
+          { border = 'rounded', focusable = true, focus = true })
+        vim.api.nvim_set_current_win(win)
+        for _, highlight in pairs(highlights) do
+          vim.api.nvim_buf_add_highlight(buf, -1, highlight.hl_group, highlight.line, highlight.startCol,
+            highlight.endCol)
+        end
+      end, { noremap = true, desc = "Hover Info" })
+      vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { noremap = true, desc = "code action" })
+
 
       lsp_zero.on_attach(function(client, buffer)
         -- lsp_zero.highlight_symbol(client, buffer)
@@ -116,140 +259,22 @@ require("lazy").setup({
           vim.diagnostic.open_float()
           vim.diagnostic.open_float() -- the second call moves my cursor inside the diagnostic window
         end, { noremap = true, desc = "show diagnostics" })
-        vim.keymap.set('n', 'H', function()
-          local hoverContents = (function()
-            local params = vim.lsp.util.make_position_params(0, 'utf-8')
-            local results, err = vim.lsp.buf_request_sync(0, 'textDocument/hover', params)
-            if err then
-              print("Error: ", err)
-              return {}
-            end
-            if not results then
-              return {}
-            else
-              local hoverContents = {}
-              for _, result in pairs(results) do
-                if result and result.result and result.result.contents then
-                  for _, content in pairs(vim.lsp.util.convert_input_to_markdown_lines(result.result.contents)) do
-                    table.insert(hoverContents, content)
-                  end
-                end
-              end
-              return hoverContents
-            end
-          end)()
-          local cursor = vim.api.nvim_win_get_cursor(0)
-          local line = cursor[1] - 1
-          local diagnostics = vim.diagnostic.get(0, { lnum = line })
-          local combined = {}
-          local highlights = {}
-          if #diagnostics > 0 then
-            table.insert(combined, "# Diagnostics")
-            table.insert(combined, "")
-          end
-          for i, diagnostic in pairs(diagnostics) do
-            local diagnosticCodeInRange = vim.api.nvim_buf_get_text(
-              0,
-              diagnostic.lnum,
-              diagnostic.col,
-              diagnostic.end_lnum,
-              diagnostic.end_col,
-              {}
-            )
-            local maxLineLength = 0
-            for j, codeLine in pairs(diagnosticCodeInRange) do
-              local lineLength = (j == 1 and diagnostic.col or 0) + #codeLine
-              if lineLength > maxLineLength then
-                maxLineLength = lineLength
-              end
-            end
-            for j, codeLine in pairs(diagnosticCodeInRange) do
-              if j == 1 then
-                table.insert(combined, "```" .. (#codeLine > 0 and vim.bo.filetype or ""))
-                if diagnostic.lnum < diagnostic.end_lnum then
-                  local leftPadding = string.rep(" ", diagnostic.col - 1);
-                  local rightPadding = string.rep(" ", maxLineLength - #leftPadding - #codeLine)
-                  table.insert(highlights,
-                    { line = #combined, hl_group = code_hl_group, endCol = maxLineLength, startCol = 0 })
-                  table.insert(combined, leftPadding .. codeLine .. rightPadding)
-                else -- same line
-                  if #codeLine == 0 then
-                    local colDesc = "in column: " .. diagnostic.col
-                    table.insert(highlights,
-                      { line = #combined, hl_group = code_hl_group, endCol = #colDesc, startCol = 0 })
-                    table.insert(combined, colDesc)
-                  else
-                    table.insert(highlights,
-                      { line = #combined, hl_group = code_hl_group, endCol = #codeLine, startCol = 0 })
-                    table.insert(combined, codeLine)
-                  end
-                end
-              else
-                table.insert(highlights,
-                  { line = #combined, hl_group = code_hl_group, endCol = maxLineLength, startCol = 0 })
-                local rightPadding = string.rep(" ", maxLineLength - #codeLine)
-                table.insert(combined, codeLine .. rightPadding)
-              end
-              if j == #diagnosticCodeInRange then
-                table.insert(combined, "```")
-              end
-            end
-
-            local startOfDiagnosticMsg = i .. ". "
-            local msgLines = vim.lsp.util
-                .convert_input_to_markdown_lines(diagnostic.message)
-            for j, msgLine in pairs(msgLines) do
-              local formattedMsgLine = ""
-              if j == 1 then
-                formattedMsgLine = startOfDiagnosticMsg
-              end
-              if j > 1 then
-                for _ = 1, #startOfDiagnosticMsg do
-                  formattedMsgLine = formattedMsgLine .. " "
-                end
-              end
-              formattedMsgLine = formattedMsgLine .. msgLine
-              if j == #msgLines then
-                formattedMsgLine = formattedMsgLine
-                if diagnostic.code then
-                  formattedMsgLine = formattedMsgLine .. " [" .. diagnostic.code .. "]"
-                end
-              end
-              table.insert(highlights,
-                {
-                  line = #combined,
-                  hl_group = highlight_map[diagnostic.severity],
-                  endCol = #startOfDiagnosticMsg +
-                      #msgLine + 1,
-                  startCol = #startOfDiagnosticMsg
-                })
-              table.insert(combined, formattedMsgLine)
-            end
-          end
-
-          if #combined > 0 and #hoverContents > 0 then
-            table.insert(combined, "----------------")
-            table.insert(combined, "# LSP Info")
-          end
-
-          for _, hoverContent in pairs(hoverContents) do
-            table.insert(combined, hoverContent)
-          end
-
-          if vim.tbl_isempty(combined) then
-            return
-          end
-
-          local buf, win = vim.lsp.util.open_floating_preview(combined, "markdown",
-            { border = 'rounded', focusable = true, focus = true })
-          vim.api.nvim_set_current_win(win)
-          for _, highlight in pairs(highlights) do
-            vim.api.nvim_buf_add_highlight(buf, -1, highlight.hl_group, highlight.line, highlight.startCol,
-              highlight.endCol)
-          end
-        end, { noremap = true, desc = "Hover Info" })
-        vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { noremap = true, desc = "code action" })
       end)
+      local lua_opts = lsp_zero.nvim_lua_ls()
+      lua_opts.settings.Lua = {
+        runtime = { version = 'LuaJIT' },
+        diagnostics = { globals = { 'vim' } },
+        workspace = { library = vim.api.nvim_get_runtime_file("", true) },
+        telemetry = { enable = false }
+      }
+      vim.lsp.config('lua_ls', lua_opts)
+      vim.lsp.config('rust_analyzer', {})
+      vim.lsp.config('vtsls', {
+        filetypes = javascriptFiletypes,
+      })
+      vim.lsp.config('eslint', {
+        filetypes = javascriptFiletypes,
+      })
 
       require("mason").setup({
         registries = {
@@ -257,48 +282,9 @@ require("lazy").setup({
           "github:Crashdummyy/mason-registry",
         }
       })
+
       require("mason-lspconfig").setup({
-        handlers = {
-          ["lua_ls"] = function()
-            local lua_opts = lsp_zero.nvim_lua_ls()
-            lua_opts.settings.Lua = {
-              runtime = { version = 'LuaJIT' },
-              diagnostics = { globals = { 'vim' } },
-              workspace = { library = vim.api.nvim_get_runtime_file("", true) },
-              telemetry = { enable = false }
-            }
-            require("lspconfig").lua_ls.setup(lua_opts)
-          end,
-          ["rust_analyzer"] = function()
-            local rust_opts = {
-            }
-            require("lspconfig").rust_analyzer.setup(rust_opts)
-          end,
-          ["vtsls"] = function()
-            require("lspconfig").vtsls.setup({
-              filetypes = {
-                "typescript",
-                "typescriptreact",
-                "typescript.tsx",
-                "javascript",
-                "javascriptreact",
-                "javascript.jsx",
-              },
-            })
-          end,
-          ["eslint"] = function()
-            require("lspconfig").eslint.setup({
-              filetypes = {
-                "typescript",
-                "typescriptreact",
-                "typescript.tsx",
-                "javascript",
-                "javascriptreact",
-                "javascript.jsx",
-              },
-            })
-          end
-        }
+        ensure_installed = { "lua_ls", "vtsls" }
       });
       vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
         vim.lsp.diagnostic.on_publish_diagnostics,
@@ -1395,6 +1381,7 @@ require("lazy").setup({
       "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
       "MunifTanjim/nui.nvim",
     },
+    lazy = vim.fn.argc() == 0,
     keys = {
       {
         '<c-f>t',
@@ -1415,6 +1402,8 @@ require("lazy").setup({
         mappings = {
           ["<PageDown>"] = { "scroll_preview", config = { direction = -10 } },
           ["<PageUp>"] = { "scroll_preview", config = { direction = 10 } },
+          ["z"] = function() vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("z", true, false, true), 'n', false) end,
+          ["Z"] = "close_all_nodes"
         }
       },
       filesystem = {
@@ -1422,6 +1411,7 @@ require("lazy").setup({
           enabled = true,
           leave_dirs_open = false,
         },
+        hijack_netrw_behavior = "open_current"
       }
     }
   },
