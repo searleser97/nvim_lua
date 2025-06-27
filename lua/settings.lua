@@ -1,4 +1,16 @@
+-- used to prevent filetype plugin from adding mappings
+vim.g.no_plugin_maps = 1
+-- disable some default plugins
+vim.g.loaded_zipPlugin = 1
+vim.g.loaded_tutor_mode_plugin = 1
+vim.g.loaded_2html_plugin = 1
+vim.g.loaded_gzip = 1
+vim.g.loaded_netrw = 1
+vim.g.loaded_tarPlugin = 1
+vim.g.loaded_spellfile_plugin = 1
+
 vim.g.mapleader = " "
+
 vim.opt.cursorline = true
 vim.opt.nu = true
 vim.opt.relativenumber = true
@@ -43,17 +55,6 @@ vim.api.nvim_create_autocmd("BufEnter", {
 })
 
 vim.o.sessionoptions="blank,buffers,curdir,folds,help,tabpages,winsize,winpos,localoptions"
-
--- used to prevent filetype plugin from adding mappings
-vim.g.no_plugin_maps = 1
--- disable some default plugins
-vim.g.loaded_zipPlugin = 1
-vim.g.loaded_tutor_mode_plugin = 1
-vim.g.loaded_2html_plugin = 1
-vim.g.loaded_gzip = 1
-vim.g.loaded_netrw = 1
-vim.g.loaded_tarPlugin = 1
-vim.g.loaded_spellfile_plugin = 1
 
 if package.config:sub(1,1) == "\\" then -- is windows
   vim.opt.shell = vim.fn.executable "pwsh" == 1 and "pwsh" or "powershell"
