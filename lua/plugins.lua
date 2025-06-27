@@ -104,7 +104,7 @@ require("lazy").setup({
       local lsp_zero = require("lsp-zero").preset({})
 
       local code_hl_group = "CodeHighlightGroup"
-      local highlight_map = {
+      local floating_highlight_map = {
         [vim.diagnostic.severity.ERROR] = 'DiagnosticFloatingError',
         [vim.diagnostic.severity.WARN] = 'DiagnosticFloatingWarn',
         [vim.diagnostic.severity.INFO] = 'DiagnosticFloatingInfo',
@@ -212,7 +212,7 @@ require("lazy").setup({
             table.insert(highlights,
               {
                 line = #combined,
-                hl_group = highlight_map[diagnostic.severity],
+                hl_group = floating_highlight_map[diagnostic.severity],
                 endCol = #startOfDiagnosticMsg +
                     #msgLine + 1,
                 startCol = #startOfDiagnosticMsg
@@ -237,13 +237,17 @@ require("lazy").setup({
         local buf, win = vim.lsp.util.open_floating_preview(combined, "markdown",
           { border = 'rounded', focusable = true, focus = true })
         vim.api.nvim_set_current_win(win)
+        local ns_id = vim.api.nvim_create_namespace("hover_diagnostics") 
         for _, highlight in pairs(highlights) do
-          vim.api.nvim_buf_add_highlight(buf, -1, highlight.hl_group, highlight.line, highlight.startCol,
-            highlight.endCol)
+          vim.api.nvim_buf_set_extmark(buf, ns_id, highlight.line, highlight.startCol, {
+            end_col = highlight.endCol,
+            hl_group = highlight.hl_group,
+            strict = false
+          })
         end
       end, { noremap = true, desc = "Hover Info" })
-      vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { noremap = true, desc = "code action" })
 
+      vim.api.nvim_set_hl(0, code_hl_group, { bg = '#000000' })
 
       lsp_zero.on_attach(function(client, buffer)
         -- lsp_zero.highlight_symbol(client, buffer)
@@ -259,7 +263,9 @@ require("lazy").setup({
           vim.diagnostic.open_float()
           vim.diagnostic.open_float() -- the second call moves my cursor inside the diagnostic window
         end, { noremap = true, desc = "show diagnostics" })
+        vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { noremap = true, desc = "code action" })
       end)
+
       local lua_opts = lsp_zero.nvim_lua_ls()
       lua_opts.settings.Lua = {
         runtime = { version = 'LuaJIT' },
@@ -286,24 +292,22 @@ require("lazy").setup({
       require("mason-lspconfig").setup({
         ensure_installed = { "lua_ls", "vtsls" }
       });
-      vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
-        vim.lsp.diagnostic.on_publish_diagnostics,
-        {
-          underline = {
-            severity = {
-              min = vim.diagnostic.severity.HINT,
-            },
-            highlight = "DiagnosticUnderline",
-          },
-        }
-      )
-      vim.cmd [[
-        highlight DiagnosticUnderlineError gui=underline
-        highlight DiagnosticUnderlineWarn gui=underline
-        highlight DiagnosticUnderlineInfo gui=underline
-        highlight DiagnosticUnderlineHint gui=underline
-      ]]
-      vim.api.nvim_set_hl(0, code_hl_group, { bg = '#000000' })
+
+      -- terminal should support undercurl, when it comes to wezterm, we need to use nightly version when using it on windows
+      -- or when using it in unix we need to run a set of commands that we can find in wezterm's wiki
+      vim.cmd([[
+        highlight DiagnosticUnderlineError gui=undercurl guisp=#FF0000
+        highlight DiagnosticUnderlineWarn gui=undercurl guisp=#FFFF00
+        highlight DiagnosticUnderlineInfo gui=undercurl guisp=#0000FF
+        highlight DiagnosticUnderlineHint gui=undercurl guisp=#FFA500
+      ]])
+
+      vim.diagnostic.config({
+        underline = true,
+        severity_sort = true,
+        virtual_text = false,
+      })
+
     end
   },
   {
