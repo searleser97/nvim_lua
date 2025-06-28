@@ -1,12 +1,9 @@
-[feature]
-        manyFiles = true
 [core]
         editor = nvim
         pager = delta
         longpaths = true
-        commitgraph = true
-    	fsmonitor = true
-    	writeCommitGraph = true
+	fsmonitor = true
+	untrackedcache = true
 [push]
         autoSetupRemote = true
 [diff]
@@ -30,3 +27,7 @@
 [credential]
         helper = store
 
+[feature]
+	manyFiles = true
+[fetch]
+	writeCommitGraph = true
