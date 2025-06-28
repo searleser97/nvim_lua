@@ -20,9 +20,11 @@ session_utils.open_session_action = function()
         return string.sub(filename, 1, -9)
       end,
     }, function(selected)
-      local session_name = string.sub(selected, 1, -9)
-      vim.g.session_name = session_name
-      sessions.load(session_name)
+      if selected then
+          local session_name = string.sub(selected, 1, -9)
+          vim.g.session_name = session_name
+          sessions.load(session_name)
+        end
     end)
   else
     local MiniPick = require('mini.pick')
