@@ -29,7 +29,8 @@ local codeFileTypes = {
   "cs",
   "ps1",
   "cmd",
-  "json"
+  "json",
+  "vim"
 }
 
 -- Add all javascript filetypes
