@@ -31,3 +31,6 @@
 	manyFiles = true
 [fetch]
 	writeCommitGraph = true
+[http]
+	postBuffer = 1048576000
+
