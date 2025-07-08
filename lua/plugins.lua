@@ -239,7 +239,7 @@ require("lazy").setup({
         local buf, win = vim.lsp.util.open_floating_preview(combined, "markdown",
           { border = 'rounded', focusable = true, focus = true })
         vim.api.nvim_set_current_win(win)
-        local ns_id = vim.api.nvim_create_namespace("hover_diagnostics") 
+        local ns_id = vim.api.nvim_create_namespace("hover_diagnostics")
         for _, highlight in pairs(highlights) do
           vim.api.nvim_buf_set_extmark(buf, ns_id, highlight.line, highlight.startCol, {
             end_col = highlight.endCol,
@@ -283,6 +283,14 @@ require("lazy").setup({
       vim.lsp.config('eslint', {
         filetypes = javascriptFiletypes,
       })
+      vim.lsp.config('roslyn', {
+        handlers = {
+          ["workspace/_roslyn_projectNeedsRestore"] = function(_, _, _, _)
+            vim.fn.system("dotnet restore")
+            return true
+          end,
+        }
+      })
 
       require("mason").setup({
         registries = {
@@ -309,7 +317,6 @@ require("lazy").setup({
         severity_sort = true,
         virtual_text = false,
       })
-
     end
   },
   {
@@ -1536,5 +1543,23 @@ require("lazy").setup({
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     lazy = false,
     opts = {}
+  },
+  {
+    "mfussenegger/nvim-dap",
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
+  },
+  {
+    "nicholasmata/nvim-dap-cs",
+    dependencies = {
+      "mfussenegger/nvim-dap",
+    },
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
+    opts = {}
+  },
+  {
+    "rcarriga/nvim-dap-ui",
+    dependencies = {
+      "mfussenegger/nvim-dap",
+    },
   }
 })
