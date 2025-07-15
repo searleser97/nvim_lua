@@ -31,7 +31,8 @@ local codeFileTypes = {
   "cmd",
   "json",
   "vim",
-  "zsh"
+  "zsh",
+  "markdown"
 }
 
 -- Add all javascript filetypes
@@ -917,7 +918,7 @@ require("lazy").setup({
     cmd = { 'DiffviewOpen', 'DiffviewClose', 'DiffviewFileHistory' },
     keys = {
       {
-        '<c-g>s',
+        'gs',
         "<cmd>DiffviewOpen<cr>",
         noremap = true,
         desc = "git status",
@@ -931,14 +932,14 @@ require("lazy").setup({
         mode = { 'n' }
       },
       {
-        '<leader>gL',
+        'gl',
         "<cmd>DiffviewFileHistory % -n=512<cr>",
         noremap = true,
         desc = "git log file",
         mode = { 'n' }
       },
       {
-        '<leader>gL',
+        'gl',
         ":DiffviewFileHistory % -L<line1>,<line2> -n=512<CR>",
         noremap = true,
         desc = "git log visual range",

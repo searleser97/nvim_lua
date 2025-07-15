@@ -67,6 +67,10 @@ if not vim.g.vscode then
   vim.keymap.set('n', '<C-Down>', '<C-w><Down>', { noremap = true })
   vim.keymap.set('n', '<C-Right>', '<C-w><Right>', { noremap = true })
   vim.keymap.set('n', '<C-Left>', '<C-w><Left>', { noremap = true })
+  vim.keymap.set('n', '<C-k>', '<C-w><Up>', { noremap = true })
+  vim.keymap.set('n', '<C-j>', '<C-w><Down>', { noremap = true })
+  vim.keymap.set('n', '<C-l>', '<C-w><Right>', { noremap = true })
+  vim.keymap.set('n', '<C-h>', '<C-w><Left>', { noremap = true })
 
   vim.keymap.set('t', '<c-v>', [[<C-\><C-n>"+pi<Right>]], { noremap = true, desc = "exit terminal mode" })
   vim.keymap.set('t', '<c-e>', [[<C-\><C-n>]], { noremap = true, desc = "exit terminal mode" })
@@ -76,6 +80,10 @@ if not vim.g.vscode then
   vim.keymap.set('t', '<c-Down>', [[<C-\><C-n><C-w><Down>]], { noremap = true, desc = "move cursor to the window below" })
   vim.keymap.set('t', '<c-Left>', [[<C-\><C-n><C-w><Left>]], { noremap = true, desc = "move cursor to the window on the left" })
   vim.keymap.set('t', '<c-Right>', [[<C-\><C-n><C-w><Right>]], { noremap = true, desc = "move cursor to the window on the right" })
+  vim.keymap.set('t', '<c-k>', [[<C-\><C-n><C-w><Up>]], { noremap = true, desc = "move cursor to the window above" })
+  vim.keymap.set('t', '<c-j>', [[<C-\><C-n><C-w><Down>]], { noremap = true, desc = "move cursor to the window below" })
+  vim.keymap.set('t', '<c-h>', [[<C-\><C-n><C-w><Left>]], { noremap = true, desc = "move cursor to the window on the left" })
+  vim.keymap.set('t', '<c-l>', [[<C-\><C-n><C-w><Right>]], { noremap = true, desc = "move cursor to the window on the right" })
 else
   local utils = require('myutils')
   -- all vscode ctrl+... keybindings are defined in the keybindings.json file of vscode
