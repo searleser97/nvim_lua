@@ -280,6 +280,12 @@ require("lazy").setup({
       vim.lsp.config('rust_analyzer', {})
       vim.lsp.config('vtsls', {
         filetypes = javascriptFiletypes,
+        init_options = {
+          maxTsServerMemory = 24576,
+          typescript = {
+            tsdk = "./node_modules/typescript/lib"
+          }
+        },
       })
       vim.lsp.config('eslint', {
         filetypes = javascriptFiletypes,
@@ -539,9 +545,13 @@ require("lazy").setup({
       {
         '<c-s>pr',
         function()
+          local fileType = vim.bo.filetype
+          local isTypeScript = fileType == "typescript" or fileType == "typescriptreact"
+          local pattern = isTypeScript and " -g \"*.tsx\" -g \"!*.test.tsx\"" or " -g \"*.*\""
+
           require("telescope-live-grep-args.shortcuts").grep_visual_selection({
             cwd = require('myutils').getPathToGitDirOr(vim.loop.cwd()),
-            postfix = " -g \"*.*\"",
+            postfix = pattern
           })
         end,
         mode = 'x',
@@ -1101,6 +1111,7 @@ require("lazy").setup({
       require("gitlinker").setup({
         callbacks = {
           ["dynamicscrm.visualstudio.com"] = handler,
+          ["domoreexp.visualstudio.com"] = handler,
           ["dev.azure.com"] = handler,
         }
       })
