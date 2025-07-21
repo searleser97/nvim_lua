@@ -45,9 +45,12 @@ local set_universal_keybindings = function(config)
 end
 
 local set_keybindings_for_vim_like_process = function(config)
+  local ignoreKeys = { "v" }
   for c = string.byte("a"), string.byte("z") do
     local key = string.char(c)
-    table.insert(config.keys, { key = key, mods = 'SUPER', action = wezterm.action.SendKey { key = key, mods = 'CTRL' } })
+    if not ignoreKeys[key] then
+      table.insert(config.keys, { key = key, mods = 'SUPER', action = wezterm.action.SendKey { key = key, mods = 'CTRL' } })
+    end
   end
   for c = string.byte("0"), string.byte("9") do
     local key = string.char(c)
@@ -57,6 +60,8 @@ local set_keybindings_for_vim_like_process = function(config)
   for _, key in ipairs(otherKeys) do
     table.insert(config.keys, { key = key, mods = 'SUPER', action = wezterm.action.SendKey { key = key, mods = 'CTRL' } })
   end
+  table.insert(config.keys, { key = 'v', mods = 'CTRL', action = act.PasteFrom 'Clipboard' })
+  table.insert(config.keys, { key = 'v', mods = 'SUPER', action = act.PasteFrom 'Clipboard' })
 end
 
 local vim_keybindings_status_var_name = 'vim_keybindings_status';

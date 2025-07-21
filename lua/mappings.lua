@@ -4,7 +4,7 @@ else
   vim.keymap.set({'n', 'x'}, '<C-c>', '"+y', { noremap = true })
 end
 
-vim.keymap.set({'n', 'x'}, '<C-v>', '"+p', { noremap = true })
+-- vim.keymap.set({'n', 'x'}, '<C-v>', '"+p', { noremap = true })
 
 vim.keymap.set({'n', 'x'}, '<C-b>', '<C-v>', { noremap = true })
 vim.keymap.set({'x', 'n'}, '<M-p>', '"ap', { noremap = true })
@@ -23,35 +23,35 @@ vim.keymap.set({'n', 'x'}, 'R', '<C-r>', { noremap = true })
 if not vim.g.vscode then
 
   vim.keymap.set({'n'}, '<leader>tc', '<cmd>tabc<cr>', { noremap = true, desc = "tab close" })
-  local pastedInInsertMode = false
+  -- local pastedInInsertMode = false
+  --
+  -- vim.api.nvim_create_autocmd("TextChangedI", {
+  --   desc = "set nopaste after text has been completely copied",
+  --   pattern = "*",
+  --   callback = function()
+  --     if pastedInInsertMode then
+  --       pastedInInsertMode = false
+  --       vim.schedule(function() vim.cmd('set nopaste!') end)
+  --     end
+  --   end
+  -- })
 
-  vim.api.nvim_create_autocmd("TextChangedI", {
-    desc = "set nopaste after text has been completely copied",
-    pattern = "*",
-    callback = function()
-      if pastedInInsertMode then
-        pastedInInsertMode = false
-        vim.schedule(function() vim.cmd('set nopaste!') end)
-      end
-    end
-  })
+  -- vim.keymap.set('c', '<C-v>', '<c-r>+', { noremap = true })
+  -- vim.keymap.set('i', '<c-v>', function()
+  --   vim.cmd('set paste!')
+  --   pastedInInsertMode = true
+  --   vim.schedule(function()
+  --     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<c-r>+', true, true, true), 'i', true)
+  --   end)
+  -- end, { noremap = true })
 
-  vim.keymap.set('c', '<C-v>', '<c-r>+', { noremap = true })
-  vim.keymap.set('i', '<c-v>', function()
-    vim.cmd('set paste!')
-    pastedInInsertMode = true
-    vim.schedule(function()
-      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<c-r>+', true, true, true), 'i', true)
-    end)
-  end, { noremap = true })
-
-  vim.keymap.set('i', '<c-p>', function()
-    vim.cmd('set paste!')
-    pastedInInsertMode = true
-    vim.schedule(function()
-      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<c-r>"', true, true, true), 'i', true)
-    end)
-  end, { noremap = true })
+  -- vim.keymap.set('i', '<c-p>', function()
+  --   vim.cmd('set paste!')
+  --   pastedInInsertMode = true
+  --   vim.schedule(function()
+  --     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<c-r>"', true, true, true), 'i', true)
+  --   end)
+  -- end, { noremap = true })
 
   vim.keymap.set({'n', 'x'}, '<PageUp>', '2<C-y>', { noremap = true })
   vim.keymap.set({'n', 'x'}, '<PageDown>', '2<C-e>', { noremap = true })
