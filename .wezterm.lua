@@ -38,6 +38,8 @@ local set_keybindings_for_main_process = function(config)
   -- bindings needed for MAC
   table.insert(config.keys, { key = 'v', mods = 'SUPER', action = act.PasteFrom 'Clipboard' })
   table.insert(config.keys, { key = 'c', mods = 'SUPER', action = ctrl_c_action })
+  table.insert(config.keys, { key = 'u', mods = 'SUPER', action = wezterm.action.SendKey { key = 'u', mods = 'CTRL' } })
+  table.insert(config.keys, { key = 'd', mods = 'SUPER', action = wezterm.action.SendKey { key = 'd', mods = 'CTRL' } })
 end
 
 local set_universal_keybindings = function(config)
