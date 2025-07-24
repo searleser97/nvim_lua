@@ -1606,7 +1606,6 @@ require("lazy").setup({
           provider = "copilot",
           model = "claude-sonnet-4",
           fastModel = "gpt-4o-mini",
-          -- No apiKeyEnvVar needed - uses existing Copilot authentication
         }
       }
     },
