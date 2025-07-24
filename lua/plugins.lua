@@ -281,11 +281,22 @@ require("lazy").setup({
       vim.lsp.config('vtsls', {
         filetypes = javascriptFiletypes,
         init_options = {
-          maxTsServerMemory = 24576,
           typescript = {
+            tsserver = {
+              maxTsServerMemory = 24576,
+            },
             tsdk = "./node_modules/typescript/lib"
           }
         },
+        settings = {
+          typescript = {
+            tsserver = {
+              maxTsServerMemory = 24576,
+            },
+            tsdk = "./node_modules/typescript/lib"
+          }
+        },
+        trace = "verbose",
       })
       vim.lsp.config('eslint', {
         filetypes = javascriptFiletypes,
@@ -1392,7 +1403,7 @@ require("lazy").setup({
     event = { "VeryLazy" },
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     opts = {
-      filewatching = false,
+      filewatching = "roslyn",
       lock_target = true,
       broad_search = false
     }
@@ -1573,5 +1584,31 @@ require("lazy").setup({
     dependencies = {
       "mfussenegger/nvim-dap",
     },
-  }
+  },
+  {
+    "dlants/magenta.nvim",
+    lazy = false, -- you could also bind to <leader>mt
+    keys = {
+      {
+        "<leader>mt",
+        function()
+          require("magenta").toggle()
+        end,
+        noremap = true,
+        desc = "Toggle Magenta"
+      }
+    },
+    build = "npm install --frozen-lockfile",
+    opts = {
+      profiles = {
+        {
+          name = "copilot-claude",
+          provider = "copilot",
+          model = "claude-sonnet-4",
+          fastModel = "gpt-4o-mini",
+          -- No apiKeyEnvVar needed - uses existing Copilot authentication
+        }
+      }
+    },
+  },
 })
