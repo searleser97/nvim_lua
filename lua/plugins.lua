@@ -462,6 +462,14 @@ require("lazy").setup({
         desc = "search files here"
       },
       {
+        '<c-s>b',
+        function()
+          require('telescope.builtin').buffers()
+        end,
+        noremap = true,
+        desc = "search buffers"
+      },
+      {
         '<c-s>m',
         function() require('telescope.builtin').marks() end,
         noremap = true,
@@ -558,7 +566,7 @@ require("lazy").setup({
         function()
           local fileType = vim.bo.filetype
           local isTypeScript = fileType == "typescript" or fileType == "typescriptreact"
-          local pattern = isTypeScript and " -g \"*.tsx\" -g \"!*.test.tsx\"" or " -g \"*.*\""
+          local pattern = isTypeScript and " -g \"*.ts*\" -g \"!*.test.ts*\"" or " -g \"*.*\""
 
           require("telescope-live-grep-args.shortcuts").grep_visual_selection({
             cwd = require('myutils').getPathToGitDirOr(vim.loop.cwd()),
