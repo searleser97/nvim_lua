@@ -1594,7 +1594,7 @@ require("lazy").setup({
     },
   },
   {
-    "dlants/magenta.nvim",
+    "searleser97/magenta.nvim",
     lazy = false, -- you could also bind to <leader>mt
     keys = {
       {
@@ -1608,6 +1608,7 @@ require("lazy").setup({
     },
     build = "npm install --frozen-lockfile",
     opts = {
+      sidebarPosition = "tab",
       profiles = {
         {
           name = "copilot-claude",
