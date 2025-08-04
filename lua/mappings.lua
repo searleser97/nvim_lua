@@ -6,7 +6,7 @@ end
 
 -- vim.keymap.set({'n', 'x'}, '<C-v>', '"+p', { noremap = true })
 
-vim.keymap.set({'n', 'x'}, '<C-b>', '<C-v>', { noremap = true })
+vim.keymap.set({'n', 'x'}, '<leader><leader>b', '<C-v>', { noremap = true })
 vim.keymap.set({'x', 'n'}, '<M-p>', '"ap', { noremap = true })
 vim.keymap.set({'x', 'n'}, '<M-P>', '"aP', { noremap = true })
 vim.keymap.set({'x'}, 'p', 'p<cmd>let @a=@"<cr><cmd>let @"=@0<cr>', { noremap = true })
