@@ -307,7 +307,8 @@ require("lazy").setup({
             vim.fn.system("dotnet restore")
             return true
           end,
-        }
+        },
+        filetypes = { "csharp", "cs" },
       })
 
       require("mason").setup({
