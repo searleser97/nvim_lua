@@ -1609,7 +1609,7 @@ require("lazy").setup({
     },
     build = "npm install --frozen-lockfile",
     opts = {
-      sidebarPosition = "tab",
+      sidebarPosition = "above",
       profiles = {
         {
           name = "copilot-claude",
