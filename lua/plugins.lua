@@ -1612,7 +1612,7 @@ require("lazy").setup({
       sidebarPosition = "above",
       profiles = {
         {
-          name = "copilot-claude",
+          name = "copilot",
           provider = "copilot",
           model = "claude-sonnet-4",
           fastModel = "gpt-4o-mini",
