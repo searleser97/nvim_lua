@@ -16,7 +16,6 @@ vim.keymap.set('n', '<leader><leader>rec', 'q')
 vim.keymap.set('n', 'q', "<nop>", { noremap = true })
 vim.keymap.set('n', '<leader><right>', "15zl", { noremap = true })
 vim.keymap.set('n', '<leader><left>', "15zh", { noremap = true })
-vim.keymap.set('n', '<c-q>', "<cmd>close<cr>")
 vim.keymap.set({'n', 'x'}, '<C-r>', '<nop>', { noremap = true })
 vim.keymap.set({'n', 'x'}, 'R', '<C-r>', { noremap = true })
 

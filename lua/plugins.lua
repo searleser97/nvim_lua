@@ -1469,28 +1469,41 @@ require("lazy").setup({
       {
         '<leader>qa',
         function()
+          local current_bufnr = vim.api.nvim_get_current_buf()
+          local current_line_number = vim.api.nvim_win_get_cursor(0)[1]
+          local qflist = vim.fn.getqflist()
+          for _, item in ipairs(qflist) do
+            if item.bufnr == current_bufnr and item.lnum == current_line_number then
+              print("Current line already in quickfix list")
+              return
+            end
+          end
+          local current_line = vim.api.nvim_get_current_line()
+          local line_number = vim.api.nvim_win_get_cursor(0)[1]
           vim.fn.setqflist({
             {
-              filename = vim.fn.expand('%:p'),
-              text = vim.fn.expand('%:p'),
+              filename = filename,
+              lnum = line_number,
+              text = current_line,
             },
           }, 'a')
-          require("quicker").open()
+          print(filename .. " added to quickfix list")
         end,
         desc = "quickfix list add current file",
         noremap = true
       },
       {
-        '<leader>qe',
+        '<c-q>e',
         function()
+          require("quicker").close()
           vim.fn.setqflist({})
-          require("quicker").open()
+          print("quickfix list cleared")
         end,
         desc = "quickfix empty",
         noremap = true
       },
       {
-        "<leader>qt",
+        "<c-q>t",
         function()
           require("quicker").toggle()
         end,
