@@ -547,6 +547,9 @@ require("lazy").setup({
                 ["o"] = Is_Windows() and require("myutils").my_open or nil
               }
             }
+          },
+          recent_files = {
+            only_cwd = true
           }
         },
         pickers = {
@@ -1608,7 +1611,7 @@ require("lazy").setup({
     },
   },
   {
-    "searleser97/magenta.nvim",
+    dir = "/Users/sergiosanc/dev/magenta.nvim",
     lazy = false, -- you could also bind to <leader>mt
     keys = {
       {
@@ -1622,7 +1625,7 @@ require("lazy").setup({
     },
     build = "npm install --frozen-lockfile",
     opts = {
-      sidebarPosition = "above",
+      sidebarPosition = "leftabove",
       profiles = {
         {
           name = "copilot",
