@@ -1636,4 +1636,8 @@ require("lazy").setup({
       }
     },
   },
+  {
+    "sphamba/smear-cursor.nvim",
+    opts = {}
+  }
 })
