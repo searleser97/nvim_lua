@@ -1,3 +1,16 @@
+local function get_node_bin_path(version)
+  local handle = io.popen("nvm which " .. version)
+  if not handle then return nil end
+  local result = handle:read("*a")
+  handle:close()
+  return result and result:match("^(.-)/node")  -- Extract path up to /bin
+end
+
+local node_bin_path = get_node_bin_path("22")
+if node_bin_path then
+  vim.env.PATH = node_bin_path .. ":" .. vim.env.PATH
+end
+
 require("settings")
 require("plugins")
 require("mappings")
