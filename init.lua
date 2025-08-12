@@ -1,21 +1,23 @@
 local function get_node_bin_path(major_version)
   local is_windows = vim.fn.has('win32') == 1 or vim.fn.has('win64') == 1
-  local nvm_dir
-  local versions_dir
-  local list_cmd
   local path_sep = is_windows and "\\" or "/"
+  local list_cmd
+  local versions_dir
+
   if is_windows then
-    nvm_dir = vim.env.NVM_HOME or (vim.env.APPDATA .. "\\nvm")
-    versions_dir = nvm_dir
+    versions_dir = vim.env.HOME .. "\\scoop\\apps\\nvm\\current\\nodejs"
     list_cmd = 'dir /b "' .. versions_dir .. '" 2>nul'
   else
-    nvm_dir = vim.env.NVM_DIR or (vim.env.HOME .. "/.nvm")
-    versions_dir = nvm_dir .. "/versions/node"
+    versions_dir = vim.env.HOME .. "/.nvm/versions/node"
     list_cmd = "ls -1 " .. versions_dir .. " 2>/dev/null"
   end
+
   local handle = io.popen(list_cmd)
+
   if not handle then return nil end
+
   local highest_version = nil
+
   for line in handle:lines() do
     local version = line:match("^v?(.+)$")
     if version then
@@ -25,8 +27,11 @@ local function get_node_bin_path(major_version)
       end
     end
   end
+
   handle:close()
+
   if not highest_version then return nil end
+
   if is_windows then
     return versions_dir .. path_sep .. "v" .. highest_version
   else
