@@ -1611,7 +1611,7 @@ require("lazy").setup({
     },
   },
   {
-    dir = "/Users/sergiosanc/dev/magenta.nvim",
+    "dlants/magenta.nvim",
     lazy = false, -- you could also bind to <leader>mt
     keys = {
       {
