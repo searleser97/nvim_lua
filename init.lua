@@ -1,9 +1,37 @@
-local function get_node_bin_path(version)
-  local handle = io.popen("nvm which " .. version)
+local function get_node_bin_path(major_version)
+  local is_windows = vim.fn.has('win32') == 1 or vim.fn.has('win64') == 1
+  local nvm_dir
+  local versions_dir
+  local list_cmd
+  local path_sep = is_windows and "\\" or "/"
+  if is_windows then
+    nvm_dir = vim.env.NVM_HOME or (vim.env.APPDATA .. "\\nvm")
+    versions_dir = nvm_dir
+    list_cmd = 'dir /b "' .. versions_dir .. '" 2>nul'
+  else
+    nvm_dir = vim.env.NVM_DIR or (vim.env.HOME .. "/.nvm")
+    versions_dir = nvm_dir .. "/versions/node"
+    list_cmd = "ls -1 " .. versions_dir .. " 2>/dev/null"
+  end
+  local handle = io.popen(list_cmd)
   if not handle then return nil end
-  local result = handle:read("*a")
+  local highest_version = nil
+  for line in handle:lines() do
+    local version = line:match("^v?(.+)$")
+    if version then
+      local major = version:match("^(%d+)")
+      if major and tonumber(major) == tonumber(major_version) then
+        highest_version = version
+      end
+    end
+  end
   handle:close()
-  return result and result:match("^(.-)/node")  -- Extract path up to /bin
+  if not highest_version then return nil end
+  if is_windows then
+    return versions_dir .. path_sep .. "v" .. highest_version
+  else
+    return versions_dir .. path_sep .. "v" .. highest_version .. path_sep .. "bin"
+  end
 end
 
 local node_bin_path = get_node_bin_path("22")
