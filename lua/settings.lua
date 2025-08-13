@@ -22,7 +22,6 @@ vim.opt.shiftwidth = require('myutils').Is_Windows() and 4 or 2
 vim.opt.smartindent = true
 vim.opt.autoindent = false
 vim.opt.expandtab = true
-vim.opt.wrap = false
 vim.opt.swapfile = false
 vim.opt.backup = false
 if package.config:sub(1,1) == "\\" then -- is windows
