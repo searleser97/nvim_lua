@@ -1483,6 +1483,7 @@ require("lazy").setup({
           end
           local current_line = vim.api.nvim_get_current_line()
           local line_number = vim.api.nvim_win_get_cursor(0)[1]
+          local filename = vim.api.nvim_buf_get_name(current_bufnr)
           vim.fn.setqflist({
             {
               filename = filename,
