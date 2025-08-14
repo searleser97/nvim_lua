@@ -1607,13 +1607,14 @@ require("lazy").setup({
   },
   {
     "rcarriga/nvim-dap-ui",
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     dependencies = {
       "mfussenegger/nvim-dap",
     },
   },
   {
     "dlants/magenta.nvim",
-    lazy = false, -- you could also bind to <leader>mt
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     keys = {
       {
         "<leader>mt",
