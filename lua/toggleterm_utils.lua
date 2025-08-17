@@ -97,7 +97,7 @@ return {
       function()
         local dirPath = vim.fn.expand("%:p:h"):gsub("%%20", " ")
         local count = vim.v.count > 0 and vim.v.count or 1
-        vim.cmd(count .. "TermExec cmd=\"cd " .. dirPath .. "\"")
+        vim.cmd(count .. "TermExec cmd='cd \"" .. dirPath .. "\"'")
       end,
       noremap = true, mode =  'n', desc = 'terminal here (file)'
     },

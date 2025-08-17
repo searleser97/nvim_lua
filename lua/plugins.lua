@@ -724,42 +724,9 @@ require("lazy").setup({
     end
   },
   {
-    "hrsh7th/nvim-cmp",
-    dependencies = {
-      "https://github.com/FelipeLema/cmp-async-path",
-      "https://github.com/hrsh7th/cmp-nvim-lua",
-      "https://github.com/hrsh7th/cmp-buffer",
-      "https://github.com/hrsh7th/cmp-nvim-lsp-signature-help"
-    },
-    cond = not vim.g.vscode,
-    event = { 'VeryLazy' },
-    config = function()
-      local cmp = require("cmp")
-      local types = require("cmp.types")
-      cmp.setup({
-        sources = {
-          { name = "copilot",                 group_index = 1 },
-          { name = 'nvim_lsp_signature_help', group_index = 1 },
-          { name = 'async_path',              group_index = 1 },
-          { name = 'nvim_lsp',                group_index = 1 },
-          { name = 'buffer',                  group_index = 1 },
-          { name = 'nvim_lua',                group_index = 1 },
-        },
-        preselect = 'item',
-        completion = {
-          completeopt = 'menu,menuone,noinsert'
-        },
-        mapping = {
-          ['<tab>'] = { i = cmp.mapping.confirm({ select = true }) },
-          ['<Down>'] = {
-            i = cmp.mapping.select_next_item({ behavior = types.cmp.SelectBehavior.Select }),
-          },
-          ['<Up>'] = {
-            i = cmp.mapping.select_prev_item({ behavior = types.cmp.SelectBehavior.Select }),
-          },
-        }
-      })
-    end
+    'saghen/blink.cmp',
+    version = "1.*",
+    opts = {}
   },
   {
     "folke/tokyonight.nvim",
@@ -1613,8 +1580,10 @@ require("lazy").setup({
     },
   },
   {
-    "dlants/magenta.nvim",
+    -- "dlants/magenta.nvim",
+    dir = "~/dev/magenta.nvim",
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
+    lazy = false,
     keys = {
       {
         "<leader>mt",
@@ -1623,6 +1592,11 @@ require("lazy").setup({
         end,
         noremap = true,
         desc = "Toggle Magenta"
+      },
+      {
+        "<c-m>",
+        "<Cmd>Magenta predict-edit<CR>",
+        mode = { "i", "n" }
       }
     },
     build = "npm install --frozen-lockfile",
@@ -1640,6 +1614,26 @@ require("lazy").setup({
   },
   {
     "sphamba/smear-cursor.nvim",
-    opts = {}
+    opts = {
+      smear_insert_mode = false,
+    }
+  },
+  {
+    "dmtrKovalenko/fff.nvim",
+    build = "cargo build --release",
+    -- or if you are using nixos
+    -- build = "nix run .#release",
+    opts = {
+      -- pass here all the options
+    },
+    keys = {
+      {
+        "ff", -- try it if you didn't it is a banger keybinding for a picker
+        function()
+          require("fff").find_files() -- or find_in_git_root() if you only want git files
+        end,
+        desc = "Open file picker",
+      },
+    },
   }
 })
