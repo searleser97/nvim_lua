@@ -95,11 +95,6 @@ require("lazy").setup({
       { 'williamboman/mason.nvim' },           -- Optional
       { 'williamboman/mason-lspconfig.nvim' }, -- Optional
       { 'nvim-telescope/telescope.nvim' },
-
-      -- Autocompletion
-      { 'hrsh7th/nvim-cmp' },     -- Required
-      { 'hrsh7th/cmp-nvim-lsp' }, -- Required
-      { 'L3MON4D3/LuaSnip' },     -- Required
     },
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     event = { 'VeryLazy' },
@@ -1255,19 +1250,6 @@ require("lazy").setup({
         end
       })
       vim.cmd("SetStatusLineBG light_grey")
-    end
-  },
-  {
-    "zbirenbaum/copilot-cmp",
-    dependencies = "zbirenbaum/copilot.lua",
-    cond = not vim.g.vscode,
-    event = { "VeryLazy" },
-    config = function()
-      require("copilot").setup({
-        suggestion = { enabled = false },
-        panel = { enabled = false },
-      })
-      require("copilot_cmp").setup()
     end
   },
   {
