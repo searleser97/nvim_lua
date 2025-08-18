@@ -725,6 +725,7 @@ require("lazy").setup({
   },
   {
     'saghen/blink.cmp',
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     version = "1.*",
     opts = {
       enabled = function() return vim.fn.expand('%:t') ~= "[Magenta Input]" end,
@@ -733,12 +734,9 @@ require("lazy").setup({
   {
     "hrsh7th/nvim-cmp",
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
-    config = function()
-      local cmp = require("cmp")
-      cmp.setup({
-        enabled = function() return vim.fn.expand('%:t') == "[Magenta Input]" end,
-      })
-    end
+    opts = {
+      enabled = function() return vim.fn.expand('%:t') == "[Magenta Input]" end
+    }
   },
   {
     "folke/tokyonight.nvim",
