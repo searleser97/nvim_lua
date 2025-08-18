@@ -725,10 +725,24 @@ require("lazy").setup({
   },
   {
     'saghen/blink.cmp',
-    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
+    cond = not vim.g.vscode,
     version = "1.*",
+    dependencies = { "fang2hou/blink-copilot" },
     opts = {
       enabled = function() return vim.fn.expand('%:t') ~= "[Magenta Input]" end,
+      completion = { documentation = { auto_show = false } },
+      signature = { enabled = true },
+      sources = {
+        default = { 'copilot', 'lsp', 'buffer', 'snippets', 'path' },
+        providers = {
+          copilot = {
+            name = "copilot",
+            module = "blink-copilot",
+            score_offset = 100,
+            async = true,
+          },
+        },
+      }
     }
   },
   {
