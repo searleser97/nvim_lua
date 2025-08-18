@@ -730,7 +730,11 @@ require("lazy").setup({
     dependencies = { "fang2hou/blink-copilot" },
     opts = {
       enabled = function() return vim.fn.expand('%:t') ~= "[Magenta Input]" end,
-      completion = { documentation = { auto_show = false } },
+      completion = {
+        documentation = { auto_show = true },
+        menu = { auto_show = true },
+        list = { selection = { preselect = false, auto_insert = false } },
+      },
       signature = { enabled = true },
       sources = {
         default = { 'copilot', 'lsp', 'buffer', 'snippets', 'path' },
