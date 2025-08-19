@@ -1269,64 +1269,6 @@ require("lazy").setup({
     }
   },
   {
-    "CopilotC-Nvim/CopilotChat.nvim",
-    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
-    cmd = "CopilotChat",
-    keys = {
-      { '<leader>cc', function() require("CopilotChat").toggle() end, mode = { 'n', 'x' }, noremap = true },
-      {
-        "<leader>ch",
-        function()
-          local actions = require("CopilotChat.actions")
-          require("CopilotChat.integrations.telescope").pick(actions.help_actions())
-        end,
-        desc = "Copilot Help",
-      },
-      {
-        "<leader>cp",
-        function()
-          local actions = require("CopilotChat.actions")
-          require("CopilotChat.integrations.telescope").pick(actions.prompt_actions())
-        end,
-        desc = "Copilot Prompts (predefined)",
-      },
-    },
-    branch = "main",
-    dependencies = {
-      { "zbirenbaum/copilot.lua" }, -- or github/copilot.vim
-      { "nvim-lua/plenary.nvim" },  -- for curl, log wrapper
-      { "nvim-telescope/telescope.nvim" },
-    },
-    build = Is_Windows() and nil or "make tiktoken", -- Only on MacOS or Linux
-    config = function()
-      require("CopilotChat").setup({
-        model = "claude-3.7-sonnet",
-        debug = false, -- Enable debugging
-        chat_autocomplete = true,
-        context = "quickfix",
-        window = {
-          layout = 'float',
-          width = 0.8,
-          height = 0.8,
-        },
-        mappings = {
-          complete = {
-            insert = '',
-          },
-        },
-        contexts = {
-        },
-      })
-      vim.api.nvim_create_autocmd("BufEnter", {
-        pattern = 'copilot-*',
-        callback = function()
-          vim.opt_local.relativenumber = true
-          vim.opt_local.number = true
-        end
-      })
-    end
-  },
-  {
     "zbirenbaum/copilot.lua",
     cmd = "Copilot",
     event = { "VeryLazy" },
