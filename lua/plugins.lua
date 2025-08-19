@@ -1489,6 +1489,13 @@ require("lazy").setup({
         end,
         noremap = true,
         desc = "File Browser here"
+      },
+      {
+        "<c-r>j",
+        function()
+          require("telescope.builtin").jumplist();
+        end,
+        noremap = true, desc = "recent jumps"
       }
     },
     dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }
