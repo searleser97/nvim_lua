@@ -585,7 +585,7 @@ require("lazy").setup({
                 vim.loop.cwd()),
               { "*.csproj", "package.json", ".git" }
             ),
-            postfix = " -g \"*.*\"",
+            postfix = pattern,
           })
         end,
         mode = 'x',
@@ -597,7 +597,7 @@ require("lazy").setup({
         function()
           require("telescope-live-grep-args.shortcuts").grep_visual_selection({
             cwd = require('myutils').getPathToCurrentDir(),
-            postfix = " -g \"*.*\"",
+            postfix = pattern,
           })
         end,
         mode = 'x',
