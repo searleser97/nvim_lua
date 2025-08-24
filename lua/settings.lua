@@ -17,6 +17,15 @@ vim.opt.relativenumber = true
 vim.wo.number = true
 vim.opt.tabstop = 2
 vim.opt.wrap = true
+vim.opt.wrap = true
+-- Break lines at word boundaries
+vim.opt.linebreak = true
+-- Visual indicator for wrapped lines
+vim.opt.showbreak = "↪ "
+-- Preserve indentation on wrapped lines
+vim.opt.breakindent = true
+vim.o.diffopt = 'internal,filler,closeoff,inline:char,linematch:40,followwrap'
+
 -- vim.opt.softtabstop = 0
 vim.opt.shiftwidth = require('myutils').Is_Windows() and 4 or 2
 vim.opt.smartindent = true
