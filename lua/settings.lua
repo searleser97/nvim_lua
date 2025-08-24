@@ -27,8 +27,9 @@ vim.opt.breakindent = true
 vim.o.diffopt = 'internal,filler,closeoff,inline:char,linematch:40,followwrap'
 
 -- vim.opt.softtabstop = 0
-vim.opt.shiftwidth = require('myutils').Is_Windows() and 4 or 2
-vim.opt.smartindent = true
+-- vim.opt.shiftwidth = require('myutils').Is_Windows() and 4 or 2
+vim.opt.cindent = false
+vim.opt.smartindent = false
 vim.opt.autoindent = false
 vim.opt.expandtab = true
 vim.opt.swapfile = false
