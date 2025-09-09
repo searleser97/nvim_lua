@@ -20,6 +20,60 @@ vim.keymap.set({'n', 'x'}, '<C-r>', '<nop>', { noremap = true })
 vim.keymap.set({'n', 'x'}, 'R', '<C-r>', { noremap = true })
 
 if not vim.g.vscode then
+  local myQfListName = "ss list";
+
+  vim.keymap.set({'n'}, '<leader>qa',
+    function()
+      local current_bufnr = vim.api.nvim_get_current_buf()
+      local current_line_number = vim.api.nvim_win_get_cursor(0)[1]
+      local qflist = vim.fn.getqflist()
+      for _, item in ipairs(qflist) do
+        if item.bufnr == current_bufnr and item.lnum == current_line_number then
+          print("Current line already in quickfix list")
+          return
+        end
+      end
+      local current_line = vim.api.nvim_get_current_line()
+      local line_number = vim.api.nvim_win_get_cursor(0)[1]
+      local filename = vim.api.nvim_buf_get_name(current_bufnr)
+      vim.fn.setqflist({}, 'a',
+        {
+          title = myQfListName,
+          items = {
+            {
+              filename = filename,
+              lnum = line_number,
+              text = current_line,
+            },
+          }
+        }
+      );
+      print(filename .. " added to quickfix list")
+    end,
+    { noremap = true, desc = "quickfix add current file" });
+
+  vim.keymap.set({"n"}, '<c-q>c',
+    function()
+      vim.fn.setqflist({}, 'r', { title = myQfListName })
+      print("quickfix list cleared")
+    end,
+  { noremap = true, desc = "quickfix clear" });
+
+  vim.keymap.set({"n"}, "<c-q>t",
+    function()
+      if vim.fn.getqflist({ size = 0 }).size == 0 then
+        print("quickfix list is empty")
+        return
+      end
+      -- if the quickfix list with name my list is opened or visible then we close it, else we open it
+      local qf_winid = vim.fn.getqflist({ winid = 0 }).winid
+      if qf_winid ~= 0 then
+        vim.cmd("cclose")
+      else
+        vim.cmd("copen")
+      end
+    end,
+  { noremap = true, desc = "quickfix toggle" });
 
   vim.keymap.set({'n'}, '<leader>tc', '<cmd>tabc<cr>', { noremap = true, desc = "tab close" })
   -- local pastedInInsertMode = false

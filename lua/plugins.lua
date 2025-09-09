@@ -1334,76 +1334,6 @@ require("lazy").setup({
     }
   },
   {
-    'stevearc/quicker.nvim',
-    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
-    ft = 'qf',
-    event = "FileType qf",
-    keys = {
-      {
-        '<leader>qa',
-        function()
-          local current_bufnr = vim.api.nvim_get_current_buf()
-          local current_line_number = vim.api.nvim_win_get_cursor(0)[1]
-          local qflist = vim.fn.getqflist()
-          for _, item in ipairs(qflist) do
-            if item.bufnr == current_bufnr and item.lnum == current_line_number then
-              print("Current line already in quickfix list")
-              return
-            end
-          end
-          local current_line = vim.api.nvim_get_current_line()
-          local line_number = vim.api.nvim_win_get_cursor(0)[1]
-          local filename = vim.api.nvim_buf_get_name(current_bufnr)
-          vim.fn.setqflist({
-            {
-              filename = filename,
-              lnum = line_number,
-              text = current_line,
-            },
-          }, 'a')
-          print(filename .. " added to quickfix list")
-        end,
-        desc = "quickfix list add current file",
-        noremap = true
-      },
-      {
-        '<c-q>e',
-        function()
-          require("quicker").close()
-          vim.fn.setqflist({})
-          print("quickfix list cleared")
-        end,
-        desc = "quickfix empty",
-        noremap = true
-      },
-      {
-        "<c-q>t",
-        function()
-          require("quicker").toggle()
-        end,
-        desc = "Toggle quickfix context",
-      },
-    },
-    opts = {
-      keys = {
-        {
-          ">",
-          function()
-            require("quicker").expand({ before = 2, after = 2, add_to_existing = true })
-          end,
-          desc = "Expand quickfix context",
-        },
-        {
-          "<",
-          function()
-            require("quicker").collapse()
-          end,
-          desc = "Collapse quickfix context",
-        },
-      }
-    }
-  },
-  {
     "nvim-telescope/telescope-file-browser.nvim",
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     keys = {
@@ -1587,19 +1517,19 @@ require("lazy").setup({
         desc = "Mark Add"
       },
       {
-        "<C-m>l",
+        "<leader>ml",
         function() require('grapple').toggle_tags() end,
         noremap = true,
         desc = "Marks List"
       },
       {
-        "<C-m>n",
+        "<leader>mn",
         function() require('grapple').cycle_tags("next") end,
         noremap = true,
         desc = "Mark next"
       },
       {
-        "<C-m>p",
+        "<leader>mp",
         function() require('grapple').cycle_tags("prev") end,
         noremap = true,
         desc = "Mark prev"
