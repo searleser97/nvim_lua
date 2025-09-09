@@ -670,55 +670,6 @@ require("lazy").setup({
     cond = not vim.g.vscode,
   },
   {
-    "https://github.com/searleser97/harpoon",
-    -- branch = "harpoon2",
-    branch = "allow_data_to_use_partial_config_key_fn",
-    keys = {
-      {
-        '<leader>ha',
-        function() require('harpoon'):list(vim.g.session_name):add() end,
-        noremap = true,
-        desc = "harpoon add",
-      },
-      {
-        '<c-h>l',
-        function()
-          require('harpoon').ui:toggle_quick_menu(require('harpoon'):list(vim.g.session_name), {
-            ui_width_ratio = 0.95,
-          })
-        end,
-        noremap = true,
-        desc = "harpoon list"
-      },
-      unpack((function()
-        local key_mappings = {}
-        for i = 1, 10 do
-          table.insert(key_mappings, {
-            '<F' .. i .. '>',
-            function() require('harpoon'):list(vim.g.session_name):select(i) end,
-            noremap = true,
-          })
-        end
-        return key_mappings
-      end)())
-    },
-    dependencies = {
-      "nvim-telescope/telescope.nvim"
-    },
-    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
-    config = function()
-      -- harpoon depends on the current working directory remaining static through out the session
-      -- therefore, in nvim-rooter, we are just setting directories related to source-control
-      require("harpoon"):setup({
-        settings = {
-          key = function()
-            return "single_harpoon_file_for_all_dirs"
-          end,
-        }
-      })
-    end
-  },
-  {
     'saghen/blink.cmp',
     cond = not vim.g.vscode,
     version = "1.*",
@@ -1552,11 +1503,11 @@ require("lazy").setup({
         noremap = true,
         desc = "Toggle Magenta"
       },
-      {
-        "<c-m>",
-        "<Cmd>Magenta predict-edit<CR>",
-        mode = { "i", "n" }
-      }
+      -- {
+      --   "<c-m>",
+      --   "<Cmd>Magenta predict-edit<CR>",
+      --   mode = { "i", "n" }
+      -- }
     },
     build = "npm install --frozen-lockfile",
     opts = {
@@ -1568,7 +1519,12 @@ require("lazy").setup({
           model = "claude-sonnet-4",
           fastModel = "gpt-4o-mini",
         }
-      }
+      },
+      mcpServers = {
+        mcphub = {
+          url = "http://localhost:37373/mcp"
+        }
+      },
     },
   },
   {
@@ -1587,12 +1543,82 @@ require("lazy").setup({
     },
     keys = {
       {
-        "ff", -- try it if you didn't it is a banger keybinding for a picker
+        "<leader>ff", -- try it if you didn't it is a banger keybinding for a picker
         function()
           require("fff").find_files() -- or find_in_git_root() if you only want git files
         end,
         desc = "Open file picker",
       },
     },
+  },
+  {
+    "ravitemer/mcphub.nvim",
+    dependencies = {
+        "nvim-lua/plenary.nvim",
+    },
+    build = "npm install -g mcp-hub@latest",  -- Installs `mcp-hub` node binary globally
+    config = function()
+        require("mcphub").setup()
+    end
+  },
+  {
+    "cbochs/portal.nvim",
+    keys = {
+      {
+        "<leader>p",
+        function() require('portal.builtin').grapple.tunnel() end,
+        noremap = true,
+        desc = "Mark Add"
+      },
+    },
+    -- Optional dependencies
+    dependencies = {
+        "cbochs/grapple.nvim",
+    },
+    opts = {}
+  },
+  {
+    "cbochs/grapple.nvim",
+    keys = {
+      {
+        "<leader>ma",
+        function() require('grapple').toggle() end,
+        noremap = true,
+        desc = "Mark Add"
+      },
+      {
+        "<C-m>l",
+        function() require('grapple').toggle_tags() end,
+        noremap = true,
+        desc = "Marks List"
+      },
+      {
+        "<C-m>n",
+        function() require('grapple').cycle_tags("next") end,
+        noremap = true,
+        desc = "Mark next"
+      },
+      {
+        "<C-m>p",
+        function() require('grapple').cycle_tags("prev") end,
+        noremap = true,
+        desc = "Mark prev"
+      },
+      unpack((function()
+        local key_mappings = {}
+        for i = 1, 10 do
+          table.insert(key_mappings, {
+            '<F' .. i .. '>',
+            function() require('grapple').select({ index = i }) end,
+            noremap = true,
+          })
+        end
+        return key_mappings
+      end)())
+    },
+    dependencies = {
+        { "nvim-tree/nvim-web-devicons", lazy = true }
+    },
+    opts = {}
   }
 })
