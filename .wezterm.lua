@@ -56,4 +56,55 @@ table.insert(globalConfig.keys, { key = 'c', mods = 'CTRL', action = ctrl_c_acti
 table.insert(globalConfig.keys, { key = 'c', mods = 'SUPER', action = ctrl_c_action })
 table.insert(globalConfig.keys, { key = 'n', mods = 'SUPER|SHIFT', action = act.SpawnWindow })
 
+
+local function get_nvim_data_path()
+  local triple = require("wezterm").target_triple
+  local home = os.getenv("HOME") or os.getenv("USERPROFILE")
+
+  if not home then
+    return nil -- Can't resolve base path
+  end
+
+  if triple:find("windows") then
+    return home .. "\\AppData\\Local\\nvim-data"
+  else
+    return home .. "/.local/share/nvim"
+  end
+end
+
+
+local function get_dimensions_filepath()
+  local path_sep = package.config:sub(1,1)
+
+  return get_nvim_data_path() .. path_sep .. "wezterm_pixels.txt";
+end
+
+local resize_timer = nil
+
+wezterm.on("window-resized", function(window, pane)
+  if resize_timer then
+    resize_timer:stop()
+    resize_timer:close()
+  end
+
+  resize_timer = wezterm.time.call_after(5.0, function()
+    local dims = window:get_dimensions()
+    local pixel_width = dims.pixel_width
+    local pixel_height = dims.pixel_height
+
+
+    local path = get_dimensions_filepath()
+
+    if path then
+      local file = io.open(path, "w")
+      if file then
+        file:write(pixel_width .. "x" .. pixel_height)
+        file:close()
+      end
+    end
+  end)
+end)
+
+
 return globalConfig
+
