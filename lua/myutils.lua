@@ -49,7 +49,7 @@ utils.getPathToCurrentDir = function(ignore)
       return vim.fn.fnamemodify(currentDir, ":h")
     end
   end
-  
+
   return currentDir
 end
 
@@ -68,6 +68,30 @@ utils.my_open = function(prompt_bufnr)
     vim.cmd(string.format('silent !start "%s"', selection:absolute()))
   end
   actions.close(prompt_bufnr)
+end
+
+utils.get_wezterm_dimensions = function()
+  local path = vim.fn.stdpath("data") .. "/wezterm_pixels.txt"
+
+  if not vim.fn.filereadable(path) == 1 then
+    vim.notify("Pixel dimension file not found: " .. path, vim.log.levels.WARN)
+    return
+  end
+
+  local line = vim.fn.readfile(path)[1]
+  if not line then
+    vim.notify("Pixel dimension file is empty", vim.log.levels.WARN)
+    return
+  end
+
+  local width = tonumber(line:match("^(%d+)x%d+"))
+  local height = tonumber(line:match("^%d+x(%d+)"))
+
+  if width and height then
+    return { width = width, height = height };
+  else
+    vim.notify("Failed to parse pixel dimensions from: " .. line, vim.log.levels.ERROR)
+  end
 end
 
 return utils
