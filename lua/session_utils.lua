@@ -4,13 +4,65 @@ local path = require 'plenary.path'
 
 local session_utils = {}
 
+local function save_quickfix_list(session_name)
+  if not session_name or session_name == "" then
+    return false
+  end
+  local qflist = vim.fn.getqflist()
+  if #qflist == 0 then
+    return true
+  end
+
+  local filepath = vim.fn.stdpath("data") .. "/sessions/" .. session_name .. "_quickfix.json"
+  local file = io.open(filepath, "w")
+  if file then
+    file:write(vim.fn.json_encode(qflist))
+    file:close()
+    return true
+  end
+  return false
+end
+
+local function load_quickfix_list(session_name)
+  if not session_name or session_name == "" then
+    return false
+  end
+  local filepath = vim.fn.stdpath("data") .. "/sessions/" .. session_name .. "_quickfix.json"
+  if vim.fn.filereadable(filepath) == 0 then
+    return false
+  end
+
+  local file = io.open(filepath, "r")
+  if not file then
+    return false
+  end
+
+  local content = file:read("*all")
+  file:close()
+
+  local success, qflist = pcall(vim.fn.json_decode, content)
+  if success and qflist and #qflist > 0 then
+    vim.fn.setqflist(qflist, 'r')
+    return true
+  end
+  return false
+end
+
 session_utils.open_session_action = function()
-  local files = scan.scan_dir(vim.fn.stdpath("data") .. "/sessions", { depth = 1, })
+  local sessions_dir = vim.fn.stdpath("data") .. "/sessions"
+  if vim.fn.isdirectory(sessions_dir) == 0 then
+    vim.fn.mkdir(sessions_dir, "p")
+  end
+  local files = scan.scan_dir(sessions_dir, { depth = 1, })
   local filenames = {}
   ---@diagnostic disable-next-line: unused-local
   for index, filepath in ipairs(files) do
     local splitpath = vim.split(filepath, path.path.sep)
-    table.insert(filenames, splitpath[#splitpath])
+    local filename = splitpath[#splitpath]
+    -- Only include files with .session extension
+    if filename:match("%.session$") then
+      table.insert(filenames, filename)
+    end
   end
   local useNativePicker = false;
   if useNativePicker then
@@ -21,10 +73,15 @@ session_utils.open_session_action = function()
       end,
     }, function(selected)
       if selected then
-          local session_name = string.sub(selected, 1, -9)
-          vim.g.session_name = session_name
-          sessions.load(session_name)
+        if vim.g.session_name then
+          save_quickfix_list(vim.g.session_name)
         end
+
+        local session_name = string.sub(selected, 1, -9)
+        vim.g.session_name = session_name
+        sessions.load(session_name)
+        load_quickfix_list(session_name)
+      end
     end)
   else
     local MiniPick = require('mini.pick')
@@ -35,12 +92,25 @@ session_utils.open_session_action = function()
       end,
     }, function(selected)
       if selected then
+        if vim.g.session_name then
+          save_quickfix_list(vim.g.session_name)
+        end
+
         local session_name = string.sub(selected, 1, -9)
         vim.g.session_name = session_name
         sessions.load(session_name)
+        load_quickfix_list(session_name)
       end
     end)
   end
 end
+
+vim.api.nvim_create_autocmd("VimLeavePre", {
+  callback = function()
+    if vim.g.session_name then
+      save_quickfix_list(vim.g.session_name)
+    end
+  end
+})
 
 return session_utils

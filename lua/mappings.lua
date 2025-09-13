@@ -20,9 +20,8 @@ vim.keymap.set({'n', 'x'}, '<C-r>', '<nop>', { noremap = true })
 vim.keymap.set({'n', 'x'}, 'R', '<C-r>', { noremap = true })
 
 if not vim.g.vscode then
-  local myQfListName = "ss list";
 
-  vim.keymap.set({'n'}, '<leader>qa',
+  vim.keymap.set({'n'}, 'qa',
     function()
       local current_bufnr = vim.api.nvim_get_current_buf()
       local current_line_number = vim.api.nvim_win_get_cursor(0)[1]
@@ -38,7 +37,6 @@ if not vim.g.vscode then
       local filename = vim.api.nvim_buf_get_name(current_bufnr)
       vim.fn.setqflist({}, 'a',
         {
-          title = myQfListName,
           items = {
             {
               filename = filename,
@@ -52,20 +50,47 @@ if not vim.g.vscode then
     end,
     { noremap = true, desc = "quickfix add current file" });
 
-  vim.keymap.set({"n"}, '<c-q>c',
+  vim.api.nvim_create_autocmd("FileType", {
+    pattern = "qf",
+    callback = function()
+      vim.keymap.set('n', 'dd', function()
+        local qflist = vim.fn.getqflist()
+        if #qflist == 0 then
+          print("quickfix list is already empty")
+          return
+        end
+
+        local current_line = vim.api.nvim_win_get_cursor(0)[1]
+        if current_line > #qflist then
+          print("no entry to delete at this position")
+          return
+        end
+
+        table.remove(qflist, current_line)
+
+        vim.fn.setqflist(qflist, 'r')
+
+        if current_line > #qflist and #qflist > 0 then
+          vim.api.nvim_win_set_cursor(0, {#qflist, 0})
+        else
+          vim.api.nvim_win_set_cursor(0, {current_line, 0})
+        end
+
+        print("deleted quickfix entry " .. current_line)
+      end, { buffer = true, noremap = true, desc = "delete quickfix entry" })
+    end
+  })
+
+
+  vim.keymap.set({"n"}, 'qc',
     function()
-      vim.fn.setqflist({}, 'r', { title = myQfListName })
+      vim.fn.setqflist({}, 'r');
       print("quickfix list cleared")
     end,
   { noremap = true, desc = "quickfix clear" });
 
-  vim.keymap.set({"n"}, "<c-q>t",
+  vim.keymap.set({"n"}, "qt",
     function()
-      if vim.fn.getqflist({ size = 0 }).size == 0 then
-        print("quickfix list is empty")
-        return
-      end
-      -- if the quickfix list with name my list is opened or visible then we close it, else we open it
       local qf_winid = vim.fn.getqflist({ winid = 0 }).winid
       if qf_winid ~= 0 then
         vim.cmd("cclose")
@@ -76,6 +101,9 @@ if not vim.g.vscode then
   { noremap = true, desc = "quickfix toggle" });
 
   vim.keymap.set({'n'}, '<leader>tc', '<cmd>tabc<cr>', { noremap = true, desc = "tab close" })
+
+  vim.keymap.set({'n'}, 'qn', '<cmd>cnext<cr>', { noremap = true, desc = "quickfix next" })
+  vim.keymap.set({'n'}, 'qp', '<cmd>cprev<cr>', { noremap = true, desc = "quickfix previous" })
   -- local pastedInInsertMode = false
   --
   -- vim.api.nvim_create_autocmd("TextChangedI", {
