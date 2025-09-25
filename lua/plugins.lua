@@ -1483,12 +1483,16 @@ require("lazy").setup({
   },
   {
     "ravitemer/mcphub.nvim",
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     dependencies = {
-        "nvim-lua/plenary.nvim",
+      "nvim-lua/plenary.nvim",
+      'Joakker/lua-json5',
     },
     build = "npm install -g mcp-hub@latest",  -- Installs `mcp-hub` node binary globally
     config = function()
-        require("mcphub").setup()
+      require('mcphub').setup({
+        json_decode = require('json5').parse,
+      })
     end
   },
   {
@@ -1550,5 +1554,9 @@ require("lazy").setup({
         { "nvim-tree/nvim-web-devicons", lazy = true }
     },
     opts = {}
+  },
+  {
+      'Joakker/lua-json5',
+      build = Is_Windows() and 'powershell ./install.ps1' or './install.sh',
   }
 })
