@@ -90,11 +90,11 @@ require("lazy").setup({
     'VonHeikemen/lsp-zero.nvim',
     branch = 'v3.x',
     dependencies = {
-      -- LSP Support
-      { 'neovim/nvim-lspconfig' },             -- Required
-      { 'williamboman/mason.nvim' },           -- Optional
-      { 'williamboman/mason-lspconfig.nvim' }, -- Optional
-      { 'nvim-telescope/telescope.nvim' },
+      'neovim/nvim-lspconfig',
+      'williamboman/mason.nvim',
+      'williamboman/mason-lspconfig.nvim',
+      'nvim-telescope/telescope.nvim',
+      "seblyng/roslyn.nvim"
     },
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     event = { 'VeryLazy' },
@@ -264,6 +264,19 @@ require("lazy").setup({
         vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { noremap = true, desc = "code action" })
       end)
 
+      require("mason").setup({
+        registries = {
+          "github:mason-org/mason-registry",
+          "github:Crashdummyy/mason-registry",
+        }
+      })
+
+      require("mason-lspconfig").setup({
+        ensure_installed = { "lua_ls", "vtsls", "copilot" }
+      });
+
+      vim.lsp.inline_completion.enable()
+
       local lua_opts = lsp_zero.nvim_lua_ls()
       lua_opts.settings.Lua = {
         runtime = { version = 'LuaJIT' },
@@ -305,17 +318,7 @@ require("lazy").setup({
         },
         filetypes = { "csharp", "cs" },
       })
-
-      require("mason").setup({
-        registries = {
-          "github:mason-org/mason-registry",
-          "github:Crashdummyy/mason-registry",
-        }
-      })
-
-      require("mason-lspconfig").setup({
-        ensure_installed = { "lua_ls", "vtsls" }
-      });
+      -- vim.lsp.inline_completion.enable()
 
       -- terminal should support undercurl, when it comes to wezterm, we need to use nightly version when using it on windows
       -- or when using it in unix we need to run a set of commands that we can find in wezterm's wiki
@@ -674,6 +677,8 @@ require("lazy").setup({
     cond = not vim.g.vscode,
     version = "1.*",
     dependencies = { "fang2hou/blink-copilot" },
+    ---@module 'blink.cmp'
+    ---@type blink.cmp.Config
     opts = {
       enabled = function() return vim.fn.expand('%:t') ~= "[Magenta Input]" end,
       completion = {
@@ -692,6 +697,25 @@ require("lazy").setup({
             async = true,
           },
         },
+      },
+      keymap = {
+        preset = "super-tab",
+        ['<C-space>'] = { 'show', 'show_documentation', 'hide_documentation' },
+        ['<C-e>'] = { 'hide', 'fallback' },
+        ["<Tab>"] = {
+          "accept",
+          function() -- if you are using Neovim's native inline completions
+            return vim.lsp.inline_completion.get()
+          end,
+          "fallback",
+        },
+        ['<Up>'] = { 'select_prev', 'fallback' },
+        ['<Down>'] = { 'select_next', 'fallback' },
+
+        ['<C-u>'] = { 'scroll_documentation_up', 'fallback' },
+        ['<C-d>'] = { 'scroll_documentation_down', 'fallback' },
+
+        ['<C-k>'] = { 'show_signature', 'hide_signature', 'fallback' },
       }
     }
   },
@@ -1220,12 +1244,6 @@ require("lazy").setup({
     }
   },
   {
-    "zbirenbaum/copilot.lua",
-    cmd = "Copilot",
-    event = { "VeryLazy" },
-    config = true
-  },
-  {
     'willothy/wezterm.nvim',
     cond = not vim.g.vscode,
     lazy = false,
@@ -1303,7 +1321,7 @@ require("lazy").setup({
     keys = {
       {
         '<c-f>t',
-        function() vim.cmd("Neotree toggle reveal_file=%:p") end,
+        function() vim.cmd("Neotree") end,
         noremap = true,
         desc = "File Tree"
       }
@@ -1420,44 +1438,6 @@ require("lazy").setup({
     },
   },
   {
-    -- "dlants/magenta.nvim",
-    dir = "~/dev/magenta.nvim",
-    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
-    lazy = false,
-    keys = {
-      {
-        "<leader>mt",
-        function()
-          require("magenta").toggle()
-        end,
-        noremap = true,
-        desc = "Toggle Magenta"
-      },
-      -- {
-      --   "<c-m>",
-      --   "<Cmd>Magenta predict-edit<CR>",
-      --   mode = { "i", "n" }
-      -- }
-    },
-    build = "npm install --frozen-lockfile",
-    opts = {
-      sidebarPosition = "leftabove",
-      profiles = {
-        {
-          name = "copilot",
-          provider = "copilot",
-          model = "claude-sonnet-4",
-          fastModel = "gpt-4o-mini",
-        }
-      },
-      mcpServers = {
-        mcphub = {
-          url = "http://localhost:37373/mcp"
-        }
-      },
-    },
-  },
-  {
     "sphamba/smear-cursor.nvim",
     opts = {
       smear_insert_mode = false,
@@ -1482,27 +1462,13 @@ require("lazy").setup({
     },
   },
   {
-    "ravitemer/mcphub.nvim",
-    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      'Joakker/lua-json5',
-    },
-    build = "npm install -g mcp-hub@latest",  -- Installs `mcp-hub` node binary globally
-    config = function()
-      require('mcphub').setup({
-        json_decode = require('json5').parse,
-      })
-    end
-  },
-  {
     "cbochs/portal.nvim",
     keys = {
       {
         "<leader>p",
         function() require('portal.builtin').grapple.tunnel() end,
         noremap = true,
-        desc = "Mark Add"
+        desc = "portal"
       },
     },
     -- Optional dependencies
@@ -1558,5 +1524,38 @@ require("lazy").setup({
   {
       'Joakker/lua-json5',
       build = Is_Windows() and 'powershell ./install.ps1' or './install.sh',
+  },
+  {
+    "folke/sidekick.nvim",
+    lazy = false,
+    keys = {
+      {
+        "<tab>",
+        function()
+          if not require("sidekick").nes_jump_or_apply() then
+            return "<Tab>"
+          end
+        end,
+        expr = true,
+        desc = "Goto/Apply Next Edit Suggestion",
+      },
+      {
+        "<c-a>",
+        function()
+          require("sidekick.cli").toggle({ focus = true, name = "copilot" })
+        end,
+        desc = "Sidekick Toggle CLI",
+        mode = { "n", "v", "t" },
+      },
+    },
+    opts = {
+      -- add any options here
+      cli = {
+        win = {
+          layout = "float",
+        }
+      },
+    },
+
   }
 })

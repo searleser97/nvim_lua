@@ -24,7 +24,7 @@ vim.opt.linebreak = true
 vim.opt.showbreak = "↪ "
 -- Preserve indentation on wrapped lines
 vim.opt.breakindent = true
-vim.o.diffopt = 'internal,filler,closeoff,inline:char,linematch:40,followwrap'
+vim.o.diffopt = 'internal,filler,closeoff,algorithm:histogram,followwrap'
 
 -- vim.opt.softtabstop = 0
 -- vim.opt.shiftwidth = require('myutils').Is_Windows() and 4 or 2
