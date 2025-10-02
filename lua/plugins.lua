@@ -1107,11 +1107,10 @@ require("lazy").setup({
   },
   {
     "searleser97/sessions.nvim",
-    lazy = vim.fn.argc() > 0,
-    priority = 1000,
+    lazy = false,
     keys = {
       { "<c-o>s", function() require('session_utils').open_session_action() end, noremap = true, desc = "open session" },
-      { "<c-s>S", ":SessionsSave ",                                              noremap = true, desc = "Save new Session" }
+      { "<c-s>S", ":SessionsSave ", noremap = true, desc = "Save new Session" }
     },
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     dependencies = {
@@ -1120,11 +1119,31 @@ require("lazy").setup({
     config = function()
       require("sessions").setup({
         use_unique_session_names = true,
-        session_filepath = vim.fn.stdpath("data") .. "/sessions",
+        session_filepath = require("session_utils").sessions_dir,
         absolute = true,
       })
       if (vim.fn.argc() == 0) then
         vim.schedule(require('session_utils').open_session_action)
+      elseif (vim.fn.argc() > 0) then
+        local arg = vim.fn.argv(0)
+        if type(arg) == "string" and arg ~= "" then
+          local session_name = require('session_utils').normalize_session_name(
+            require('myutils').getPathToGitDirOr(vim.loop.cwd())
+          )
+          if session_name == "" or session_name == "_" then
+            session_name = "root"
+          end
+          vim.schedule(function()
+            local original_notify = vim.notify
+            ---@diagnostic disable-next-line: duplicate-set-field
+            vim.notify = function() end  -- suppress notifications
+            if not require("sessions").load(session_name, {}) then
+              require("sessions").save(session_name, {})
+              vim.cmd("Neotree")
+            end
+            vim.notify = original_notify  -- restore notifications
+          end)
+        end
       end
     end
   },
@@ -1317,7 +1336,6 @@ require("lazy").setup({
       "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
       "MunifTanjim/nui.nvim",
     },
-    lazy = vim.fn.argc() == 0,
     keys = {
       {
         '<c-f>t',
@@ -1326,6 +1344,7 @@ require("lazy").setup({
         desc = "File Tree"
       }
     },
+    cmd = "Neotree",
     opts = {
       window = {  -- see https://github.com/MunifTanjim/nui.nvim/tree/main/lua/nui/popup for
         position = "float",
@@ -1347,7 +1366,6 @@ require("lazy").setup({
           enabled = true,
           leave_dirs_open = false,
         },
-        hijack_netrw_behavior = "open_current"
       }
     }
   },
@@ -1553,6 +1571,70 @@ require("lazy").setup({
       cli = {
         win = {
           layout = "float",
+          keys = {
+            send_selection = {
+              "<leader>ais",
+              function(t)
+                -- Get the current window that has the selection
+                local current_win = vim.fn.winnr('#') -- previous window
+                if current_win == 0 then
+                  vim.notify("No previous window found", vim.log.levels.WARN)
+                  return
+                end
+                -- Switch to the source window temporarily to get selection
+                vim.cmd('wincmd p') -- go to previous window
+                -- Get visual selection marks
+                local start_pos = vim.fn.getpos("'<")
+                local end_pos = vim.fn.getpos("'>")
+                if start_pos[2] == 0 or end_pos[2] == 0 then
+                  vim.notify("No text selection found. Select text first.", vim.log.levels.WARN)
+                  vim.cmd('wincmd p') -- go back to CLI
+                  return
+                end
+                local start_line = start_pos[2]
+                local end_line = end_pos[2]
+                -- Get selected text
+                local lines = vim.fn.getline(start_line, end_line)
+                -- Ensure lines is a table (vim.fn.getline can return string or table)
+                if type(lines) == "string" then
+                  lines = {lines}
+                end
+                if #lines == 0 then 
+                  vim.cmd('wincmd p') -- go back to CLI
+                  return
+                end
+                -- Handle partial line selections
+                if #lines == 1 then
+                  local start_col = start_pos[3]
+                  local end_col = end_pos[3]
+                  lines[1] = string.sub(lines[1], start_col, end_col)
+                else
+                  -- First line from start column to end
+                  local start_col = start_pos[3]
+                  lines[1] = string.sub(lines[1], start_col)
+                  -- Last line from beginning to end column
+                  local end_col = end_pos[3]
+                  lines[#lines] = string.sub(lines[#lines], 1, end_col)
+                end
+                -- Get current file info
+                local file_name = vim.fn.expand('%:t')
+                local filetype = vim.bo.filetype
+                -- Switch back to CLI window
+                vim.cmd('wincmd p')
+                -- Format and send the message
+                local selected_text = table.concat(lines, '\n')
+                local context_msg = string.format(
+                  "Selected code from %s (lines %d-%d):\n\n```%s\n%s\n```\n\n",
+                  file_name,
+                  start_line,
+                  end_line,
+                  filetype,
+                  selected_text
+                )
+                t:send(context_msg)
+              end,
+            },
+          },
         }
       },
     },

@@ -4,6 +4,14 @@ local path = require 'plenary.path'
 
 local session_utils = {}
 
+-- Function to normalize a path into a filesystem-safe session name
+session_utils.normalize_session_name = function(directory_path)
+  return vim.fn.fnamemodify(directory_path, ":p")
+    :gsub("/$", "")                           -- Remove trailing slash
+    :gsub("[/\\:*?\"<>|]", "_")              -- Replace problematic chars with underscores
+    :gsub("^_+", "")                         -- Remove leading underscores
+end
+
 local function save_quickfix_list(session_name)
   if not session_name or session_name == "" then
     return false
@@ -48,12 +56,13 @@ local function load_quickfix_list(session_name)
   return false
 end
 
+session_utils.sessions_dir = vim.fn.stdpath("data") .. "/sessions"
+
 session_utils.open_session_action = function()
-  local sessions_dir = vim.fn.stdpath("data") .. "/sessions"
-  if vim.fn.isdirectory(sessions_dir) == 0 then
-    vim.fn.mkdir(sessions_dir, "p")
+  if vim.fn.isdirectory(session_utils.sessions_dir) == 0 then
+    vim.fn.mkdir(session_utils.sessions_dir, "p")
   end
-  local files = scan.scan_dir(sessions_dir, { depth = 1, })
+  local files = scan.scan_dir(session_utils.sessions_dir, { depth = 1, })
   local filenames = {}
   ---@diagnostic disable-next-line: unused-local
   for index, filepath in ipairs(files) do
@@ -69,7 +78,9 @@ session_utils.open_session_action = function()
     vim.ui.select(filenames, {
       prompt = "Select a session to open:",
       format_item = function(filename)
-        return string.sub(filename, 1, -9)
+        local session_name = filename
+        local home_dir_normalized = session_utils.normalize_session_name(os.getenv("HOME"))
+        return session_name:gsub("^" .. vim.pesc(home_dir_normalized) .. "_", ""):gsub("%.session$", "")
       end,
     }, function(selected)
       if selected then
@@ -77,9 +88,9 @@ session_utils.open_session_action = function()
           save_quickfix_list(vim.g.session_name)
         end
 
-        local session_name = string.sub(selected, 1, -9)
+        local session_name = selected:gsub("%.session$", "")
         vim.g.session_name = session_name
-        sessions.load(session_name)
+        sessions.load(session_name, {})
         load_quickfix_list(session_name)
       end
     end)
@@ -88,7 +99,9 @@ session_utils.open_session_action = function()
     MiniPick.ui_select(filenames, {
       prompt = "Select a session to open:",
       format_item = function(filename)
-        return string.sub(filename, 1, -9)
+        local session_name = filename
+        local home_dir_normalized = session_utils.normalize_session_name(os.getenv("HOME"))
+        return session_name:gsub("^" .. vim.pesc(home_dir_normalized) .. "_", ""):gsub("%.session$", "")
       end,
     }, function(selected)
       if selected then
@@ -96,9 +109,9 @@ session_utils.open_session_action = function()
           save_quickfix_list(vim.g.session_name)
         end
 
-        local session_name = string.sub(selected, 1, -9)
+        local session_name = selected:gsub("%.session$", "")
         vim.g.session_name = session_name
-        sessions.load(session_name)
+        sessions.load(session_name, {})
         load_quickfix_list(session_name)
       end
     end)
