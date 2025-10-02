@@ -275,8 +275,6 @@ require("lazy").setup({
         ensure_installed = { "lua_ls", "vtsls", "copilot" }
       });
 
-      vim.lsp.inline_completion.enable()
-
       local lua_opts = lsp_zero.nvim_lua_ls()
       lua_opts.settings.Lua = {
         runtime = { version = 'LuaJIT' },
@@ -318,8 +316,6 @@ require("lazy").setup({
         },
         filetypes = { "csharp", "cs" },
       })
-      -- vim.lsp.inline_completion.enable()
-
       -- terminal should support undercurl, when it comes to wezterm, we need to use nightly version when using it on windows
       -- or when using it in unix we need to run a set of commands that we can find in wezterm's wiki
       vim.cmd([[
@@ -1638,6 +1634,10 @@ require("lazy").setup({
         }
       },
     },
-
+  },
+  {
+    "NMAC427/guess-indent.nvim",
+    lazy = false,
+    opts = {}
   }
 })
