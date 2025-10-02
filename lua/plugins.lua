@@ -377,25 +377,9 @@ require("lazy").setup({
       {
         '<c-s>fr',
         function()
-          require('telescope.builtin').find_files({
-            cwd = require('myutils').getPathToGitDirOr(vim.loop.cwd()),
-            find_command = function(prompt)
-              return {
-                "rg",
-                -- "--no-ignore",
-                "--files",
-                "--hidden",
-                "--follow",
-                "--no-heading",    -- Don't group matches by each file
-                "--with-filename", -- Print the file path with the matched lines
-                "--line-number",   -- Show line numbers
-                "--column",        -- Show column numbers
-                "--smart-case",    -- Smart case search
-                "--glob",
-                "!**/.git/*",
-              }
-            end
-          })
+          require("telescope_utils").find_files_utils.launch_find_files_in_cwd(
+            require('myutils').getPathToGitDirOr(vim.loop.cwd())
+          )
         end,
         noremap = true,
         desc = "search files in repo"
@@ -403,29 +387,13 @@ require("lazy").setup({
       {
         '<c-s>fp',
         function()
-          require('telescope.builtin').find_files({
-            cwd = require('myutils').getPathToProjectOr(
+          require("telescope_utils").find_files_utils.launch_find_files_in_cwd(
+            require('myutils').getPathToProjectOr(
               require('myutils').getPathToGitDirOr(
                 vim.loop.cwd()),
               { "*.csproj", "package.json", ".git" }
-            ),
-            find_command = function(prompt)
-              return {
-                "rg",
-                -- "--no-ignore",
-                "--files",
-                "--hidden",
-                "--follow",
-                "--no-heading",    -- Don't group matches by each file
-                "--with-filename", -- Print the file path with the matched lines
-                "--line-number",   -- Show line numbers
-                "--column",        -- Show column numbers
-                "--smart-case",    -- Smart case search
-                "--glob",
-                "!**/.git/*",
-              }
-            end
-          })
+            )
+          )
         end,
         noremap = true,
         desc = "search files in project"
@@ -433,25 +401,9 @@ require("lazy").setup({
       {
         '<c-s>fh',
         function()
-          require('telescope.builtin').find_files({
-            cwd = require('myutils').getPathToCurrentDir({ "__tests?__" }),
-            find_command = function(prompt)
-              return {
-                "rg",
-                -- "--no-ignore",
-                "--files",
-                "--hidden",
-                "--follow",
-                "--no-heading",    -- Don't group matches by each file
-                "--with-filename", -- Print the file path with the matched lines
-                "--line-number",   -- Show line numbers
-                "--column",        -- Show column numbers
-                "--smart-case",    -- Smart case search
-                "--glob",
-                "!**/.git/*",
-              }
-            end
-          })
+          require("telescope_utils").find_files_utils.launch_find_files_in_cwd(
+            require('myutils').getPathToCurrentDir({ "__tests?__" })
+          )
         end,
         noremap = true,
         desc = "search files here"
@@ -551,6 +503,20 @@ require("lazy").setup({
             mappings = {
               i = { ["<cr>"] = actions.git_switch_branch + actions.center },
             }
+          },
+          find_files = {
+            find_command = function(prompt)
+              return require("telescope_utils").find_files_utils.get_find_files_command()
+            end,
+            attach_mappings = function(_, map)
+              map("i", "<c-h>",
+                function(prompt_bufnr)
+                  require("telescope_utils").find_files_utils.toggle_hidden()
+                  require("telescope_utils").find_files_utils.launch_find_files_in_prev_cwd()
+                end
+              )
+              return true
+            end
           }
         }
       });
