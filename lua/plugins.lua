@@ -544,6 +544,9 @@ require("lazy").setup({
       {
         '<c-s>pp',
         function()
+          local fileType = vim.bo.filetype
+          local isTypeScript = fileType == "typescript" or fileType == "typescriptreact"
+          local pattern = isTypeScript and " -g \"*.ts*\" -g \"!*.test.ts*\"" or " -g \"*.*\""
           require("telescope-live-grep-args.shortcuts").grep_visual_selection({
             cwd = require('myutils').getPathToProjectOr(
               require('myutils').getPathToGitDirOr(
@@ -560,6 +563,9 @@ require("lazy").setup({
       {
         '<c-s>ph',
         function()
+          local fileType = vim.bo.filetype
+          local isTypeScript = fileType == "typescript" or fileType == "typescriptreact"
+          local pattern = isTypeScript and " -g \"*.ts*\" -g \"!*.test.ts*\"" or " -g \"*.*\""
           require("telescope-live-grep-args.shortcuts").grep_visual_selection({
             cwd = require('myutils').getPathToCurrentDir(),
             postfix = pattern,
