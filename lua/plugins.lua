@@ -40,7 +40,7 @@ for _, v in ipairs(javascriptFiletypes) do
   table.insert(codeFileTypes, v)
 end
 
-local gitFilePatterns = { "COMMIT_EDITMSG", "git-rebase-todo" }
+local gitFilePatterns = { "COMMIT_EDITMSG", "git-rebase-todo", "MERGE_MSG" }
 local isNeovimOpenedWithGitFile = function()
   if vim.fn.argc() == 0 then
     return false
@@ -1105,7 +1105,8 @@ require("lazy").setup({
             local original_notify = vim.notify
             ---@diagnostic disable-next-line: duplicate-set-field
             vim.notify = function() end  -- suppress notifications
-            if not require("sessions").load(session_name, {}) then
+            local path = require("sessions").get_session_path(session_name, false)
+            if not path or vim.fn.filereadable(path) == 0 then
               require("sessions").save(session_name, {})
               vim.cmd("Neotree")
             end
@@ -1213,22 +1214,6 @@ require("lazy").setup({
       })
       vim.cmd("SetStatusLineBG light_grey")
     end
-  },
-  {
-    "pteroctopus/faster.nvim",
-    lazy = false,
-    priority = 1000,
-    cond = not vim.g.vscode and vim.fn.argc() > 0,
-    opts = {
-      behaviours = {
-        bigfile = {
-          extra_patterns = {
-            { filesize = 0, pattern = "COMMIT_EDITMSG" },
-            { filesize = 0, pattern = "git-rebase-todo" }
-          }
-        }
-      }
-    }
   },
   {
     'willothy/wezterm.nvim',
