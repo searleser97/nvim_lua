@@ -1109,6 +1109,8 @@ require("lazy").setup({
             if not path or vim.fn.filereadable(path) == 0 then
               require("sessions").save(session_name, {})
               vim.cmd("Neotree")
+            else
+              require("sessions").load(session_name, {})
             end
             vim.notify = original_notify  -- restore notifications
           end)
