@@ -1111,6 +1111,10 @@ require("lazy").setup({
               vim.cmd("Neotree")
             else
               require("sessions").load(session_name, {})
+              -- If opened with a file (not directory), open that file after loading session
+              if vim.fn.isdirectory(arg) == 0 and vim.fn.filereadable(arg) == 1 then
+                vim.cmd("edit " .. vim.fn.fnameescape(arg))
+              end
             end
             vim.notify = original_notify  -- restore notifications
           end)
