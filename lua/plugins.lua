@@ -1108,12 +1108,14 @@ require("lazy").setup({
             local path = require("sessions").get_session_path(session_name, false)
             if not path or vim.fn.filereadable(path) == 0 then
               require("sessions").save(session_name, {})
-              vim.cmd("Neotree")
+              vim.cmd('redraw!')
+              vim.schedule(function() vim.cmd("Neotree") end)
             else
               require("sessions").load(session_name, {})
+              vim.cmd('redraw!')
               -- If opened with a file (not directory), open that file after loading session
               if vim.fn.isdirectory(arg) == 0 and vim.fn.filereadable(arg) == 1 then
-                vim.cmd("edit " .. vim.fn.fnameescape(arg))
+                vim.schedule(function() vim.cmd("confirm only | edit " .. vim.fn.fnameescape(arg)) end)
               end
             end
             vim.notify = original_notify  -- restore notifications
@@ -1420,7 +1422,7 @@ require("lazy").setup({
       smear_insert_mode = false,
     }
   },
-  {
+  --[[{
     "dmtrKovalenko/fff.nvim",
     build = "cargo build --release",
     -- or if you are using nixos
@@ -1437,7 +1439,7 @@ require("lazy").setup({
         desc = "Open file picker",
       },
     },
-  },
+  },]]--
   {
     "cbochs/portal.nvim",
     keys = {
