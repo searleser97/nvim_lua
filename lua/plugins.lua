@@ -484,7 +484,7 @@ require("lazy").setup({
             hidden = false,
             grouped = true,
             depth = 1,
-            hijack_netrw = true,
+            hijack_netrw = false,
             mappings = {
               ["i"] = {
                 ["<C-o>"] = Is_Windows() and require("myutils").my_open or nil
@@ -1082,7 +1082,8 @@ require("lazy").setup({
     },
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     dependencies = {
-      "echasnovski/mini.pick"
+      "echasnovski/mini.pick",
+      "nvim-telescope/telescope-file-browser.nvim"
     },
     config = function()
       require("sessions").setup({
@@ -1108,8 +1109,9 @@ require("lazy").setup({
             local path = require("sessions").get_session_path(session_name, false)
             if not path or vim.fn.filereadable(path) == 0 then
               require("sessions").save(session_name, {})
-              vim.cmd('redraw!')
-              vim.schedule(function() vim.cmd("Neotree") end)
+              require("telescope").extensions.file_browser.file_browser({
+                cwd = require('myutils').getPathToCurrentDir(),
+              })
             else
               require("sessions").load(session_name, {})
               vim.cmd('redraw!')
@@ -1289,48 +1291,6 @@ require("lazy").setup({
     }
   },
   {
-    "nvim-neo-tree/neo-tree.nvim",
-    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
-    branch = "v3.x",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
-      "MunifTanjim/nui.nvim",
-    },
-    keys = {
-      {
-        '<c-f>t',
-        function() vim.cmd("Neotree") end,
-        noremap = true,
-        desc = "File Tree"
-      }
-    },
-    cmd = "Neotree",
-    opts = {
-      window = {  -- see https://github.com/MunifTanjim/nui.nvim/tree/main/lua/nui/popup for
-        position = "float",
-        popup = { -- settings that apply to float position only
-          size = {
-            height = "80%",
-            width = "90%",
-          },
-        },
-        mappings = {
-          ["<PageDown>"] = { "scroll_preview", config = { direction = -10 } },
-          ["<PageUp>"] = { "scroll_preview", config = { direction = 10 } },
-          ["z"] = function() vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("z", true, false, true), 'n', false) end,
-          ["Z"] = "close_all_nodes"
-        }
-      },
-      filesystem = {
-        follow_current_file = {
-          enabled = true,
-          leave_dirs_open = false,
-        },
-      }
-    }
-  },
-  {
     "nvim-telescope/telescope-file-browser.nvim",
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     keys = {
@@ -1376,6 +1336,9 @@ require("lazy").setup({
         noremap = true, desc = "recent jumps"
       }
     },
+    config = function()
+      require("telescope").load_extension("file_browser")
+    end,
     dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }
   },
   {
