@@ -1,3 +1,10 @@
+local action_state = require "telescope.actions.state"
+local actions = require "telescope.actions"
+local pickers = require "telescope.pickers"
+local finders = require "telescope.finders"
+local make_entry = require "telescope.make_entry"
+local conf = require"telescope.config".values
+
 local sessions = require("sessions")
 local scan = require 'plenary.scandir'
 local path = require 'plenary.path'
@@ -95,26 +102,28 @@ session_utils.open_session_action = function()
       end
     end)
   else
-    local MiniPick = require('mini.pick')
-    MiniPick.ui_select(filenames, {
-      prompt = "Select a session to open:",
-      format_item = function(filename)
-        local session_name = filename
-        local home_dir_normalized = session_utils.normalize_session_name(os.getenv("HOME"))
-        return session_name:gsub("^" .. vim.pesc(home_dir_normalized) .. "_", ""):gsub("%.session$", "")
-      end,
-    }, function(selected)
-      if selected then
-        if vim.g.session_name then
-          save_quickfix_list(vim.g.session_name)
-        end
-
-        local session_name = selected:gsub("%.session$", "")
-        vim.g.session_name = session_name
-        sessions.load(session_name, {})
-        load_quickfix_list(session_name)
+    pickers.new({}, {
+      previewer = false,
+      prompt_title = "Open Session",
+      finder = finders.new_table({
+        results = filenames,
+        entry_maker = make_entry.gen_from_file({})
+      }),
+      sorter = conf.file_sorter(),
+      attach_mappings = function (_, map)
+        map("i", "<cr>", function (prompt_bufnr)
+          if vim.g.session_name then
+            save_quickfix_list(vim.g.session_name)
+          end
+          actions.close(prompt_bufnr)
+          local session_name = action_state.get_selected_entry()[1]:gsub("%.session$", "")
+          vim.g.session_name = session_name
+          sessions.load(session_name, {})
+          load_quickfix_list(session_name)
+        end)
+        return true
       end
-    end)
+    }):find()
   end
 end
 

@@ -1082,7 +1082,6 @@ require("lazy").setup({
     },
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     dependencies = {
-      "echasnovski/mini.pick",
       "nvim-telescope/telescope-file-browser.nvim"
     },
     config = function()
@@ -1352,12 +1351,6 @@ require("lazy").setup({
         desc = "Git Blame"
       }
     },
-    opts = {}
-  },
-  {
-    "echasnovski/mini.pick",
-    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
-    lazy = false,
     opts = {}
   },
   {
