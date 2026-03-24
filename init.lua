@@ -39,7 +39,7 @@ local function get_node_bin_path(major_version)
   end
 end
 
-local node_bin_path = get_node_bin_path("22")
+local node_bin_path = get_node_bin_path("24")
 if node_bin_path then
   vim.env.PATH = node_bin_path .. ":" .. vim.env.PATH
 end
