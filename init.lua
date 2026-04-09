@@ -1,41 +1,49 @@
 local function get_node_bin_path(major_version)
   local is_windows = vim.fn.has('win32') == 1 or vim.fn.has('win64') == 1
   local path_sep = is_windows and "\\" or "/"
-  local list_cmd
   local versions_dir
 
   if is_windows then
     versions_dir = vim.env.HOME .. "\\scoop\\apps\\nvm\\current\\nodejs"
-    list_cmd = 'dir /b "' .. versions_dir .. '" 2>nul'
   else
     versions_dir = vim.env.HOME .. "/.nvm/versions/node"
-    list_cmd = "ls -1 " .. versions_dir .. " 2>/dev/null"
   end
 
-  local handle = io.popen(list_cmd)
-
+  local handle = vim.uv.fs_scandir(versions_dir)
   if not handle then return nil end
 
-  local highest_version = nil
+  local target_match = nil
+  local highest_match = nil
+  local highest_major, highest_minor, highest_patch = 0, 0, 0
 
-  for line in handle:lines() do
-    local version = line:match("^v?(.+)$")
+  local name = vim.uv.fs_scandir_next(handle)
+  while name do
+    local version = name:match("^v?(.+)$")
     if version then
-      local major = version:match("^(%d+)")
-      if major and tonumber(major) == tonumber(major_version) then
-        highest_version = version
+      local major, minor, patch = version:match("^(%d+)%.(%d+)%.(%d+)")
+      if major then
+        major, minor, patch = tonumber(major), tonumber(minor), tonumber(patch)
+        if major_version and major == tonumber(major_version) then
+          target_match = version
+        end
+        if major > highest_major
+          or (major == highest_major and minor > highest_minor)
+          or (major == highest_major and minor == highest_minor and patch > highest_patch) then
+          highest_major, highest_minor, highest_patch = major, minor, patch
+          highest_match = version
+        end
       end
     end
+    name = vim.uv.fs_scandir_next(handle)
   end
 
-  handle:close()
-
-  if not highest_version then return nil end
+  local chosen = target_match or highest_match
+  if not chosen then return nil end
 
   if is_windows then
-    return versions_dir .. path_sep .. "v" .. highest_version
+    return versions_dir .. path_sep .. "v" .. chosen
   else
-    return versions_dir .. path_sep .. "v" .. highest_version .. path_sep .. "bin"
+    return versions_dir .. path_sep .. "v" .. chosen .. path_sep .. "bin"
   end
 end
 

@@ -1115,8 +1115,8 @@ require("lazy").setup({
               require("sessions").load(session_name, {})
               vim.cmd('redraw!')
               -- If opened with a file (not directory), open that file after loading session
-              if vim.fn.isdirectory(arg) == 0 and vim.fn.filereadable(arg) == 1 then
-                vim.schedule(function() vim.cmd("confirm only | edit " .. vim.fn.fnameescape(arg)) end)
+              if vim.fn.isdirectory(arg) == 0 then
+                vim.schedule(function() vim.cmd("silent! only | edit " .. vim.fn.fnameescape(arg)) end)
               end
             end
             vim.notify = original_notify  -- restore notifications
@@ -1461,104 +1461,8 @@ require("lazy").setup({
       build = Is_Windows() and 'powershell ./install.ps1' or './install.sh',
   },
   {
-    "folke/sidekick.nvim",
-    lazy = false,
-    keys = {
-      {
-        "<tab>",
-        function()
-          if not require("sidekick").nes_jump_or_apply() then
-            return "<Tab>"
-          end
-        end,
-        expr = true,
-        desc = "Goto/Apply Next Edit Suggestion",
-      },
-      {
-        "<c-a>",
-        function()
-          require("sidekick.cli").toggle({ focus = true, name = "copilot" })
-        end,
-        desc = "Sidekick Toggle CLI",
-        mode = { "n", "v", "t" },
-      },
-    },
-    opts = {
-      -- add any options here
-      cli = {
-        win = {
-          layout = "float",
-          keys = {
-            send_selection = {
-              "<leader>ais",
-              function(t)
-                -- Get the current window that has the selection
-                local current_win = vim.fn.winnr('#') -- previous window
-                if current_win == 0 then
-                  vim.notify("No previous window found", vim.log.levels.WARN)
-                  return
-                end
-                -- Switch to the source window temporarily to get selection
-                vim.cmd('wincmd p') -- go to previous window
-                -- Get visual selection marks
-                local start_pos = vim.fn.getpos("'<")
-                local end_pos = vim.fn.getpos("'>")
-                if start_pos[2] == 0 or end_pos[2] == 0 then
-                  vim.notify("No text selection found. Select text first.", vim.log.levels.WARN)
-                  vim.cmd('wincmd p') -- go back to CLI
-                  return
-                end
-                local start_line = start_pos[2]
-                local end_line = end_pos[2]
-                -- Get selected text
-                local lines = vim.fn.getline(start_line, end_line)
-                -- Ensure lines is a table (vim.fn.getline can return string or table)
-                if type(lines) == "string" then
-                  lines = {lines}
-                end
-                if #lines == 0 then 
-                  vim.cmd('wincmd p') -- go back to CLI
-                  return
-                end
-                -- Handle partial line selections
-                if #lines == 1 then
-                  local start_col = start_pos[3]
-                  local end_col = end_pos[3]
-                  lines[1] = string.sub(lines[1], start_col, end_col)
-                else
-                  -- First line from start column to end
-                  local start_col = start_pos[3]
-                  lines[1] = string.sub(lines[1], start_col)
-                  -- Last line from beginning to end column
-                  local end_col = end_pos[3]
-                  lines[#lines] = string.sub(lines[#lines], 1, end_col)
-                end
-                -- Get current file info
-                local file_name = vim.fn.expand('%:t')
-                local filetype = vim.bo.filetype
-                -- Switch back to CLI window
-                vim.cmd('wincmd p')
-                -- Format and send the message
-                local selected_text = table.concat(lines, '\n')
-                local context_msg = string.format(
-                  "Selected code from %s (lines %d-%d):\n\n```%s\n%s\n```\n\n",
-                  file_name,
-                  start_line,
-                  end_line,
-                  filetype,
-                  selected_text
-                )
-                t:send(context_msg)
-              end,
-            },
-          },
-        }
-      },
-    },
-  },
-  {
     "NMAC427/guess-indent.nvim",
-    lazy = false,
+    event = "BufReadPost",
     opts = {}
   }
 })
