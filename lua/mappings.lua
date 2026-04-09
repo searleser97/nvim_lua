@@ -144,10 +144,6 @@ if not vim.g.vscode then
   vim.keymap.set('i', '<cr>', '<cr><c-g>u', { noremap = true })
   -- end fine-grained undo
   -- window mappings
-  vim.keymap.set('n', '<C-Up>', '<C-w><Up>', { noremap = true })
-  vim.keymap.set('n', '<C-Down>', '<C-w><Down>', { noremap = true })
-  vim.keymap.set('n', '<C-Right>', '<C-w><Right>', { noremap = true })
-  vim.keymap.set('n', '<C-Left>', '<C-w><Left>', { noremap = true })
   vim.keymap.set('n', '<C-k>', '<C-w><Up>', { noremap = true })
   vim.keymap.set('n', '<C-j>', '<C-w><Down>', { noremap = true })
   vim.keymap.set('n', '<C-l>', '<C-w><Right>', { noremap = true })
@@ -157,10 +153,6 @@ if not vim.g.vscode then
   vim.keymap.set('t', '<c-e>', [[<C-\><C-n>]], { noremap = true, desc = "exit terminal mode" })
   vim.keymap.set('t', '<c-w>p', [[<C-\><C-n><C-w><C-p>]], { noremap = true, desc = "got to previous window" })
   vim.keymap.set('t', '<c-q>', [[<C-\><C-n><cmd>close<cr>]], { noremap = true, desc = "close terminal" })
-  vim.keymap.set('t', '<c-Up>', [[<C-\><C-n><C-w><Up>]], { noremap = true, desc = "move cursor to the window above" })
-  vim.keymap.set('t', '<c-Down>', [[<C-\><C-n><C-w><Down>]], { noremap = true, desc = "move cursor to the window below" })
-  vim.keymap.set('t', '<c-Left>', [[<C-\><C-n><C-w><Left>]], { noremap = true, desc = "move cursor to the window on the left" })
-  vim.keymap.set('t', '<c-Right>', [[<C-\><C-n><C-w><Right>]], { noremap = true, desc = "move cursor to the window on the right" })
   vim.keymap.set('t', '<c-k>', [[<C-\><C-n><C-w><Up>]], { noremap = true, desc = "move cursor to the window above" })
   vim.keymap.set('t', '<c-j>', [[<C-\><C-n><C-w><Down>]], { noremap = true, desc = "move cursor to the window below" })
   vim.keymap.set('t', '<c-h>', [[<C-\><C-n><C-w><Left>]], { noremap = true, desc = "move cursor to the window on the left" })
