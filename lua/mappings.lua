@@ -157,6 +157,8 @@ if not vim.g.vscode then
   vim.keymap.set('t', '<c-j>', [[<C-\><C-n><C-w><Down>]], { noremap = true, desc = "move cursor to the window below" })
   vim.keymap.set('t', '<c-h>', [[<C-\><C-n><C-w><Left>]], { noremap = true, desc = "move cursor to the window on the left" })
   vim.keymap.set('t', '<c-l>', [[<C-\><C-n><C-w><Right>]], { noremap = true, desc = "move cursor to the window on the right" })
+
+  vim.keymap.set('n', '<leader>ai', function() require('cli_chat').toggle_chat() end, { noremap = true, desc = "Copilot chat" })
 else
   local utils = require('myutils')
   -- all vscode ctrl+... keybindings are defined in the keybindings.json file of vscode
