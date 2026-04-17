@@ -53,8 +53,6 @@ if node_bin_path then
 end
 
 require("settings")
-require("plugins")
-require("mappings")
 
 if vim.fn.argc() == 0 then
   local marker_path = vim.fn.stdpath('data') .. (require('myutils').Is_Windows() and '\\' or '/') .. 'first_launch_done'
@@ -91,6 +89,9 @@ if vim.fn.argc() == 0 then
     end
   end
 end
+
+require("plugins")
+require("mappings")
 
 if vim.g.copilot_mode then
   vim.schedule(function()
