@@ -59,32 +59,30 @@ require("mappings")
 if vim.fn.argc() == 0 then
   local marker_path = vim.fn.stdpath('data') .. (require('myutils').Is_Windows() and '\\' or '/') .. 'first_launch_done'
   if vim.fn.filereadable(marker_path) == 0 then
-    vim.schedule(function()
-      local is_win = require('myutils').Is_Windows()
-      local lines = {
-        '-- Copilot CLI Setup --',
-        '',
-        'To configure the Copilot CLI command, set the COPILOT_CLI_CMD environment variable.',
-        'If not set, it defaults to "copilot".',
-        '',
-      }
-      if is_win then
-        table.insert(lines, 'Run in PowerShell or CMD:')
-        table.insert(lines, '  setx COPILOT_CLI_CMD "copilot"')
-      else
-        table.insert(lines, 'Add to your shell profile (~/.bashrc, ~/.zshrc, etc.):')
-        table.insert(lines, '  export COPILOT_CLI_CMD="copilot"')
-      end
-      table.insert(lines, '')
-      table.insert(lines, 'Replace "copilot" with your desired command if needed.')
-      table.insert(lines, 'This message will only appear once.')
+    local is_win = require('myutils').Is_Windows()
+    local lines = {
+      '-- Copilot CLI Setup --',
+      '',
+      'To configure the Copilot CLI command, set the COPILOT_CLI_CMD environment variable.',
+      'If not set, it defaults to "copilot".',
+      '',
+    }
+    if is_win then
+      table.insert(lines, 'Run in PowerShell or CMD:')
+      table.insert(lines, '  setx COPILOT_CLI_CMD "copilot"')
+    else
+      table.insert(lines, 'Add to your shell profile (~/.bashrc, ~/.zshrc, etc.):')
+      table.insert(lines, '  export COPILOT_CLI_CMD="copilot"')
+    end
+    table.insert(lines, '')
+    table.insert(lines, 'Replace "copilot" with your desired command if needed.')
+    table.insert(lines, 'This message will only appear once.')
 
-      local buf = vim.api.nvim_get_current_buf()
-      if vim.api.nvim_buf_get_name(buf) == '' and vim.bo[buf].buftype == '' then
-        vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
-        vim.bo[buf].modified = false
-      end
-    end)
+    local buf = vim.api.nvim_get_current_buf()
+    if vim.api.nvim_buf_get_name(buf) == '' and vim.bo[buf].buftype == '' then
+      vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+      vim.bo[buf].modified = false
+    end
     -- Create marker file so this hint only shows once
     local f = io.open(marker_path, 'w')
     if f then
