@@ -9,6 +9,7 @@ if package.config:sub(1,1) == '\\' then
   globalConfig.default_prog = { 'C:\\Program Files\\PowerShell\\7\\pwsh.exe' }
 end
 
+globalConfig.front_end = "OpenGL"
 -- globalConfig.prefer_egl = true
 -- globalConfig.front_end = "Software"
 globalConfig.animation_fps = 1
