@@ -126,7 +126,7 @@ function M.open_chat()
     if state.term_buf and vim.api.nvim_buf_is_valid(state.term_buf) then
       vim.api.nvim_buf_delete(state.term_buf, { force = true })
     end
-    state.term_job_id = vim.fn.termopen("copilot", {
+    state.term_job_id = vim.fn.termopen(vim.env.COPILOT_CLI_CMD or "copilot", {
       on_exit = function()
         state.term_job_id = nil
       end,

@@ -1090,7 +1090,8 @@ require("lazy").setup({
         session_filepath = require("session_utils").sessions_dir,
         absolute = true,
       })
-      if (vim.fn.argc() == 0) and not vim.g.copilot_mode then
+      local first_launch_marker = vim.fn.stdpath('data') .. (require('myutils').Is_Windows() and '\\' or '/') .. 'first_launch_done'
+      if (vim.fn.argc() == 0) and not vim.g.copilot_mode and vim.fn.filereadable(first_launch_marker) == 1 then
         vim.schedule(require('session_utils').open_session_action)
       elseif (vim.fn.argc() > 0) then
         local arg = vim.fn.argv(0)
