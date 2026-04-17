@@ -56,6 +56,13 @@ require("settings")
 require("plugins")
 require("mappings")
 
+if vim.g.copilot_mode then
+  vim.schedule(function()
+    require('cli_chat').open_chat()
+    vim.cmd('tabclose 1')
+  end)
+end
+
 -- vim.api.nvim_create_autocmd({ 'CursorMoved' }, {
 --   desc = 'Center When Cursor Line Significantly Changed',
 --   pattern = '*',

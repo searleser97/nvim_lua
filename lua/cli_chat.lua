@@ -7,7 +7,7 @@ local state = {
   tab = nil,
 }
 
-local COMPOSE_HEIGHT = 10
+local COMPOSE_HEIGHT = 4
 
 local function is_term_alive()
   if not state.term_job_id or not state.term_buf then return false end

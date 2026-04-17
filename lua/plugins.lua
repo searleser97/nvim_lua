@@ -1090,7 +1090,7 @@ require("lazy").setup({
         session_filepath = require("session_utils").sessions_dir,
         absolute = true,
       })
-      if (vim.fn.argc() == 0) then
+      if (vim.fn.argc() == 0) and not vim.g.copilot_mode then
         vim.schedule(require('session_utils').open_session_action)
       elseif (vim.fn.argc() > 0) then
         local arg = vim.fn.argv(0)

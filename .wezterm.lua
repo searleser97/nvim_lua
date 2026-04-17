@@ -20,6 +20,12 @@ globalConfig.hide_tab_bar_if_only_one_tab = true
 globalConfig.initial_cols = 70
 globalConfig.initial_rows = 16
 globalConfig.font_size = 16
+globalConfig.window_padding = {
+  left = 0,
+  right = 0,
+  top = 0,
+  bottom = 0,
+}
 globalConfig.keys = {}
 
 local ctrl_c_action = wezterm.action_callback(function(window, pane)
