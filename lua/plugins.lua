@@ -70,22 +70,31 @@ require("lazy").setup({
       -- remove lower case `s`
       table.remove(leap.opts.safe_labels, 1)
       table.remove(leap.opts.labels, 1)
+
+      -- Enhanced f/t motions (replaces flit.nvim)
+      local function ft(key_specific_args)
+        leap.leap(
+          vim.tbl_deep_extend('keep', key_specific_args, {
+            inputlen = 1,
+            inclusive = true,
+            opts = {
+              labels = '',
+              safe_labels = vim.fn.mode(1):match('o') and '' or nil,
+            },
+          })
+        )
+      end
+
+      local clever = require('leap.user').with_traversal_keys
+      local clever_f, clever_t = clever('f', 'F'), clever('t', 'T')
+
+      vim.keymap.set({ 'n', 'x', 'o' }, 'f', function() ft { opts = clever_f } end)
+      vim.keymap.set({ 'n', 'x', 'o' }, 'F', function() ft { backward = true, opts = clever_f } end)
+      vim.keymap.set({ 'n', 'x', 'o' }, 't', function() ft { offset = -1, opts = clever_t } end)
+      vim.keymap.set({ 'n', 'x', 'o' }, 'T', function() ft { backward = true, offset = 1, opts = clever_t } end)
     end
   },
-  {
-    "ggandor/flit.nvim",
-    dependencies = {
-      "ggandor/leap.nvim",
-      "tpope/vim-repeat"
-    },
-    keys = {
-      { 'f', mode = { 'n', 'x' } },
-      { 'F', mode = { 'n', 'x' } },
-      { 't', mode = { 'n', 'x' } },
-      { 'T', mode = { 'n', 'x' } },
-    },
-    opts = { labeled_modes = "nv" }
-  },
+
   {
     'VonHeikemen/lsp-zero.nvim',
     branch = 'v3.x',
