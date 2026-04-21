@@ -64,12 +64,16 @@ require("lazy").setup({
     keys = {
       { ']]', '<Plug>(leap-forward)',  mode = { 'n', 'x' } },
       { '[[', '<Plug>(leap-backward)', mode = { 'n', 'x' } },
+      { 'f', mode = { 'n', 'x', 'o' } },
+      { 'F', mode = { 'n', 'x', 'o' } },
+      { 't', mode = { 'n', 'x', 'o' } },
+      { 'T', mode = { 'n', 'x', 'o' } },
     },
     config = function()
       local leap = require("leap")
-      -- remove lower case `s`
-      table.remove(leap.opts.safe_labels, 1)
-      table.remove(leap.opts.labels, 1)
+      -- remove lower case `s` from labels
+      leap.opts.safe_labels = leap.opts.safe_labels:gsub('s', '', 1)
+      leap.opts.labels = leap.opts.labels:gsub('s', '', 1)
 
       -- Enhanced f/t motions (replaces flit.nvim)
       local function ft(key_specific_args)
