@@ -57,7 +57,7 @@ end
 
 require("lazy").setup({
   {
-    "https://codeberg.org/andyg/leap.nvim",
+    url = "https://codeberg.org/andyg/leap.nvim",
     dependencies = {
       "tpope/vim-repeat"
     },
@@ -343,24 +343,11 @@ require("lazy").setup({
     build = ":TSUpdate",
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     config = function()
-      require("nvim-treesitter.configs").setup({
-        ensure_installed = { "bash", "lua", "vim", "vimdoc", "rust", "typescript", "javascript", "json", "tsx", "c_sharp" },
-        highlight = { enable = true },
-        indent = { enable = true }
-      })
-      local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
-      parser_config.bond = {
-        install_info = {
-          url = "https://github.com/jorgenbele/tree-sitter-bond", -- local path or git repo
-          files = { "src/parser.c" },                             -- note that some parsers also require src/scanner.c or src/scanner.cc
-        },
-        filetype = "bond",                                        -- if filetype does not match the parser name
-      }
+      require("nvim-treesitter").install({ "bash", "lua", "vim", "vimdoc", "rust", "typescript", "javascript", "json", "tsx", "c_sharp" })
 
       vim.treesitter.language.register('bond', 'bond')
 
       vim.filetype.add({
-        -- Detect and assign filetype based on the extension of the filename
         extension = {
           bond = "bond",
         },
