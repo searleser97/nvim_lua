@@ -1109,9 +1109,13 @@ require("lazy").setup({
             local path = require("sessions").get_session_path(session_name, false)
             if not path or vim.fn.filereadable(path) == 0 then
               require("sessions").save(session_name, {})
-              require("telescope").extensions.file_browser.file_browser({
-                cwd = require('myutils').getPathToCurrentDir(),
-              })
+              if vim.fn.isdirectory(arg) == 1 then
+                require("telescope").extensions.file_browser.file_browser({
+                  cwd = require('myutils').getPathToCurrentDir(),
+                })
+              else
+                vim.cmd("edit " .. vim.fn.fnameescape(arg))
+              end
             else
               require("sessions").load(session_name, {})
               vim.cmd('redraw!')
