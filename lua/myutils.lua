@@ -26,10 +26,11 @@ utils.getPathToProjectOr = function(defaultPath, projectFilePatterns)
         return currentDir
       end
     end
-    currentDir = vim.fn.fnamemodify(currentDir, ":h")
-    if currentDir == "" then
+    local parentDir = vim.fn.fnamemodify(currentDir, ":h")
+    if parentDir == currentDir then
       break
     end
+    currentDir = parentDir
   end
 
   return defaultPath
