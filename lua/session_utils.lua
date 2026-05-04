@@ -121,6 +121,24 @@ session_utils.open_session_action = function()
           sessions.load(session_name, {})
           load_quickfix_list(session_name)
         end)
+        map("i", "<C-d>", function (prompt_bufnr)
+          local entry = action_state.get_selected_entry()
+          if not entry then return end
+          local filename = entry[1]
+          local session_name = filename:gsub("%.session$", "")
+          local confirm = vim.fn.confirm("Delete session '" .. session_name .. "'?", "&Yes\n&No", 2)
+          if confirm == 1 then
+            local session_file = session_utils.sessions_dir .. path.path.sep .. filename
+            local quickfix_file = session_utils.sessions_dir .. path.path.sep .. session_name .. "_quickfix.json"
+            vim.fn.delete(session_file)
+            vim.fn.delete(quickfix_file)
+            if vim.g.session_name == session_name then
+              vim.g.session_name = nil
+            end
+            actions.close(prompt_bufnr)
+            session_utils.open_session_action()
+          end
+        end)
         return true
       end
     }):find()
