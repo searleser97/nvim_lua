@@ -32,7 +32,8 @@ local codeFileTypes = {
   "json",
   "vim",
   "zsh",
-  "markdown"
+  "markdown",
+  "text"
 }
 
 -- Add all javascript filetypes
@@ -1119,8 +1120,15 @@ require("lazy").setup({
             else
               require("sessions").load(session_name, {})
               vim.cmd('redraw!')
-              -- If opened with a file (not directory), open that file after loading session
-              if vim.fn.isdirectory(arg) == 0 then
+              if vim.fn.isdirectory(arg) == 1 then
+                -- Session loaded but opened with a directory, still show file browser
+                vim.schedule(function()
+                  require("telescope").extensions.file_browser.file_browser({
+                    cwd = require('myutils').getPathToCurrentDir(),
+                  })
+                end)
+              else
+                -- If opened with a file (not directory), open that file after loading session
                 vim.schedule(function() vim.cmd("silent! only | edit " .. vim.fn.fnameescape(arg)) end)
               end
             end
