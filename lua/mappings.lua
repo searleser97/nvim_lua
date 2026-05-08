@@ -101,6 +101,9 @@ if not vim.g.vscode then
   { noremap = true, desc = "quickfix toggle" });
 
   vim.keymap.set({'n'}, '<leader>tc', '<cmd>tabc<cr>', { noremap = true, desc = "tab close" })
+  vim.keymap.set({'n'}, '<leader>to', '<cmd>tabnew<cr>', { noremap = true, desc = "tab open" })
+  vim.keymap.set({'n'}, '<leader>tn', '<cmd>tabn<cr>', { noremap = true, desc = "tab next" })
+  vim.keymap.set({'n'}, '<leader>tp', '<cmd>tabp<cr>', { noremap = true, desc = "tab previous" })
 
   vim.keymap.set({'n'}, 'qn', '<cmd>cnext<cr>', { noremap = true, desc = "quickfix next" })
   vim.keymap.set({'n'}, 'qp', '<cmd>cprev<cr>', { noremap = true, desc = "quickfix previous" })
