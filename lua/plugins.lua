@@ -286,7 +286,7 @@ require("lazy").setup({
       })
 
       require("mason-lspconfig").setup({
-        ensure_installed = { "lua_ls", "vtsls", "copilot" }
+        ensure_installed = { "lua_ls", "vtsls" }
       });
 
       local lua_opts = lsp_zero.nvim_lua_ls()
@@ -645,7 +645,7 @@ require("lazy").setup({
     'saghen/blink.cmp',
     cond = not vim.g.vscode,
     version = "1.*",
-    dependencies = { "fang2hou/blink-copilot" },
+    dependencies = {},
     ---@module 'blink.cmp'
     ---@type blink.cmp.Config
     opts = {
@@ -657,15 +657,7 @@ require("lazy").setup({
       },
       signature = { enabled = true },
       sources = {
-        default = { 'copilot', 'lsp', 'buffer', 'snippets', 'path' },
-        providers = {
-          copilot = {
-            name = "copilot",
-            module = "blink-copilot",
-            score_offset = 100,
-            async = true,
-          },
-        },
+        default = { 'lsp', 'buffer', 'snippets', 'path' },
       },
       keymap = {
         preset = "super-tab",
@@ -766,8 +758,8 @@ require("lazy").setup({
 
       vim.api.nvim_create_autocmd({ 'BufEnter' }, {
         desc = 'Insert mode in terminal when entering it',
-        pattern = 'term://*',
         callback = function()
+          if vim.bo.buftype ~= 'terminal' then return end
           vim.defer_fn(function()
             vim.cmd('startinsert!')
           end, 100)
@@ -776,8 +768,8 @@ require("lazy").setup({
 
       vim.api.nvim_create_autocmd({ 'BufLeave' }, {
         desc = 'Normal mode when leaving a terminal buffer',
-        pattern = 'term://*',
         callback = function()
+          if vim.bo.buftype ~= 'terminal' then return end
           vim.defer_fn(function()
             local current_buf = vim.api.nvim_get_current_buf()
             if (not string.match(vim.fn.bufname(current_buf), "toggleterm#%d+")) then
