@@ -67,7 +67,7 @@ local function get_compose_buf()
   if not state.compose_buf or not vim.api.nvim_buf_is_valid(state.compose_buf) then
     state.compose_buf = vim.api.nvim_create_buf(false, true)
     local buf = state.compose_buf
-    pcall(vim.api.nvim_buf_set_name, buf, "[ai cli input]")
+    pcall(vim.api.nvim_buf_set_name, buf, "AI Prompt")
     vim.bo[buf].filetype = 'markdown'
     vim.bo[buf].buftype = 'nofile'
     vim.bo[buf].swapfile = false
@@ -126,12 +126,15 @@ function M.open_chat()
     if state.term_buf and vim.api.nvim_buf_is_valid(state.term_buf) then
       vim.api.nvim_buf_delete(state.term_buf, { force = true })
     end
-    state.term_job_id = vim.fn.termopen(vim.env.COPILOT_CLI_CMD or "copilot", {
+    local cmd = vim.env.COPILOT_CLI_CMD or "copilot"
+    state.term_job_id = vim.fn.termopen(cmd, {
       on_exit = function()
         state.term_job_id = nil
       end,
     })
     state.term_buf = vim.api.nvim_get_current_buf()
+    local buf_name = cmd:find("claude") and "Claude Code" or "Copilot CLI"
+    pcall(vim.api.nvim_buf_set_name, state.term_buf, buf_name)
   end
 
   local compose_buf = get_compose_buf()
