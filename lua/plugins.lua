@@ -1361,6 +1361,14 @@ require("lazy").setup({
   {
     "mfussenegger/nvim-dap",
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
+    config = function()
+      -- Tolerate trailing commas in launch.json (VS Code allows them)
+      local vscode = require("dap.ext.vscode")
+      vscode.json_decode = function(str, opts)
+        str = str:gsub(",%s*([%]%}])", "%1")
+        return vim.json.decode(str, opts)
+      end
+    end,
   },
   {
     "nicholasmata/nvim-dap-cs",
@@ -1368,14 +1376,32 @@ require("lazy").setup({
       "mfussenegger/nvim-dap",
     },
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
-    opts = {}
+    opts = {
+      netcoredbg = {
+        path = vim.fn.stdpath("data") .. "\\mason\\packages\\netcoredbg\\netcoredbg\\netcoredbg.exe",
+      },
+    }
   },
   {
     "rcarriga/nvim-dap-ui",
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     dependencies = {
       "mfussenegger/nvim-dap",
+      "nvim-neotest/nvim-nio",
     },
+    config = function()
+      local dap, dapui = require("dap"), require("dapui")
+      dapui.setup()
+      dap.listeners.after.event_initialized["dapui_config"] = function()
+        dapui.open()
+      end
+      dap.listeners.before.event_terminated["dapui_config"] = function()
+        dapui.close()
+      end
+      dap.listeners.before.event_exited["dapui_config"] = function()
+        dapui.close()
+      end
+    end,
   },
   {
     "sphamba/smear-cursor.nvim",
