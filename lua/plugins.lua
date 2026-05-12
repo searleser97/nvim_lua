@@ -1508,5 +1508,11 @@ require("lazy").setup({
     "NMAC427/guess-indent.nvim",
     event = "BufReadPost",
     opts = {}
+  },
+  {
+    "iamcco/markdown-preview.nvim",
+    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    ft = { "markdown" },
+    build = "cd app && npx --yes yarn install",
   }
 })
