@@ -105,6 +105,56 @@ if not vim.g.vscode then
   vim.keymap.set({'n'}, '<leader>tn', '<cmd>tabn<cr>', { noremap = true, desc = "tab next" })
   vim.keymap.set({'n'}, '<leader>tp', '<cmd>tabp<cr>', { noremap = true, desc = "tab previous" })
 
+  -- DAP (debugger) keybindings
+  vim.keymap.set('n', '<leader>db', function() require('dap').toggle_breakpoint() end, { noremap = true, desc = "toggle breakpoint" })
+  vim.keymap.set('n', '<leader>dB', function() require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: ')) end, { noremap = true, desc = "conditional breakpoint" })
+  vim.keymap.set('n', '<leader>dc', function() require('dap').continue() end, { noremap = true, desc = "debug continue" })
+  vim.keymap.set('n', '<leader>di', function() require('dap').step_into() end, { noremap = true, desc = "debug step into" })
+  vim.keymap.set('n', '<leader>do', function() require('dap').step_over() end, { noremap = true, desc = "debug step over" })
+  vim.keymap.set('n', '<leader>dO', function() require('dap').step_out() end, { noremap = true, desc = "debug step out" })
+  vim.keymap.set('n', '<leader>dd', function() require('dap').disconnect({ terminateDebuggee = false }) end, { noremap = true, desc = "debug detach" })
+  vim.keymap.set('n', '<leader>dt', function() require('dap').terminate() end, { noremap = true, desc = "debug terminate" })
+  vim.keymap.set('n', '<leader>dr', function() require('dap').repl.open() end, { noremap = true, desc = "debug REPL" })
+  vim.keymap.set('n', '<leader>dl', function() require('dap').run_last() end, { noremap = true, desc = "debug run last" })
+  vim.keymap.set('n', '<leader>du', function() require('dapui').toggle() end, { noremap = true, desc = "toggle debug UI" })
+  vim.keymap.set('n', '<leader>da', function()
+    local dap = require('dap')
+    local ps_script = [[Get-CimInstance Win32_Process -Filter "Name='dotnet.exe'" | ForEach-Object { "$($_.ProcessId)|$($_.CommandLine)" }]]
+    local output = vim.fn.system({ 'powershell', '-NoProfile', '-Command', ps_script })
+    local lines = vim.split(vim.fn.trim(output), '\n')
+    local procs = {}
+    for _, line in ipairs(lines) do
+      line = vim.fn.trim(line)
+      local pid, cmd = line:match("^(%d+)|(.+)$")
+      if pid then
+        table.insert(procs, { pid = tonumber(pid), cmd = cmd })
+      end
+    end
+    if #procs == 0 then
+      print("No dotnet processes found")
+      return
+    end
+    vim.ui.select(procs, {
+      prompt = "Select dotnet process: ",
+      format_item = function(proc)
+        return "PID " .. proc.pid .. ": " .. proc.cmd
+      end,
+    }, function(selected)
+      if selected then
+        dap.run({
+          type = "coreclr",
+          name = "Attach (dotnet)",
+          request = "attach",
+          processId = selected.pid,
+        })
+      end
+    end)
+  end, { noremap = true, desc = "debug attach to dotnet process" })
+  vim.keymap.set('n', '<leader>dL', function()
+    require('dap').list_breakpoints()
+    vim.cmd('copen')
+  end, { noremap = true, desc = "list breakpoints" })
+
   vim.keymap.set({'n'}, 'qn', '<cmd>cnext<cr>', { noremap = true, desc = "quickfix next" })
   vim.keymap.set({'n'}, 'qp', '<cmd>cprev<cr>', { noremap = true, desc = "quickfix previous" })
   -- local pastedInInsertMode = false
