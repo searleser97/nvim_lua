@@ -285,6 +285,18 @@ require("lazy").setup({
         }
       })
 
+      -- Auto-install Mason packages not covered by mason-lspconfig
+      local ensure_mason_installed = { "netcoredbg", "roslyn" }
+      local mr = require("mason-registry")
+      mr.refresh(function()
+        for _, name in ipairs(ensure_mason_installed) do
+          local pkg = mr.get_package(name)
+          if not pkg:is_installed() then
+            pkg:install()
+          end
+        end
+      end)
+
       require("mason-lspconfig").setup({
         ensure_installed = { "lua_ls", "vtsls" }
       });
@@ -1096,6 +1108,7 @@ require("lazy").setup({
             session_name = "root"
           end
           vim.schedule(function()
+            vim.g.session_name = session_name
             local original_notify = vim.notify
             ---@diagnostic disable-next-line: duplicate-set-field
             vim.notify = function() end  -- suppress notifications
