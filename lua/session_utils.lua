@@ -63,6 +63,70 @@ local function load_quickfix_list(session_name)
   return false
 end
 
+local function save_breakpoints(session_name)
+  if not session_name or session_name == "" then
+    return false
+  end
+  local ok, dap_bps = pcall(function() return require("dap.breakpoints").get() end)
+  if not ok or vim.tbl_isempty(dap_bps) then return false end
+
+  local save_data = {}
+  for bufnr, buf_bps in pairs(dap_bps) do
+    local fname = vim.api.nvim_buf_get_name(bufnr)
+    if fname ~= "" then
+      save_data[fname] = buf_bps
+    end
+  end
+
+  local filepath = vim.fn.stdpath("data") .. "/sessions/" .. session_name .. "_breakpoints.json"
+  if vim.tbl_isempty(save_data) then
+    vim.fn.delete(filepath)
+    return true
+  end
+  local file = io.open(filepath, "w")
+  if file then
+    file:write(vim.fn.json_encode(save_data))
+    file:close()
+    return true
+  end
+  return false
+end
+
+local function load_breakpoints(session_name)
+  if not session_name or session_name == "" then
+    return false
+  end
+  local filepath = vim.fn.stdpath("data") .. "/sessions/" .. session_name .. "_breakpoints.json"
+  if vim.fn.filereadable(filepath) == 0 then
+    return false
+  end
+
+  local file = io.open(filepath, "r")
+  if not file then return false end
+  local content = file:read("*all")
+  file:close()
+
+  local success, data = pcall(vim.fn.json_decode, content)
+  if not success or not data then return false end
+
+  local ok, dap_bps = pcall(function() return require("dap.breakpoints") end)
+  if not ok then return false end
+
+  dap_bps.clear()
+  for fname, buf_bps in pairs(data) do
+    local bufnr = vim.fn.bufadd(fname)
+    vim.fn.bufload(bufnr)
+    for _, bp in ipairs(buf_bps) do
+      dap_bps.set({
+        condition = bp.condition,
+        log_message = bp.logMessage,
+        hit_condition = bp.hitCondition,
+      }, bufnr, bp.line)
+    end
+  end
+  return true
+end
+
 session_utils.sessions_dir = vim.fn.stdpath("data") .. "/sessions"
 
 session_utils.open_session_action = function()
@@ -93,12 +157,14 @@ session_utils.open_session_action = function()
       if selected then
         if vim.g.session_name then
           save_quickfix_list(vim.g.session_name)
+          save_breakpoints(vim.g.session_name)
         end
 
         local session_name = selected:gsub("%.session$", "")
         vim.g.session_name = session_name
         sessions.load(session_name, {})
         load_quickfix_list(session_name)
+        load_breakpoints(session_name)
       end
     end)
   else
@@ -114,12 +180,14 @@ session_utils.open_session_action = function()
         map("i", "<cr>", function (prompt_bufnr)
           if vim.g.session_name then
             save_quickfix_list(vim.g.session_name)
+            save_breakpoints(vim.g.session_name)
           end
           actions.close(prompt_bufnr)
           local session_name = action_state.get_selected_entry()[1]:gsub("%.session$", "")
           vim.g.session_name = session_name
           sessions.load(session_name, {})
           load_quickfix_list(session_name)
+          load_breakpoints(session_name)
         end)
         map("i", "<C-d>", function (prompt_bufnr)
           local entry = action_state.get_selected_entry()
@@ -130,8 +198,10 @@ session_utils.open_session_action = function()
           if confirm == 1 then
             local session_file = session_utils.sessions_dir .. path.path.sep .. filename
             local quickfix_file = session_utils.sessions_dir .. path.path.sep .. session_name .. "_quickfix.json"
+            local breakpoints_file = session_utils.sessions_dir .. path.path.sep .. session_name .. "_breakpoints.json"
             vim.fn.delete(session_file)
             vim.fn.delete(quickfix_file)
+            vim.fn.delete(breakpoints_file)
             if vim.g.session_name == session_name then
               vim.g.session_name = nil
             end
@@ -149,6 +219,7 @@ vim.api.nvim_create_autocmd("VimLeavePre", {
   callback = function()
     if vim.g.session_name then
       save_quickfix_list(vim.g.session_name)
+      save_breakpoints(vim.g.session_name)
     end
   end
 })
