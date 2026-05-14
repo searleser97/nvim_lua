@@ -119,7 +119,13 @@ if not vim.g.vscode then
   vim.keymap.set('n', '<leader>du', function() require('dapui').toggle() end, { noremap = true, desc = "toggle debug UI" })
   vim.keymap.set('n', '<leader>da', function()
     local dap = require('dap')
-    local ps_script = [[Get-CimInstance Win32_Process -Filter "Name='dotnet.exe'" | ForEach-Object { "$($_.ProcessId)|$($_.CommandLine)" }]]
+    local ps_script = [[
+      $dotnetProcs = Get-CimInstance Win32_Process -Filter "Name='dotnet.exe'"
+      foreach ($p in $dotnetProcs) { "$($p.ProcessId)|$($p.CommandLine)" }
+      foreach ($p in $dotnetProcs) {
+        Get-CimInstance Win32_Process -Filter "ParentProcessId=$($p.ProcessId)" | ForEach-Object { "$($_.ProcessId)|$($_.CommandLine)" }
+      }
+    ]]
     local output = vim.fn.system({ 'powershell', '-NoProfile', '-Command', ps_script })
     local lines = vim.split(vim.fn.trim(output), '\n')
     local procs = {}

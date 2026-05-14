@@ -1393,7 +1393,14 @@ require("lazy").setup({
       netcoredbg = {
         path = vim.fn.stdpath("data") .. "\\mason\\packages\\netcoredbg\\netcoredbg\\netcoredbg.exe",
       },
-    }
+    },
+    config = function(_, opts)
+      require("dap-cs").setup(opts)
+      -- Set justMyCode = false on all cs configurations for full symbol loading
+      for _, config in ipairs(require("dap").configurations.cs) do
+        config.justMyCode = false
+      end
+    end,
   },
   {
     "rcarriga/nvim-dap-ui",
@@ -1404,7 +1411,81 @@ require("lazy").setup({
     },
     config = function()
       local dap, dapui = require("dap"), require("dapui")
-      dapui.setup()
+
+      -- Breakpoint signs
+      vim.fn.sign_define('DapBreakpoint', { text = '●', texthl = 'DapBreakpoint' })
+      vim.fn.sign_define('DapBreakpointDisabled', { text = '○', texthl = 'Comment' })
+      vim.fn.sign_define('DapStopped', { text = '▶', texthl = 'DiagnosticWarn', linehl = 'DapStoppedLine' })
+
+      -- Stopped line highlight
+      vim.api.nvim_set_hl(0, 'DapStoppedLine', { bg = '#3a3a00' })
+
+      -- Strikethrough for disabled breakpoints in dap-ui panel
+      vim.api.nvim_set_hl(0, 'DapUIBreakpointsDisabledLine', { fg = '#555555', strikethrough = true })
+
+      dapui.setup({
+        element_mappings = {
+          breakpoints = {
+            expand = {},
+          },
+        },
+        layouts = {
+          {
+            elements = {
+              { id = "scopes", size = 0.25 },
+              { id = "breakpoints", size = 0.25 },
+              { id = "stacks", size = 0.25 },
+              { id = "watches", size = 0.25 },
+            },
+            size = 40,
+            position = "left",
+          },
+          {
+            elements = {
+              { id = "repl", size = 1.0 },
+            },
+            size = 0.25,
+            position = "bottom",
+          },
+        },
+      })
+
+      -- Override breakpoint open to peek without leaving the panel
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "dapui_breakpoints",
+        callback = function(args)
+          -- Defer so dap-ui sets its mappings first
+          vim.schedule(function()
+            if not vim.api.nvim_buf_is_valid(args.buf) then return end
+
+            -- Save dap-ui's original open mapping
+            local orig_maps = vim.api.nvim_buf_get_keymap(args.buf, "n")
+            local orig_open
+            for _, map in ipairs(orig_maps) do
+              if map.lhs == "o" then
+                orig_open = map.callback
+                break
+              end
+            end
+
+            if not orig_open then return end
+
+            local function peek_breakpoint()
+              local bp_win = vim.api.nvim_get_current_win()
+              orig_open()
+              vim.schedule(function()
+                if vim.api.nvim_win_is_valid(bp_win) then
+                  pcall(vim.api.nvim_set_current_win, bp_win)
+                end
+              end)
+            end
+
+            vim.keymap.set("n", "o", peek_breakpoint, { buffer = args.buf, noremap = true, desc = "Peek breakpoint" })
+            vim.keymap.set("n", "<CR>", peek_breakpoint, { buffer = args.buf, noremap = true, desc = "Peek breakpoint" })
+          end)
+        end,
+      })
+
       dap.listeners.after.event_initialized["dapui_config"] = function()
         dapui.open()
       end
@@ -1510,9 +1591,29 @@ require("lazy").setup({
     opts = {}
   },
   {
-    "iamcco/markdown-preview.nvim",
-    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    "MeanderingProgrammer/render-markdown.nvim",
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-tree/nvim-web-devicons",
+    },
     ft = { "markdown" },
-    build = "cd app && npx --yes yarn install",
+    ---@module 'render-markdown'
+    ---@type render.md.UserConfig
+    opts = {
+      code = {
+        disable = { 'mermaid' },
+      },
+    },
+  },
+  {
+    dir = "C:\\Users\\sergiosanc\\projects\\mermaid-nvim",
+    ft = { "markdown" },
+    config = function()
+      require('mermaid-nvim').setup({
+        cmd = { 'termaid' },
+        preview_mode = 'tab',
+        render_inline_on_open = false,
+      })
+    end,
   }
 })
