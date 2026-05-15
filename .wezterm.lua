@@ -63,6 +63,8 @@ table.insert(globalConfig.keys, { key = 'c', mods = 'CTRL', action = ctrl_c_acti
 table.insert(globalConfig.keys, { key = 'c', mods = 'SUPER', action = ctrl_c_action })
 table.insert(globalConfig.keys, { key = 'n', mods = 'SUPER|SHIFT', action = act.SpawnWindow })
 
+table.insert(globalConfig.keys, { key = "RightArrow", mods = "ALT", action = wezterm.action.IncreaseFontSize })
+table.insert(globalConfig.keys, { key = "LeftArrow", mods = "ALT", action = wezterm.action.DecreaseFontSize })
 
 local function get_nvim_data_path()
   local triple = require("wezterm").target_triple
