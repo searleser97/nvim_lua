@@ -68,7 +68,6 @@ vim.api.nvim_create_autocmd('FileType', {
   pattern = 'markdown',
   callback = function(args)
     if vim.api.nvim_buf_get_name(args.buf):match('AI Prompt$') then return end
-    vim.opt_local.wrap = false
     vim.opt_local.virtualedit = 'all'
     vim.opt_local.smoothscroll = true
   end,

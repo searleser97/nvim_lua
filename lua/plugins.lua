@@ -1610,8 +1610,10 @@ require("lazy").setup({
     ft = { "markdown" },
     config = function()
       require('mermaid-nvim').setup({
-        cmd = { 'termaid' },
+        cmd = { 'termaid', '--padding-x', '2', '--padding-y', '0', '--gap', '1' },
         preview_mode = 'tab',
+        exclude_bufs = { 'AI Prompt' },
+        shorten_labels = true,
         render_inline_on_open = false,
       })
     end,
