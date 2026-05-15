@@ -1606,7 +1606,7 @@ require("lazy").setup({
     },
   },
   {
-    dir = "C:\\Users\\sergiosanc\\projects\\mermaid-nvim",
+    "searleser97/mermaid-nvim",
     ft = { "markdown" },
     config = function()
       require('mermaid-nvim').setup({
