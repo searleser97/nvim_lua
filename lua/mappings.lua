@@ -104,6 +104,9 @@ if not vim.g.vscode then
   vim.keymap.set({'n'}, '<leader>to', '<cmd>tabnew<cr>', { noremap = true, desc = "tab open" })
   vim.keymap.set({'n'}, '<leader>tn', '<cmd>tabn<cr>', { noremap = true, desc = "tab next" })
   vim.keymap.set({'n'}, '<leader>tp', '<cmd>tabp<cr>', { noremap = true, desc = "tab previous" })
+  for i = 1, 9 do
+    vim.keymap.set('n', '<leader>t' .. i, '<cmd>tabn ' .. i .. '<cr>', { noremap = true, desc = "go to tab " .. i })
+  end
 
   -- DAP (debugger) keybindings
   vim.keymap.set('n', '<leader>db', function() require('dap').toggle_breakpoint() end, { noremap = true, desc = "toggle breakpoint" })
@@ -117,14 +120,37 @@ if not vim.g.vscode then
   vim.keymap.set('n', '<leader>dr', function() require('dap').repl.open() end, { noremap = true, desc = "debug REPL" })
   vim.keymap.set('n', '<leader>dl', function() require('dap').run_last() end, { noremap = true, desc = "debug run last" })
   vim.keymap.set('n', '<leader>du', function() require('dapui').toggle() end, { noremap = true, desc = "toggle debug UI" })
+  vim.keymap.set('n', '<leader>de', function()
+    local dap = require('dap')
+    local session = dap.session()
+    if not session then
+      print("No active debug session")
+      return
+    end
+    vim.ui.input({ prompt = "Expression to serialize: " }, function(expr)
+      if not expr or expr == "" then return end
+      local eval_expr = "System.Text.Json.JsonSerializer.Serialize(" .. expr .. ")"
+      session:request("evaluate", {
+        expression = eval_expr,
+        frameId = session.current_frame.id,
+        context = "repl",
+      }, function(err, resp)
+        vim.schedule(function()
+          if err then
+            print("Eval error: " .. tostring(err))
+            return
+          end
+          local result = resp.result
+          vim.fn.setreg("+", result)
+          print("Copied to clipboard (" .. #result .. " chars)")
+        end)
+      end)
+    end)
+  end, { noremap = true, desc = "serialize & copy variable as JSON" })
   vim.keymap.set('n', '<leader>da', function()
     local dap = require('dap')
     local ps_script = [[
-      $dotnetProcs = Get-CimInstance Win32_Process -Filter "Name='dotnet.exe'"
-      foreach ($p in $dotnetProcs) { "$($p.ProcessId)|$($p.CommandLine)" }
-      foreach ($p in $dotnetProcs) {
-        Get-CimInstance Win32_Process -Filter "ParentProcessId=$($p.ProcessId)" | ForEach-Object { "$($_.ProcessId)|$($_.CommandLine)" }
-      }
+      Get-CimInstance Win32_Process | Where-Object { $_.ExecutablePath -match '\\bin\\([^\\]+\\)?(Debug|Release)\\' -or $_.Name -eq 'dotnet.exe' } | ForEach-Object { "$($_.ProcessId)|$($_.Name -replace '\.exe$','') - $($_.CommandLine)" }
     ]]
     local output = vim.fn.system({ 'powershell', '-NoProfile', '-Command', ps_script })
     local lines = vim.split(vim.fn.trim(output), '\n')
@@ -137,11 +163,11 @@ if not vim.g.vscode then
       end
     end
     if #procs == 0 then
-      print("No dotnet processes found")
+      print("No .NET processes found")
       return
     end
     vim.ui.select(procs, {
-      prompt = "Select dotnet process: ",
+      prompt = "Select .NET process: ",
       format_item = function(proc)
         return "PID " .. proc.pid .. ": " .. proc.cmd
       end,

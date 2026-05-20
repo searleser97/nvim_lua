@@ -889,7 +889,7 @@ require("lazy").setup({
     cmd = { 'DiffviewOpen', 'DiffviewClose', 'DiffviewFileHistory' },
     keys = {
       {
-        'gs',
+        '<c-g>s',
         "<cmd>DiffviewOpen<cr>",
         noremap = true,
         desc = "git status",
@@ -903,7 +903,7 @@ require("lazy").setup({
         mode = { 'n' }
       },
       {
-        'gl',
+        '<c-g>l',
         "<cmd>DiffviewFileHistory % -n=512<cr>",
         noremap = true,
         desc = "git log file",
@@ -918,7 +918,12 @@ require("lazy").setup({
       },
       {
         '<c-g>dm',
-        "<cmd>DiffviewOpen main..HEAD<cr>",
+        function()
+          local branch = vim.fn.input("Branch: ")
+          if branch ~= "" then
+            vim.cmd("DiffviewOpen " .. branch .. "..HEAD")
+          end
+        end,
         noremap = true,
         desc = "git diff with given branch",
         mode = { 'n' }
@@ -1363,7 +1368,7 @@ require("lazy").setup({
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     keys = {
       {
-        "<leader>gb",
+        "<c-g>b",
         "<cmd>BlameToggle<cr>",
         noremap = true,
         desc = "Git Blame"
@@ -1424,65 +1429,201 @@ require("lazy").setup({
       vim.api.nvim_set_hl(0, 'DapUIBreakpointsDisabledLine', { fg = '#555555', strikethrough = true })
 
       dapui.setup({
-        element_mappings = {
-          breakpoints = {
-            expand = {},
-          },
-        },
+        element_mappings = {},
         layouts = {
           {
             elements = {
-              { id = "scopes", size = 0.25 },
-              { id = "breakpoints", size = 0.25 },
-              { id = "stacks", size = 0.25 },
-              { id = "watches", size = 0.25 },
+              { id = "scopes", size = 1.0 },
             },
-            size = 40,
-            position = "left",
+            size = 10,
+            position = "bottom",
           },
           {
             elements = {
-              { id = "repl", size = 1.0 },
+              { id = "stacks", size = 1.0 },
             },
-            size = 0.25,
+            size = 10,
+            position = "bottom",
+          },
+          {
+            elements = {
+              { id = "watches", size = 1.0 },
+            },
+            size = 10,
+            position = "bottom",
+          },
+          {
+            elements = {
+              { id = "breakpoints", size = 1.0 },
+            },
+            size = 10,
             position = "bottom",
           },
         },
       })
 
-      -- Override breakpoint open to peek without leaving the panel
+      -- Patch send_to_repl to capture evaluateName before renders create partials
+      local dapui_util = require("dapui.util")
+      local original_send_to_repl = dapui_util.send_to_repl
+      local suppress_repl = false
+      dapui_util.send_to_repl = function(expression)
+        vim.g._dapui_last_eval_name = expression
+        if not suppress_repl then
+          original_send_to_repl(expression)
+        end
+      end
+
+      -- Override 'o' in breakpoints panel to jump to file and return focus
       vim.api.nvim_create_autocmd("FileType", {
         pattern = "dapui_breakpoints",
         callback = function(args)
-          -- Defer so dap-ui sets its mappings first
+          -- Defer so dap-ui's own mappings are set first
           vim.schedule(function()
-            if not vim.api.nvim_buf_is_valid(args.buf) then return end
-
-            -- Save dap-ui's original open mapping
-            local orig_maps = vim.api.nvim_buf_get_keymap(args.buf, "n")
-            local orig_open
-            for _, map in ipairs(orig_maps) do
-              if map.lhs == "o" then
-                orig_open = map.callback
-                break
-              end
-            end
-
-            if not orig_open then return end
+            local existing = vim.fn.maparg("o", "n", false, true)
+            local original_cb = existing.callback
+            if not original_cb then return end
 
             local function peek_breakpoint()
               local bp_win = vim.api.nvim_get_current_win()
-              orig_open()
+              original_cb()
               vim.schedule(function()
                 if vim.api.nvim_win_is_valid(bp_win) then
                   pcall(vim.api.nvim_set_current_win, bp_win)
                 end
               end)
             end
-
             vim.keymap.set("n", "o", peek_breakpoint, { buffer = args.buf, noremap = true, desc = "Peek breakpoint" })
-            vim.keymap.set("n", "<CR>", peek_breakpoint, { buffer = args.buf, noremap = true, desc = "Peek breakpoint" })
+            vim.keymap.set("n", "<2-LeftMouse>", peek_breakpoint, { buffer = args.buf, noremap = true, desc = "Peek breakpoint" })
           end)
+        end,
+      })
+
+      -- Serialize variable under cursor in scopes panel as JSON and copy to clipboard
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "dapui_scopes",
+        callback = function(args)
+          vim.keymap.set("n", "yy", function()
+            local session = dap.session()
+            if not session then
+              print("No active debug session")
+              return
+            end
+
+            -- Use our patched send_to_repl to capture evaluateName
+            vim.g._dapui_last_eval_name = nil
+            suppress_repl = true
+            local keys = vim.api.nvim_replace_termcodes("r", true, false, true)
+            vim.api.nvim_feedkeys(keys, "x", false)
+            suppress_repl = false
+
+            local expr = vim.g._dapui_last_eval_name
+            if not expr then
+              -- Fallback for leaf variables: parse value from buffer line
+              local line = vim.api.nvim_get_current_line()
+              local value = line:match("= (.+)$")
+              if value then
+                vim.fn.setreg('"', value)
+                print("Yanked: " .. value)
+              else
+                print("No value found on this line")
+              end
+              return
+            end
+
+            -- Evaluate the expression to get its variablesReference
+            session:request("evaluate", {
+              expression = expr,
+              frameId = session.current_frame.id,
+              context = "hover",
+            }, function(err, resp)
+              if err or not resp then
+                vim.schedule(function() print("Evaluate error: " .. tostring(err)) end)
+                return
+              end
+
+              if resp.variablesReference == 0 then
+                -- Leaf value: just copy it
+                vim.schedule(function()
+                  vim.fn.setreg('"', resp.result or "")
+                  print("Yanked value")
+                end)
+                return
+              end
+
+              -- Recursively build JSON from variablesReference
+              local max_depth = 5
+              local indent_str = "  "
+              local function build_json(var_ref, depth, done_cb)
+                if var_ref == 0 or depth > max_depth then
+                  done_cb(nil)
+                  return
+                end
+                session:request("variables", { variablesReference = var_ref }, function(verr, vresp)
+                  if verr or not vresp or not vresp.variables then
+                    done_cb(nil)
+                    return
+                  end
+
+                  local vars = vresp.variables
+                  if #vars == 0 then
+                    done_cb("{}")
+                    return
+                  end
+
+                  local is_array = vars[1].name:match("^%[%d+%]$") ~= nil
+                  local results = {}
+                  local pending = #vars
+                  local pad = string.rep(indent_str, depth)
+                  local pad_close = string.rep(indent_str, depth - 1)
+
+                  local function try_finish()
+                    pending = pending - 1
+                    if pending > 0 then return end
+                    local parts = {}
+                    if is_array then
+                      for _, r in ipairs(results) do
+                        if r then table.insert(parts, pad .. r.value) end
+                      end
+                      done_cb("[\n" .. table.concat(parts, ",\n") .. "\n" .. pad_close .. "]")
+                    else
+                      for _, r in ipairs(results) do
+                        if r then table.insert(parts, pad .. '"' .. r.name .. '": ' .. r.value) end
+                      end
+                      done_cb("{\n" .. table.concat(parts, ",\n") .. "\n" .. pad_close .. "}")
+                    end
+                  end
+
+                  for idx, variable in ipairs(vars) do
+                    if variable.variablesReference > 0 and depth < max_depth then
+                      build_json(variable.variablesReference, depth + 1, function(child_json)
+                        results[idx] = { name = variable.name, value = child_json or ('"' .. (variable.value or ""):gsub('"', '\\"') .. '"') }
+                        try_finish()
+                      end)
+                    else
+                      local val = variable.value or ""
+                      if val == "null" or val == "true" or val == "false" or val:match("^%-?%d+%.?%d*$") then
+                        results[idx] = { name = variable.name, value = val }
+                      else
+                        results[idx] = { name = variable.name, value = '"' .. val:gsub('\\', '\\\\'):gsub('"', '\\"'):gsub('\n', '\\n'):gsub('\r', '\\r') .. '"' }
+                      end
+                      try_finish()
+                    end
+                  end
+                end)
+              end
+
+              build_json(resp.variablesReference, 1, function(json)
+                vim.schedule(function()
+                  if json then
+                    vim.fn.setreg('"', json)
+                    print("Yanked JSON (" .. #json .. " chars)")
+                  else
+                    print("Failed to build JSON")
+                  end
+                end)
+              end)
+            end)
+          end, { buffer = args.buf, noremap = true, desc = "Yank variable as JSON" })
         end,
       })
 
