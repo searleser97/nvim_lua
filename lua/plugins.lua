@@ -1523,7 +1523,7 @@ require("lazy").setup({
               local value = line:match("= (.+)$")
               if value then
                 vim.fn.setreg('"', value)
-                print("Yanked")
+                print("Yanked (" .. #value .. " chars)")
               else
                 print("No value found on this line")
               end
@@ -1545,7 +1545,7 @@ require("lazy").setup({
                 -- Leaf value: just copy it
                 vim.schedule(function()
                   vim.fn.setreg('"', resp.result or "")
-                  print("Yanked value")
+                  print("Yanked (" .. #(resp.result or "") .. " chars)")
                 end)
                 return
               end
