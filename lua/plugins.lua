@@ -1523,7 +1523,7 @@ require("lazy").setup({
               local value = line:match("= (.+)$")
               if value then
                 vim.fn.setreg('"', value)
-                print("Yanked: " .. value)
+                print("Yanked")
               else
                 print("No value found on this line")
               end
@@ -1616,7 +1616,7 @@ require("lazy").setup({
                 vim.schedule(function()
                   if json then
                     vim.fn.setreg('"', json)
-                    print("Yanked JSON (" .. #json .. " chars)")
+                print("Yanked (" .. #json .. " chars)")
                   else
                     print("Failed to build JSON")
                   end
