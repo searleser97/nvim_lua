@@ -1428,39 +1428,63 @@ require("lazy").setup({
       -- Strikethrough for disabled breakpoints in dap-ui panel
       vim.api.nvim_set_hl(0, 'DapUIBreakpointsDisabledLine', { fg = '#555555', strikethrough = true })
 
+      local portrait_layouts = {
+        {
+          elements = { { id = "scopes", size = 1.0 } },
+          size = 10,
+          position = "bottom",
+        },
+        {
+          elements = { { id = "stacks", size = 1.0 } },
+          size = 10,
+          position = "bottom",
+        },
+        {
+          elements = { { id = "watches", size = 1.0 } },
+          size = 10,
+          position = "bottom",
+        },
+        {
+          elements = { { id = "breakpoints", size = 1.0 } },
+          size = 10,
+          position = "bottom",
+        },
+      }
+
+      local landscape_layouts = {
+        {
+          elements = {
+            { id = "scopes", size = 0.4 },
+            { id = "stacks", size = 0.2 },
+            { id = "watches", size = 0.2 },
+            { id = "breakpoints", size = 0.2 },
+          },
+          size = 50,
+          position = "left",
+        },
+      }
+
+      local current_layout = "portrait"
+
       dapui.setup({
         element_mappings = {},
-        layouts = {
-          {
-            elements = {
-              { id = "scopes", size = 1.0 },
-            },
-            size = 10,
-            position = "bottom",
-          },
-          {
-            elements = {
-              { id = "stacks", size = 1.0 },
-            },
-            size = 10,
-            position = "bottom",
-          },
-          {
-            elements = {
-              { id = "watches", size = 1.0 },
-            },
-            size = 10,
-            position = "bottom",
-          },
-          {
-            elements = {
-              { id = "breakpoints", size = 1.0 },
-            },
-            size = 10,
-            position = "bottom",
-          },
-        },
+        layouts = portrait_layouts,
       })
+
+      vim.keymap.set('n', '<leader>dv', function()
+        dapui.close()
+        if current_layout == "portrait" then
+          current_layout = "landscape"
+          dapui.setup({ element_mappings = {}, layouts = landscape_layouts })
+        else
+          current_layout = "portrait"
+          dapui.setup({ element_mappings = {}, layouts = portrait_layouts })
+        end
+        if dap.session() then
+          dapui.open()
+        end
+        print("DAP layout: " .. current_layout)
+      end, { noremap = true, desc = "toggle DAP UI layout (portrait/landscape)" })
 
       -- Patch send_to_repl to capture evaluateName before renders create partials
       local dapui_util = require("dapui.util")
