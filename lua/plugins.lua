@@ -1652,6 +1652,12 @@ require("lazy").setup({
       })
 
       dap.listeners.after.event_initialized["dapui_config"] = function()
+        local detected = require("orientation").get()
+        if detected ~= current_layout then
+          current_layout = detected
+          local layouts = (detected == "landscape") and landscape_layouts or portrait_layouts
+          dapui.setup({ element_mappings = {}, layouts = layouts })
+        end
         dapui.open()
       end
       dap.listeners.before.event_terminated["dapui_config"] = function()
