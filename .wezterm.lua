@@ -82,6 +82,24 @@ table.insert(globalConfig.keys, { key = 'n', mods = 'SUPER|SHIFT', action = act.
 table.insert(globalConfig.keys, { key = "RightArrow", mods = "ALT", action = wezterm.action.IncreaseFontSize })
 table.insert(globalConfig.keys, { key = "LeftArrow", mods = "ALT", action = wezterm.action.DecreaseFontSize })
 
+-- Split panes
+table.insert(globalConfig.keys, {
+  key = '\\',
+  mods = 'META',
+  action = act.SplitHorizontal { domain = 'CurrentPaneDomain' },
+})
+table.insert(globalConfig.keys, {
+  key = '-',
+  mods = 'META',
+  action = act.SplitVertical { domain = 'CurrentPaneDomain' },
+})
+
+-- Pane navigation with Meta (Alt) + hjkl
+table.insert(globalConfig.keys, { key = 'h', mods = 'META', action = act.ActivatePaneDirection 'Left' })
+table.insert(globalConfig.keys, { key = 'j', mods = 'META', action = act.ActivatePaneDirection 'Down' })
+table.insert(globalConfig.keys, { key = 'k', mods = 'META', action = act.ActivatePaneDirection 'Up' })
+table.insert(globalConfig.keys, { key = 'l', mods = 'META', action = act.ActivatePaneDirection 'Right' })
+
 local function get_nvim_data_path()
   local triple = require("wezterm").target_triple
   local home = os.getenv("HOME") or os.getenv("USERPROFILE")
