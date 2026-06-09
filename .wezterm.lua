@@ -6,10 +6,26 @@ local globalConfig = wezterm.config_builder()
 local act = wezterm.action
 
 if package.config:sub(1,1) == '\\' then
-  globalConfig.default_prog = { 'C:\\Program Files\\PowerShell\\7\\pwsh.exe' }
+  local function file_exists(path)
+    local f = io.open(path, "r")
+    if f then f:close() return true end
+    return false
+  end
+
+  local pwsh_paths = {
+    'C:\\Program Files\\WindowsApps\\Microsoft.PowerShell_7.6.2.0_arm64__8wekyb3d8bbwe\\pwsh.exe',
+    'C:\\Program Files\\PowerShell\\7\\pwsh.exe',
+  }
+
+  for _, path in ipairs(pwsh_paths) do
+    if file_exists(path) then
+      globalConfig.default_prog = { path }
+      break
+    end
+  end
 end
 
-globalConfig.front_end = "OpenGL"
+--globalConfig.front_end = "OpenGL"
 -- globalConfig.prefer_egl = true
 -- globalConfig.front_end = "Software"
 globalConfig.animation_fps = 1
