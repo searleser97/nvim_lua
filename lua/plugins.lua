@@ -292,7 +292,12 @@ require("lazy").setup({
         for _, name in ipairs(ensure_mason_installed) do
           local pkg = mr.get_package(name)
           if not pkg:is_installed() then
-            pkg:install()
+            -- Force x64 for roslyn on ARM64 since the project requires x64 .NET
+            local install_opts = {}
+            if name == "roslyn" and vim.uv.os_uname().machine == "arm64" then
+              install_opts.target = "win_x64"
+            end
+            pkg:install(install_opts)
           end
         end
       end)
