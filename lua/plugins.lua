@@ -298,7 +298,8 @@ require("lazy").setup({
       end)
 
       require("mason-lspconfig").setup({
-        ensure_installed = { "lua_ls", "vtsls" }
+        -- "lua_ls" commented out: installed externally via winget (Mason doesn't support win-arm64)
+        ensure_installed = { --[[ "lua_ls", ]] "vtsls" }
       });
 
       local lua_opts = lsp_zero.nvim_lua_ls()
@@ -1034,40 +1035,23 @@ require("lazy").setup({
     end
   },
   {
-    "ruifm/gitlinker.nvim",
+    "linrongbin16/gitlinker.nvim",
+    cmd = "GitLink",
     keys = {
-      {
-        '<leader>cl',
-        function()
-          require("gitlinker").get_buf_range_url("n",
-            { action_callback = require("gitlinker.actions").copy_to_clipboard })
-        end,
-        silent = true,
-        desc = "copy link to current line"
-      },
-      {
-        '<leader>cl',
-        function()
-          require("gitlinker").get_buf_range_url("v",
-            { action_callback = require("gitlinker.actions").copy_to_clipboard })
-        end,
-        silent = true,
-        mode = 'v',
-        desc = "copy link to selected lines"
-      }
+      { '<leader>cl', "<cmd>GitLink<cr>", silent = true, desc = "copy link to current line" },
+      { '<leader>cl', "<cmd>GitLink<cr>", mode = 'v', silent = true, desc = "copy link to selected lines" },
     },
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     config = function()
-      local handler = function(url_data)
-        local base_url = require "gitlinker.hosts".get_base_https_url(url_data)
-        local normalized_file_path = url_data.file:gsub("\\", "/")
-        local repo_path = require('myutils').getPathToGitDirOr(vim.loop.cwd())
-        local relative_file_path = normalized_file_path:gsub("^" .. vim.pesc(repo_path) .. "[/\\]?", "")
-        local url = base_url .. "?path=/" .. relative_file_path
-        if url_data.lstart then
-          url = url .. "&version=GC" .. url_data.rev
-          url = url .. "&line=" .. url_data.lstart
-          if url_data.lend then url = url .. "&lineEnd=" .. url_data.lend end
+      local azure_devops_router = function(lk)
+        local repo = lk.repo:gsub("%.git$", "")
+        local base_url = "https://" .. lk.host .. "/" .. lk.org .. "/" .. repo
+        local file = lk.file:gsub("\\", "/")
+        local url = base_url .. "?path=/" .. file
+        if lk.lstart then
+          url = url .. "&version=GC" .. lk.rev
+          url = url .. "&line=" .. lk.lstart
+          if lk.lend then url = url .. "&lineEnd=" .. lk.lend end
           url = url .. "&lineStartColumn=1"
           url = url .. "&lineEndColumn=1000"
           url = url .. "&_a=contents"
@@ -1075,11 +1059,14 @@ require("lazy").setup({
         return url
       end
       require("gitlinker").setup({
-        callbacks = {
-          ["dynamicscrm.visualstudio.com"] = handler,
-          ["domoreexp.visualstudio.com"] = handler,
-          ["dev.azure.com"] = handler,
-        }
+        router = {
+          browse = {
+            ["^dynamicscrm%.visualstudio%.com"] = azure_devops_router,
+            ["^domoreexp%.visualstudio%.com"] = azure_devops_router,
+            ["^office%.visualstudio%.com"] = azure_devops_router,
+            ["^dev%.azure%.com"] = azure_devops_router,
+          },
+        },
       })
     end,
   },
