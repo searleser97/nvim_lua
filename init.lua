@@ -128,34 +128,22 @@ end
 
 if require('myutils').Is_Windows() then
   vim.api.nvim_create_autocmd('QuitPre', {
+    desc = "Remove stale ShaDa temporary files",
     callback = function()
+      local shada_dir = vim.fn.stdpath("data") .. "\\shada"
+      local handle = vim.uv.fs_scandir(shada_dir)
+      if not handle then return end
 
-      local log_file_path = vim.fn.stdpath("data") .. "\\shada_cleanup.log"
-      local log_file = io.open(log_file_path, "a")
-      if log_file then
-        log_file:write(os.date() .. " - Cleanup started\n")
-        log_file:close()
-      end
-      os.execute('del "' .. vim.fn.stdpath("data") .. '\\shada\\main.shada.tmp.*"')
-      -- delete all tmp shada tmp files
-      -- for i = string.byte('f'), string.byte('z') do
-      --   local shadafile = vim.fn.stdpath("data") .. "\\shada\\main.shada.tmp." .. string.char(i)
-      --   local file = io.open(shadafile, "w")
-      --   if file then
-      --     file:write("Dummy content for " .. shadafile)
-      --     file:close()
-      --   end
-      -- end
-      -- vim.opt.shadafile = vim.fn.stdpath("data") .. "\\shada\\main.shada.tmp." .. os.time()
-      -- local ok, err = pcall(vim.cmd, 'wshada')
-      -- if not ok and err:match("E138: main%.shada%.tmp%.%d+ files exist") then
-        -- vim.opt.shadafile = vim.fn.stdpath("data") .. "\\shada\\main.shada.tmp." .. os.time()
-        -- vim.cmd('wshada')
-      -- end
-      log_file = io.open(log_file_path, "a")
-      if log_file then
-        log_file:write(os.date() .. " - Cleanup completed\n")
-        log_file:close()
+      while true do
+        local name, file_type = vim.uv.fs_scandir_next(handle)
+        if not name then break end
+        if file_type == "file" and vim.startswith(name, "main.shada.tmp.") then
+          local path = shada_dir .. "\\" .. name
+          local ok, err = vim.uv.fs_unlink(path)
+          if not ok then
+            vim.notify(("Could not remove stale ShaDa file %s: %s"):format(path, err), vim.log.levels.WARN)
+          end
+        end
       end
     end
   })
