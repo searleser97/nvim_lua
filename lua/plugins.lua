@@ -531,7 +531,10 @@ require("lazy").setup({
               map("i", "<c-h>",
                 function(prompt_bufnr)
                   require("telescope_utils").find_files_utils.toggle_hidden()
-                  require("telescope_utils").find_files_utils.launch_find_files_in_prev_cwd()
+                  actions.close(prompt_bufnr)
+                  vim.schedule(function()
+                    require("telescope_utils").find_files_utils.launch_find_files_in_prev_cwd()
+                  end)
                 end
               )
               return true
