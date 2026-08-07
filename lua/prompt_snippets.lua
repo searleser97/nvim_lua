@@ -112,10 +112,19 @@ local function insert_prompt(buf, win, cursor, text)
     return
   end
 
+  local text_lines = vim.split(text, "\n", { plain = true })
   vim.api.nvim_set_current_win(win)
-  vim.api.nvim_buf_set_text(buf, cursor[1] - 1, cursor[2], cursor[1] - 1, cursor[2], { text })
-  vim.api.nvim_win_set_cursor(win, { cursor[1], cursor[2] + #text - 1 })
-  vim.cmd("startinsert!")
+  vim.api.nvim_buf_set_text(buf, cursor[1] - 1, cursor[2], cursor[1] - 1, cursor[2], text_lines)
+
+  local final_row = cursor[1] + #text_lines - 1
+  local final_column = #text_lines == 1 and cursor[2] + #text_lines[1] or #text_lines[#text_lines]
+  if final_column == 0 then
+    vim.api.nvim_win_set_cursor(win, { final_row, 0 })
+    vim.cmd("startinsert")
+  else
+    vim.api.nvim_win_set_cursor(win, { final_row, final_column - 1 })
+    vim.cmd("startinsert!")
+  end
 end
 
 function M.pick(buf)
@@ -149,11 +158,12 @@ function M.pick(buf)
     finder = finders.new_table({
       results = prompts,
       entry_maker = function(prompt)
+        local display_text = prompt.text:gsub("%s+", " ")
         return {
           value = prompt.text,
           ordinal = prompt.label,
           display = function()
-            return displayer({ prompt.label, prompt.text })
+            return displayer({ prompt.label, display_text })
           end,
         }
       end,
