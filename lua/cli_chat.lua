@@ -61,6 +61,10 @@ local function setup_compose_keymaps(buf)
       vim.api.nvim_feedkeys("/", "n", false)
     end
   end, { buffer = buf, noremap = true, desc = 'Slash command passthrough' })
+
+  vim.keymap.set('i', '<C-a>', function()
+    require('prompt_snippets').pick(buf)
+  end, { buffer = buf, noremap = true, desc = 'Insert AI instruction' })
 end
 
 local function get_compose_buf()
