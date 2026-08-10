@@ -722,6 +722,13 @@ require("lazy").setup({
           colors.diff.change = colors.none
           colors.diff.text = "#87632f"
           colors.diff.text = "#966d30"
+        end,
+        on_highlights = function(highlights, colors)
+          highlights.MarkdownTableButton = {
+            fg = colors.bg_dark,
+            bg = colors.magenta,
+            bold = true,
+          }
         end
       })
 
@@ -1099,7 +1106,7 @@ require("lazy").setup({
       if (vim.fn.argc() == 0) and not vim.g.copilot_mode and vim.fn.filereadable(first_launch_marker) == 1 then
         vim.schedule(require('session_utils').open_session_action)
       elseif (vim.fn.argc() > 0) then
-        local arg = vim.fn.argv(0)
+        local arg = vim.fn.fnamemodify(vim.fn.argv(0), ":p")
         if type(arg) == "string" and arg ~= "" then
           local session_name = require('session_utils').normalize_session_name(
             require('myutils').getPathToGitDirOr(vim.loop.cwd())
@@ -1117,7 +1124,7 @@ require("lazy").setup({
               require("sessions").save(session_name, {})
               if vim.fn.isdirectory(arg) == 1 then
                 require("telescope").extensions.file_browser.file_browser({
-                  cwd = require('myutils').getPathToCurrentDir(),
+                  cwd = arg,
                 })
               else
                 vim.cmd("edit " .. vim.fn.fnameescape(arg))
@@ -1129,7 +1136,7 @@ require("lazy").setup({
                 -- Session loaded but opened with a directory, still show file browser
                 vim.schedule(function()
                   require("telescope").extensions.file_browser.file_browser({
-                    cwd = require('myutils').getPathToCurrentDir(),
+                    cwd = arg,
                   })
                 end)
               else
@@ -1775,11 +1782,6 @@ require("lazy").setup({
     },
   },
   {
-    "searleser97/markdown-table.nvim",
-    ft = { "markdown" },
-    opts = {},
-  },
-  {
     "searleser97/mermaid-nvim",
     ft = { "markdown" },
     config = function()
@@ -1791,5 +1793,13 @@ require("lazy").setup({
         render_inline_on_open = false,
       })
     end,
+  },
+  {
+    "searleser97/markdown-table.nvim",
+    dependencies = {
+      "searleser97/mermaid-nvim",
+    },
+    ft = { "markdown" },
+    opts = {},
   }
 })
