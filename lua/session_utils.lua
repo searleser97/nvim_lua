@@ -10,6 +10,7 @@ local scan = require 'plenary.scandir'
 local path = require 'plenary.path'
 
 local session_utils = {}
+local new_session_entry = "[New Session]"
 
 -- Function to normalize a path into a filesystem-safe session name
 session_utils.normalize_session_name = function(directory_path)
@@ -129,6 +130,40 @@ end
 
 session_utils.sessions_dir = vim.fn.stdpath("data") .. "/sessions"
 
+local function open_current_directory_session()
+  if vim.g.session_name then
+    save_quickfix_list(vim.g.session_name)
+    save_breakpoints(vim.g.session_name)
+  end
+
+  local cwd = vim.loop.cwd()
+  local session_name = session_utils.normalize_session_name(
+    require("myutils").getPathToGitDirOr(cwd)
+  )
+  if session_name == "" or session_name == "_" then
+    session_name = "root"
+  end
+
+  vim.g.session_name = session_name
+  local session_path = sessions.get_session_path(session_name, false)
+  if session_path and vim.fn.filereadable(session_path) == 1 then
+    sessions.load(session_name, {})
+    load_quickfix_list(session_name)
+    load_breakpoints(session_name)
+    vim.defer_fn(function()
+      vim.notify(
+        "Multiple sessions for the same working directory are not allowed by design. Loading the existing session.",
+        vim.log.levels.WARN
+      )
+    end, 100)
+  else
+    sessions.save(session_name, {})
+    vim.schedule(function()
+      require("telescope").extensions.file_browser.file_browser({ cwd = cwd })
+    end)
+  end
+end
+
 session_utils.open_session_action = function()
   if vim.fn.isdirectory(session_utils.sessions_dir) == 0 then
     vim.fn.mkdir(session_utils.sessions_dir, "p")
@@ -144,31 +179,70 @@ session_utils.open_session_action = function()
       table.insert(filenames, filename)
     end
   end
+  table.insert(filenames, new_session_entry)
+  local session_sorter = conf.file_sorter()
+  local file_scoring_function = session_sorter.scoring_function
+  session_sorter.scoring_function = function(sorter, prompt, line, entry, ...)
+    local score = file_scoring_function(sorter, prompt, line, entry, ...)
+    if not score or score < 0 then
+      return score
+    end
+    if entry.is_new_session then
+      return 0
+    end
+    return score + 1
+  end
   pickers.new({}, {
     previewer = false,
     prompt_title = "Open Session",
+    default_selection_index = 1,
     finder = finders.new_table({
       results = filenames,
-      entry_maker = make_entry.gen_from_file({})
+      entry_maker = function(filename)
+        if filename == new_session_entry then
+          return {
+            value = filename,
+            display = filename,
+            ordinal = filename,
+            filename = filename,
+            is_new_session = true,
+          }
+        end
+        local entry = make_entry.gen_from_file({})(filename)
+        entry.is_new_session = false
+        return entry
+      end
     }),
-    sorter = conf.file_sorter(),
+    sorter = session_sorter,
     attach_mappings = function (_, map)
       map("i", "<cr>", function (prompt_bufnr)
+        local entry = action_state.get_selected_entry()
+        actions.close(prompt_bufnr)
+        if entry.is_new_session then
+          open_current_directory_session()
+          return
+        end
         if vim.g.session_name then
           save_quickfix_list(vim.g.session_name)
           save_breakpoints(vim.g.session_name)
         end
-        actions.close(prompt_bufnr)
-        local session_name = action_state.get_selected_entry()[1]:gsub("%.session$", "")
+        local session_name = entry.value:gsub("%.session$", "")
         vim.g.session_name = session_name
         sessions.load(session_name, {})
         load_quickfix_list(session_name)
         load_breakpoints(session_name)
       end)
+      local close_picker = function(prompt_bufnr)
+        actions.close(prompt_bufnr)
+      end
+      map("i", "<esc>", function()
+        vim.cmd("stopinsert")
+      end)
+      map("n", "<esc>", close_picker)
       map("i", "<C-d>", function (prompt_bufnr)
         local entry = action_state.get_selected_entry()
-        if not entry then return end
-        local filename = entry[1]
+        if not entry or entry.is_new_session then return end
+        local filename = entry.value
         local session_name = filename:gsub("%.session$", "")
         local confirm = vim.fn.confirm("Delete session '" .. session_name .. "'?", "&Yes\n&No", 2)
         if confirm == 1 then
