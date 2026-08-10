@@ -1773,6 +1773,7 @@ require("lazy").setup({
     ---@module 'render-markdown'
     ---@type render.md.UserConfig
     opts = {
+      enabled = false,
       code = {
         disable = { 'mermaid' },
       },
@@ -1786,6 +1787,7 @@ require("lazy").setup({
     ft = { "markdown" },
     config = function()
       require('mermaid-nvim').setup({
+        enabled = false,
         cmd = { 'termaid', '--padding-x', '2', '--padding-y', '0', '--gap', '1' },
         preview_mode = 'tab',
         exclude_bufs = { 'AI Prompt' },
@@ -1800,6 +1802,40 @@ require("lazy").setup({
       "searleser97/mermaid-nvim",
     },
     ft = { "markdown" },
-    opts = {},
+    opts = {
+      enabled = false,
+    },
+  },
+  {
+    "searleser97/markdown-view.nvim",
+    dependencies = {
+      "searleser97/markdown-table.nvim",
+      "searleser97/mermaid-nvim",
+      "MeanderingProgrammer/render-markdown.nvim",
+    },
+    ft = { "markdown" },
+    config = function()
+      require('markdown-view').setup({
+        open_mode = 'replace',
+      })
+
+      local function set_toggle(buf)
+        vim.keymap.set('n', '<leader>mv', function()
+          require('markdown-view').toggle()
+        end, {
+          buffer = buf,
+          desc = 'Toggle rendered Markdown view',
+        })
+      end
+
+      vim.api.nvim_create_autocmd('FileType', {
+        pattern = 'markdown',
+        callback = function(args)
+          set_toggle(args.buf)
+        end,
+      })
+
+      set_toggle(vim.api.nvim_get_current_buf())
+    end,
   }
 })
