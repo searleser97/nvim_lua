@@ -144,75 +144,50 @@ session_utils.open_session_action = function()
       table.insert(filenames, filename)
     end
   end
-  local useNativePicker = false;
-  if useNativePicker then
-    vim.ui.select(filenames, {
-      prompt = "Select a session to open:",
-      format_item = function(filename)
-        local session_name = filename
-        local home_dir_normalized = session_utils.normalize_session_name(os.getenv("HOME"))
-        return session_name:gsub("^" .. vim.pesc(home_dir_normalized) .. "_", ""):gsub("%.session$", "")
-      end,
-    }, function(selected)
-      if selected then
+  pickers.new({}, {
+    previewer = false,
+    prompt_title = "Open Session",
+    finder = finders.new_table({
+      results = filenames,
+      entry_maker = make_entry.gen_from_file({})
+    }),
+    sorter = conf.file_sorter(),
+    attach_mappings = function (_, map)
+      map("i", "<cr>", function (prompt_bufnr)
         if vim.g.session_name then
           save_quickfix_list(vim.g.session_name)
           save_breakpoints(vim.g.session_name)
         end
-
-        local session_name = selected:gsub("%.session$", "")
+        actions.close(prompt_bufnr)
+        local session_name = action_state.get_selected_entry()[1]:gsub("%.session$", "")
         vim.g.session_name = session_name
         sessions.load(session_name, {})
         load_quickfix_list(session_name)
         load_breakpoints(session_name)
-      end
-    end)
-  else
-    pickers.new({}, {
-      previewer = false,
-      prompt_title = "Open Session",
-      finder = finders.new_table({
-        results = filenames,
-        entry_maker = make_entry.gen_from_file({})
-      }),
-      sorter = conf.file_sorter(),
-      attach_mappings = function (_, map)
-        map("i", "<cr>", function (prompt_bufnr)
-          if vim.g.session_name then
-            save_quickfix_list(vim.g.session_name)
-            save_breakpoints(vim.g.session_name)
+      end)
+      map("i", "<C-d>", function (prompt_bufnr)
+        local entry = action_state.get_selected_entry()
+        if not entry then return end
+        local filename = entry[1]
+        local session_name = filename:gsub("%.session$", "")
+        local confirm = vim.fn.confirm("Delete session '" .. session_name .. "'?", "&Yes\n&No", 2)
+        if confirm == 1 then
+          local session_file = session_utils.sessions_dir .. path.path.sep .. filename
+          local quickfix_file = session_utils.sessions_dir .. path.path.sep .. session_name .. "_quickfix.json"
+          local breakpoints_file = session_utils.sessions_dir .. path.path.sep .. session_name .. "_breakpoints.json"
+          vim.fn.delete(session_file)
+          vim.fn.delete(quickfix_file)
+          vim.fn.delete(breakpoints_file)
+          if vim.g.session_name == session_name then
+            vim.g.session_name = nil
           end
           actions.close(prompt_bufnr)
-          local session_name = action_state.get_selected_entry()[1]:gsub("%.session$", "")
-          vim.g.session_name = session_name
-          sessions.load(session_name, {})
-          load_quickfix_list(session_name)
-          load_breakpoints(session_name)
-        end)
-        map("i", "<C-d>", function (prompt_bufnr)
-          local entry = action_state.get_selected_entry()
-          if not entry then return end
-          local filename = entry[1]
-          local session_name = filename:gsub("%.session$", "")
-          local confirm = vim.fn.confirm("Delete session '" .. session_name .. "'?", "&Yes\n&No", 2)
-          if confirm == 1 then
-            local session_file = session_utils.sessions_dir .. path.path.sep .. filename
-            local quickfix_file = session_utils.sessions_dir .. path.path.sep .. session_name .. "_quickfix.json"
-            local breakpoints_file = session_utils.sessions_dir .. path.path.sep .. session_name .. "_breakpoints.json"
-            vim.fn.delete(session_file)
-            vim.fn.delete(quickfix_file)
-            vim.fn.delete(breakpoints_file)
-            if vim.g.session_name == session_name then
-              vim.g.session_name = nil
-            end
-            actions.close(prompt_bufnr)
-            session_utils.open_session_action()
-          end
-        end)
-        return true
-      end
-    }):find()
-  end
+          session_utils.open_session_action()
+        end
+      end)
+      return true
+    end
+  }):find()
 end
 
 vim.api.nvim_create_autocmd("VimLeavePre", {
