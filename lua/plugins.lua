@@ -1764,59 +1764,40 @@ require("lazy").setup({
     opts = {}
   },
   {
-    "MeanderingProgrammer/render-markdown.nvim",
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter",
-      "nvim-tree/nvim-web-devicons",
-    },
-    ft = { "markdown" },
-    ---@module 'render-markdown'
-    ---@type render.md.UserConfig
-    opts = {
-      enabled = false,
-      code = {
-        disable = { 'mermaid' },
-      },
-      pipe_table = {
-        enabled = false,
-      },
-    },
-  },
-  {
-    "searleser97/mermaid-nvim",
-    ft = { "markdown" },
-    config = function()
-      require('mermaid-nvim').setup({
-        enabled = false,
-        cmd = { 'termaid', '--padding-x', '2', '--padding-y', '0', '--gap', '1' },
-        preview_mode = 'tab',
-        exclude_bufs = { 'AI Prompt' },
-        shorten_labels = true,
-        render_inline_on_open = false,
-      })
-    end,
-  },
-  {
-    "searleser97/markdown-table.nvim",
-    dependencies = {
-      "searleser97/mermaid-nvim",
-    },
-    ft = { "markdown" },
-    opts = {
-      enabled = false,
-    },
-  },
-  {
     "searleser97/markdown-view.nvim",
     dependencies = {
       "searleser97/markdown-table.nvim",
       "searleser97/mermaid-nvim",
-      "MeanderingProgrammer/render-markdown.nvim",
+      {
+        "MeanderingProgrammer/render-markdown.nvim",
+        dependencies = {
+          "nvim-treesitter/nvim-treesitter",
+          "nvim-tree/nvim-web-devicons",
+        },
+        opts = {
+          enabled = false,
+          code = {
+            disable = { 'mermaid' },
+          },
+          pipe_table = {
+            enabled = false,
+          },
+        },
+      },
     },
     ft = { "markdown" },
     config = function()
       require('markdown-view').setup({
         open_mode = 'replace',
+        tables = {
+          padding = 1,
+          min_column_width = 3,
+          max_column_width = 40,
+        },
+        mermaid = {
+          cmd = { 'termaid', '--padding-x', '2', '--padding-y', '0', '--gap', '1' },
+          shorten_labels = false,
+        },
       })
 
       local function set_toggle(buf)
