@@ -1769,7 +1769,15 @@ require("lazy").setup({
       code = {
         disable = { 'mermaid' },
       },
+      pipe_table = {
+        enabled = false,
+      },
     },
+  },
+  {
+    "searleser97/markdown-table.nvim",
+    ft = { "markdown" },
+    opts = {},
   },
   {
     "searleser97/mermaid-nvim",
