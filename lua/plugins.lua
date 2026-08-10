@@ -1800,23 +1800,48 @@ require("lazy").setup({
         },
       })
 
-      local function set_toggle(buf)
-        vim.keymap.set('n', '<leader>mv', function()
-          require('markdown-view').toggle()
+      local function is_regular_markdown(buf)
+        local name = vim.api.nvim_buf_get_name(buf)
+        return vim.api.nvim_buf_is_valid(buf)
+          and vim.bo[buf].filetype == 'markdown'
+          and vim.bo[buf].buftype == ''
+          and name ~= ''
+          and vim.fn.filereadable(name) == 1
+      end
+
+      local function configure_markdown_buffer(buf)
+        if vim.b[buf].markdown_view then
+          vim.keymap.set('n', '<leader>e', function()
+            require('markdown-view').toggle()
+          end, {
+            buffer = buf,
+            desc = 'Edit Markdown source',
+          })
+          return
+        end
+
+        vim.keymap.set('n', '<leader>v', function()
+          require('markdown-view').open(buf)
         end, {
           buffer = buf,
-          desc = 'Toggle rendered Markdown view',
+          desc = 'Open rendered Markdown view',
         })
+
+        vim.defer_fn(function()
+          if vim.api.nvim_get_current_buf() == buf and is_regular_markdown(buf) then
+            require('markdown-view').open(buf)
+          end
+        end, 100)
       end
 
       vim.api.nvim_create_autocmd('FileType', {
         pattern = 'markdown',
         callback = function(args)
-          set_toggle(args.buf)
+          configure_markdown_buffer(args.buf)
         end,
       })
 
-      set_toggle(vim.api.nvim_get_current_buf())
+      configure_markdown_buffer(vim.api.nvim_get_current_buf())
     end,
   }
 })
