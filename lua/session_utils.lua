@@ -57,8 +57,10 @@ local function save_breakpoints(session_name)
   if not session_name or session_name == "" then
     return false
   end
-  local ok, dap_bps = pcall(function() return require("dap.breakpoints").get() end)
-  if not ok or vim.tbl_isempty(dap_bps) then return false end
+  local breakpoints = package.loaded["dap.breakpoints"]
+  if not breakpoints then return false end
+  local dap_bps = breakpoints.get()
+  if vim.tbl_isempty(dap_bps) then return false end
 
   local save_data = {}
   for bufnr, buf_bps in pairs(dap_bps) do
