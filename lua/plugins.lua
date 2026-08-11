@@ -666,11 +666,11 @@ require("lazy").setup({
     'saghen/blink.cmp',
     cond = not vim.g.vscode,
     version = "1.*",
+    event = "InsertEnter",
     dependencies = {},
     ---@module 'blink.cmp'
     ---@type blink.cmp.Config
     opts = {
-      enabled = function() return vim.fn.expand('%:t') ~= "[Magenta Input]" end,
       completion = {
         documentation = { auto_show = true },
         menu = { auto_show = true },
@@ -699,13 +699,6 @@ require("lazy").setup({
 
         ['<C-k>'] = { 'show_signature', 'hide_signature', 'fallback' },
       }
-    }
-  },
-  {
-    "hrsh7th/nvim-cmp",
-    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
-    opts = {
-      enabled = function() return vim.fn.expand('%:t') == "[Magenta Input]" end
     }
   },
   {
@@ -1094,7 +1087,7 @@ require("lazy").setup({
     },
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     dependencies = {
-      "nvim-telescope/telescope-file-browser.nvim"
+      "nvim-telescope/telescope.nvim"
     },
     config = function()
       require("sessions").setup({
@@ -1123,7 +1116,7 @@ require("lazy").setup({
             if not path or vim.fn.filereadable(path) == 0 then
               require("sessions").save(session_name, {})
               if vim.fn.isdirectory(arg) == 1 then
-                require("telescope").extensions.file_browser.file_browser({
+                require("session_utils").open_file_browser({
                   cwd = arg,
                 })
               else
@@ -1135,7 +1128,7 @@ require("lazy").setup({
               if vim.fn.isdirectory(arg) == 1 then
                 -- Session loaded but opened with a directory, still show file browser
                 vim.schedule(function()
-                  require("telescope").extensions.file_browser.file_browser({
+                  require("session_utils").open_file_browser({
                     cwd = arg,
                   })
                 end)
@@ -1381,6 +1374,7 @@ require("lazy").setup({
   {
     "mfussenegger/nvim-dap",
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
+    lazy = true,
     config = function()
       -- Tolerate trailing commas in launch.json (VS Code allows them)
       local vscode = require("dap.ext.vscode")
@@ -1396,6 +1390,7 @@ require("lazy").setup({
       "mfussenegger/nvim-dap",
     },
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
+    lazy = true,
     opts = {
       netcoredbg = {
         path = vim.fn.stdpath("data") .. "\\mason\\packages\\netcoredbg\\netcoredbg\\netcoredbg.exe",
@@ -1412,6 +1407,10 @@ require("lazy").setup({
   {
     "rcarriga/nvim-dap-ui",
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
+    lazy = true,
+    keys = {
+      { "<leader>dv", desc = "toggle DAP UI layout (portrait/landscape)" },
+    },
     dependencies = {
       "mfussenegger/nvim-dap",
       "nvim-neotest/nvim-nio",
@@ -1672,6 +1671,7 @@ require("lazy").setup({
   },
   {
     "sphamba/smear-cursor.nvim",
+    event = { "CursorMoved", "CursorMovedI" },
     opts = {
       smear_insert_mode = false,
     }

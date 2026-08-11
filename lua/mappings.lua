@@ -109,19 +109,29 @@ if not vim.g.vscode then
   end
 
   -- DAP (debugger) keybindings
-  vim.keymap.set('n', '<leader>db', function() require('dap').toggle_breakpoint() end, { noremap = true, desc = "toggle breakpoint" })
-  vim.keymap.set('n', '<leader>dB', function() require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: ')) end, { noremap = true, desc = "conditional breakpoint" })
-  vim.keymap.set('n', '<leader>dc', function() require('dap').continue() end, { noremap = true, desc = "debug continue" })
-  vim.keymap.set('n', '<leader>di', function() require('dap').step_into() end, { noremap = true, desc = "debug step into" })
-  vim.keymap.set('n', '<leader>do', function() require('dap').step_over() end, { noremap = true, desc = "debug step over" })
-  vim.keymap.set('n', '<leader>dO', function() require('dap').step_out() end, { noremap = true, desc = "debug step out" })
-  vim.keymap.set('n', '<leader>dd', function() require('dap').disconnect({ terminateDebuggee = false }) end, { noremap = true, desc = "debug detach" })
-  vim.keymap.set('n', '<leader>dt', function() require('dap').terminate() end, { noremap = true, desc = "debug terminate" })
-  vim.keymap.set('n', '<leader>dr', function() require('dap').repl.open() end, { noremap = true, desc = "debug REPL" })
-  vim.keymap.set('n', '<leader>dl', function() require('dap').run_last() end, { noremap = true, desc = "debug run last" })
-  vim.keymap.set('n', '<leader>du', function() require('dapui').toggle() end, { noremap = true, desc = "toggle debug UI" })
+  local function load_dap()
+    require("lazy").load({ plugins = { "nvim-dap", "nvim-dap-cs", "nvim-dap-ui" } })
+    return require("dap")
+  end
+
+  local function load_dapui()
+    load_dap()
+    return require("dapui")
+  end
+
+  vim.keymap.set('n', '<leader>db', function() load_dap().toggle_breakpoint() end, { noremap = true, desc = "toggle breakpoint" })
+  vim.keymap.set('n', '<leader>dB', function() load_dap().set_breakpoint(vim.fn.input('Breakpoint condition: ')) end, { noremap = true, desc = "conditional breakpoint" })
+  vim.keymap.set('n', '<leader>dc', function() load_dap().continue() end, { noremap = true, desc = "debug continue" })
+  vim.keymap.set('n', '<leader>di', function() load_dap().step_into() end, { noremap = true, desc = "debug step into" })
+  vim.keymap.set('n', '<leader>do', function() load_dap().step_over() end, { noremap = true, desc = "debug step over" })
+  vim.keymap.set('n', '<leader>dO', function() load_dap().step_out() end, { noremap = true, desc = "debug step out" })
+  vim.keymap.set('n', '<leader>dd', function() load_dap().disconnect({ terminateDebuggee = false }) end, { noremap = true, desc = "debug detach" })
+  vim.keymap.set('n', '<leader>dt', function() load_dap().terminate() end, { noremap = true, desc = "debug terminate" })
+  vim.keymap.set('n', '<leader>dr', function() load_dap().repl.open() end, { noremap = true, desc = "debug REPL" })
+  vim.keymap.set('n', '<leader>dl', function() load_dap().run_last() end, { noremap = true, desc = "debug run last" })
+  vim.keymap.set('n', '<leader>du', function() load_dapui().toggle() end, { noremap = true, desc = "toggle debug UI" })
   vim.keymap.set('n', '<leader>de', function()
-    local dap = require('dap')
+    local dap = load_dap()
     local session = dap.session()
     if not session then
       print("No active debug session")
@@ -148,7 +158,7 @@ if not vim.g.vscode then
     end)
   end, { noremap = true, desc = "serialize & copy variable as JSON" })
   vim.keymap.set('n', '<leader>da', function()
-    local dap = require('dap')
+    local dap = load_dap()
     local ps_script = [[
       Get-CimInstance Win32_Process | Where-Object { $_.ExecutablePath -match '\\bin\\([^\\]+\\)?(Debug|Release)\\' -or $_.Name -eq 'dotnet.exe' } | ForEach-Object { "$($_.ProcessId)|$($_.Name -replace '\.exe$','') - $($_.CommandLine)" }
     ]]
@@ -183,7 +193,7 @@ if not vim.g.vscode then
     end)
   end, { noremap = true, desc = "debug attach to dotnet process" })
   vim.keymap.set('n', '<leader>dL', function()
-    require('dap').list_breakpoints()
+    load_dap().list_breakpoints()
     vim.cmd('copen')
   end, { noremap = true, desc = "list breakpoints" })
 

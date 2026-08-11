@@ -130,6 +130,11 @@ end
 
 session_utils.sessions_dir = vim.fn.stdpath("data") .. "/sessions"
 
+session_utils.open_file_browser = function(opts)
+  require("lazy").load({ plugins = { "telescope-file-browser.nvim" } })
+  require("telescope").extensions.file_browser.file_browser(opts)
+end
+
 local function open_current_directory_session()
   if vim.g.session_name then
     save_quickfix_list(vim.g.session_name)
@@ -159,7 +164,7 @@ local function open_current_directory_session()
   else
     sessions.save(session_name, {})
     vim.schedule(function()
-      require("telescope").extensions.file_browser.file_browser({ cwd = cwd })
+      session_utils.open_file_browser({ cwd = cwd })
     end)
   end
 end
