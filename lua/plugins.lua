@@ -1795,7 +1795,14 @@ require("lazy").setup({
           max_column_width = 40,
         },
         mermaid = {
-          cmd = { 'termaid', '--padding-x', '2', '--padding-y', '0', '--no-auto-fit' },
+          cmd = {
+            'termaid',
+            '--padding-x', '2',
+            '--padding-y', '0',
+            '--gap', '8',
+            '--inline-edge-labels',
+            '--no-auto-fit',
+          },
           shorten_labels = false,
         },
       })
