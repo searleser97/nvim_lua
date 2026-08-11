@@ -49,7 +49,7 @@ end
 
 local node_bin_path = get_node_bin_path("24")
 if node_bin_path then
-  vim.env.PATH = node_bin_path .. ":" .. vim.env.PATH
+  vim.env.PATH = node_bin_path .. (package.config:sub(1, 1) == "\\" and ";" or ":") .. vim.env.PATH
 end
 
 require("settings")

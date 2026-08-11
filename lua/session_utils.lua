@@ -1,14 +1,3 @@
-local action_state = require "telescope.actions.state"
-local actions = require "telescope.actions"
-local pickers = require "telescope.pickers"
-local finders = require "telescope.finders"
-local make_entry = require "telescope.make_entry"
-local conf = require"telescope.config".values
-
-local sessions = require("sessions")
-local scan = require 'plenary.scandir'
-local path = require 'plenary.path'
-
 local session_utils = {}
 local new_session_entry = "[New Session]"
 
@@ -136,6 +125,8 @@ session_utils.open_file_browser = function(opts)
 end
 
 local function open_current_directory_session()
+  local sessions = require("sessions")
+
   if vim.g.session_name then
     save_quickfix_list(vim.g.session_name)
     save_breakpoints(vim.g.session_name)
@@ -170,6 +161,16 @@ local function open_current_directory_session()
 end
 
 session_utils.open_session_action = function()
+  local action_state = require("telescope.actions.state")
+  local actions = require("telescope.actions")
+  local pickers = require("telescope.pickers")
+  local finders = require("telescope.finders")
+  local make_entry = require("telescope.make_entry")
+  local conf = require("telescope.config").values
+  local sessions = require("sessions")
+  local scan = require("plenary.scandir")
+  local path = require("plenary.path")
+
   if vim.fn.isdirectory(session_utils.sessions_dir) == 0 then
     vim.fn.mkdir(session_utils.sessions_dir, "p")
   end
