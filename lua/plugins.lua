@@ -1793,11 +1793,10 @@ require("lazy").setup({
         mermaid = {
           cmd = {
             'termaid',
-            '--padding-x', '2',
+            '--padding-x', '0',
             '--padding-y', '0',
-            '--gap', '8',
+            '--gap', '3',
             '--inline-edge-labels',
-            '--no-auto-fit',
           },
           shorten_labels = false,
         },
