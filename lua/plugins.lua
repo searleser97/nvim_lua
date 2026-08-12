@@ -1784,6 +1784,7 @@ require("lazy").setup({
     config = function()
       require('markdown-view').setup({
         open_mode = 'replace',
+        edit_on_insert = true,
         tables = {
           padding = 1,
           min_column_width = 3,
