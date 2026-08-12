@@ -78,6 +78,24 @@ function CloseAllVisibleTerms(ignore)
   end
 end
 
+local function directory_command(path)
+  if utils.Is_Windows() then
+    return "Set-Location -LiteralPath '" .. path:gsub("'", "''") .. "'"
+  end
+  return "cd -- " .. vim.fn.shellescape(path)
+end
+
+local function open_terminal_in(path)
+  path = vim.fs.normalize(path)
+  if vim.fn.isdirectory(path) ~= 1 then
+    vim.notify("Terminal directory does not exist: " .. path, vim.log.levels.ERROR)
+    return
+  end
+
+  local count = vim.v.count > 0 and vim.v.count or 1
+  require('toggleterm').exec(directory_command(path), count, nil, nil, nil, nil, false, true)
+end
+
 local gitPrettyFormat = "%C(#FFDE59)%h%Creset %aI %C(blue)%aN%Creset %s %C(red)%D%Creset"
 local gitPrettyFormatWithDescription = gitPrettyFormat .. "%n%n%b"
 
@@ -86,9 +104,7 @@ return {
     {
       '<leader>tH',
       function()
-        local count = vim.v.count > 0 and vim.v.count or 1
-        vim.cmd(count .. "TermExec cmd=\"pwd\"")
-        vim.schedule(function() vim.cmd(count .. "TermExec cmd=\"cd " .. utils.getPathToGitDirOr(vim.loop.cwd()) .. "\"") end)
+        open_terminal_in(utils.getPathToGitDirOr(vim.loop.cwd()))
       end,
       noremap = true, mode = 'n', desc = 'terminal Here (git root)'
     },
@@ -96,8 +112,7 @@ return {
       '<leader>th',
       function()
         local dirPath = vim.fn.expand("%:p:h"):gsub("%%20", " ")
-        local count = vim.v.count > 0 and vim.v.count or 1
-        vim.cmd(count .. "TermExec cmd='cd \"" .. dirPath .. "\"'")
+        open_terminal_in(dirPath)
       end,
       noremap = true, mode =  'n', desc = 'terminal here (file)'
     },
