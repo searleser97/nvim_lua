@@ -1848,6 +1848,9 @@ require("lazy").setup({
       end, vim.api.nvim_create_namespace('markdown_view_idle_return'))
 
       local function configure_markdown_buffer(buf)
+        if vim.b[buf].ai_prompt then
+          return
+        end
         if vim.b[buf].markdown_view_user_configured then
           return
         end

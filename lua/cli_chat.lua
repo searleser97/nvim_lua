@@ -72,6 +72,7 @@ local function get_compose_buf()
     state.compose_buf = vim.api.nvim_create_buf(false, true)
     local buf = state.compose_buf
     pcall(vim.api.nvim_buf_set_name, buf, "AI Prompt")
+    vim.b[buf].ai_prompt = true
     vim.bo[buf].filetype = 'markdown'
     vim.bo[buf].buftype = 'nofile'
     vim.bo[buf].swapfile = false
