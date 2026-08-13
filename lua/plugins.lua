@@ -501,6 +501,7 @@ require("lazy").setup({
             hidden = false,
             grouped = true,
             depth = 1,
+            display_stat = false,
             hijack_netrw = false,
             mappings = {
               ["i"] = {
@@ -1096,6 +1097,7 @@ require("lazy").setup({
       elseif (vim.fn.argc() > 0) then
         local arg = vim.fn.fnamemodify(vim.fn.argv(0), ":p")
         if type(arg) == "string" and arg ~= "" then
+          local is_directory = vim.fn.isdirectory(arg) == 1
           local session_name = require('session_utils').normalize_session_name(
             require('myutils').getPathToGitDirOr(vim.loop.cwd())
           )
@@ -1108,9 +1110,16 @@ require("lazy").setup({
             ---@diagnostic disable-next-line: duplicate-set-field
             vim.notify = function() end  -- suppress notifications
             local path = require("sessions").get_session_path(session_name, false)
+            if is_directory then
+              local directory_buf = vim.api.nvim_get_current_buf()
+              if vim.fn.isdirectory(vim.api.nvim_buf_get_name(directory_buf)) == 1 then
+                vim.api.nvim_set_current_buf(vim.api.nvim_create_buf(true, false))
+                vim.api.nvim_buf_delete(directory_buf, { force = true })
+              end
+            end
             if not path or vim.fn.filereadable(path) == 0 then
               require("sessions").save(session_name, {})
-              if vim.fn.isdirectory(arg) == 1 then
+              if is_directory then
                 require("session_utils").open_file_browser({
                   cwd = arg,
                 })
@@ -1120,7 +1129,7 @@ require("lazy").setup({
             else
               require("sessions").load(session_name, {})
               vim.cmd('redraw!')
-              if vim.fn.isdirectory(arg) == 1 then
+              if is_directory then
                 -- Session loaded but opened with a directory, still show file browser
                 vim.schedule(function()
                   require("session_utils").open_file_browser({
@@ -1349,6 +1358,17 @@ require("lazy").setup({
       }
     },
     config = function()
+      if Is_Windows() then
+        local fb_utils = require("telescope._extensions.file_browser.utils")
+        if not fb_utils.windows_paths_normalized then
+          local to_absolute_path = fb_utils.to_absolute_path
+          fb_utils.to_absolute_path = function(path)
+            local absolute_path = to_absolute_path(path)
+            return absolute_path and absolute_path:gsub("/", "\\") or nil
+          end
+          fb_utils.windows_paths_normalized = true
+        end
+      end
       require("telescope").load_extension("file_browser")
     end,
     dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }
