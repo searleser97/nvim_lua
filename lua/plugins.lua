@@ -1823,50 +1823,6 @@ require("lazy").setup({
         },
       })
 
-      local view_idle_ms = 1200
-      local idle_generations = {}
-      local idle_pending = {}
-
-      local function cancel_idle_return(buf)
-        idle_generations[buf] = (idle_generations[buf] or 0) + 1
-        idle_pending[buf] = nil
-      end
-
-      local function schedule_idle_return(buf)
-        idle_generations[buf] = (idle_generations[buf] or 0) + 1
-        local generation = idle_generations[buf]
-        idle_pending[buf] = true
-        vim.defer_fn(function()
-          if idle_pending[buf]
-            and idle_generations[buf] == generation
-            and vim.api.nvim_buf_is_valid(buf)
-            and vim.api.nvim_get_current_buf() == buf
-            and vim.api.nvim_get_mode().mode == 'n'
-          then
-            idle_pending[buf] = nil
-            markdown_view.open(buf)
-          end
-        end, view_idle_ms)
-      end
-
-      vim.on_key(function()
-        local buf = vim.api.nvim_get_current_buf()
-        if not idle_pending[buf] then
-          return
-        end
-
-        idle_generations[buf] = (idle_generations[buf] or 0) + 1
-        vim.schedule(function()
-          if idle_pending[buf]
-            and vim.api.nvim_buf_is_valid(buf)
-            and vim.api.nvim_get_current_buf() == buf
-            and vim.api.nvim_get_mode().mode == 'n'
-          then
-            schedule_idle_return(buf)
-          end
-        end)
-      end, vim.api.nvim_create_namespace('markdown_view_idle_return'))
-
       local function configure_markdown_buffer(buf)
         if vim.b[buf].ai_prompt then
           return
@@ -1891,25 +1847,6 @@ require("lazy").setup({
         end, {
           buffer = buf,
           desc = 'Open rendered Markdown view',
-        })
-
-        vim.api.nvim_create_autocmd('InsertEnter', {
-          buffer = buf,
-          callback = function()
-            cancel_idle_return(buf)
-          end,
-        })
-        vim.api.nvim_create_autocmd('InsertLeave', {
-          buffer = buf,
-          callback = function()
-            schedule_idle_return(buf)
-          end,
-        })
-        vim.api.nvim_create_autocmd({ 'BufLeave', 'WinLeave', 'BufWipeout' }, {
-          buffer = buf,
-          callback = function()
-            cancel_idle_return(buf)
-          end,
         })
 
       end
