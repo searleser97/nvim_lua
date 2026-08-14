@@ -115,6 +115,7 @@ function M.open_chat()
     vim.api.nvim_set_current_tabpage(state.tab)
     for _, win in ipairs(vim.api.nvim_tabpage_list_wins(state.tab)) do
       if vim.api.nvim_win_get_buf(win) == state.compose_buf then
+        vim.wo[win].winfixbuf = true
         vim.api.nvim_set_current_win(win)
         return
       end
@@ -148,6 +149,7 @@ function M.open_chat()
   vim.api.nvim_win_set_buf(compose_win, compose_buf)
   vim.api.nvim_win_set_height(compose_win, COMPOSE_HEIGHT)
   vim.wo[compose_win].winfixheight = true
+  vim.wo[compose_win].winfixbuf = true
 end
 
 function M.close_chat()
