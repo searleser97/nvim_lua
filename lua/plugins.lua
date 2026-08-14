@@ -392,17 +392,17 @@ require("lazy").setup({
     "nvim-telescope/telescope.nvim",
     keys = {
       {
-        '<c-s>fr',
+        '<leader>fsr',
         function()
           require("telescope_utils").find_files_utils.launch_find_files_in_cwd(
             require('myutils').getPathToGitDirOr(vim.loop.cwd())
           )
         end,
         noremap = true,
-        desc = "search files in repo"
+        desc = "File Search in Repository"
       },
       {
-        '<c-s>fp',
+        '<leader>fsp',
         function()
           require("telescope_utils").find_files_utils.launch_find_files_in_cwd(
             require('myutils').getPathToProjectOr(
@@ -413,17 +413,17 @@ require("lazy").setup({
           )
         end,
         noremap = true,
-        desc = "search files in project"
+        desc = "File Search in Project"
       },
       {
-        '<c-s>fh',
+        '<leader>fsh',
         function()
           require("telescope_utils").find_files_utils.launch_find_files_in_cwd(
             require('myutils').getPathToCurrentDir({ "__tests?__" })
           )
         end,
         noremap = true,
-        desc = "search files here"
+        desc = "File Search here"
       },
       {
         '<c-s>b',
@@ -538,11 +538,7 @@ require("lazy").setup({
             attach_mappings = function(_, map)
               map("i", "<c-h>",
                 function(prompt_bufnr)
-                  require("telescope_utils").find_files_utils.toggle_hidden()
-                  actions.close(prompt_bufnr)
-                  vim.schedule(function()
-                    require("telescope_utils").find_files_utils.launch_find_files_in_prev_cwd()
-                  end)
+                  require("telescope_utils").find_files_utils.toggle_hidden(prompt_bufnr)
                 end
               )
               return true
@@ -1353,7 +1349,7 @@ require("lazy").setup({
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     keys = {
       {
-        "<c-f>br",
+        "<leader>fbr",
         function()
           require("telescope").extensions.file_browser.file_browser({
             cwd = require('myutils').getPathToGitDirOr(vim.loop.cwd()),
@@ -1363,7 +1359,7 @@ require("lazy").setup({
         desc = "File Browser in Repository"
       },
       {
-        "<c-f>bp",
+        "<leader>fbp",
         function()
           require("telescope").extensions.file_browser.file_browser({
             cwd = require('myutils').getPathToProjectOr(
@@ -1377,7 +1373,7 @@ require("lazy").setup({
         desc = "File Browser in Project"
       },
       {
-        "<c-f>bh",
+        "<leader>fbh",
         function()
           require("telescope").extensions.file_browser.file_browser({
             cwd = require('myutils').getPathToCurrentDir(),
@@ -1387,7 +1383,7 @@ require("lazy").setup({
         desc = "File Browser here"
       },
       {
-        "<c-f>ba",
+        "<leader>fba",
         function()
           require("telescope_utils").open_file_browser_anywhere()
         end,

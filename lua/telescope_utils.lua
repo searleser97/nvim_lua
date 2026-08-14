@@ -2,7 +2,6 @@ local M = {}
 
 local function find_files_utils()
   local show_all_hidden = false
-  local prev_cwd = nil
   local get_find_files_command = function()
     local cmd = {
       "rg",
@@ -20,25 +19,30 @@ local function find_files_utils()
     return cmd
   end
 
-  local toggle_hidden = function()
+  local toggle_hidden = function(prompt_bufnr)
     show_all_hidden = not show_all_hidden
+    if not prompt_bufnr then return end
+
+    local current_picker = require("telescope.actions.state").get_current_picker(prompt_bufnr)
+    local finder = require("telescope.finders").new_oneshot_job(get_find_files_command(), {
+      cwd = current_picker.finder.cwd,
+      entry_maker = current_picker.finder.entry_maker,
+    })
+    current_picker:refresh(finder, {
+      reset_prompt = false,
+      multi = current_picker._multi,
+    })
   end
 
   local launch_find_files_in_cwd = function(cwd)
-    prev_cwd = cwd
     require('telescope.builtin').find_files({
       cwd = cwd
     })
   end
 
-  local launch_find_files_in_prev_cwd = function()
-    launch_find_files_in_cwd(prev_cwd)
-  end
-
   return {
     toggle_hidden = toggle_hidden,
     get_find_files_command = get_find_files_command,
-    launch_find_files_in_prev_cwd = launch_find_files_in_prev_cwd,
     launch_find_files_in_cwd = launch_find_files_in_cwd
   }
 end
