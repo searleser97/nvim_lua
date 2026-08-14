@@ -62,7 +62,7 @@ local function setup_compose_keymaps(buf)
     end
   end, { buffer = buf, noremap = true, desc = 'Slash command passthrough' })
 
-  vim.keymap.set('i', '<C-a>', function()
+  vim.keymap.set('i', '<C-p>', function()
     require('prompt_snippets').pick(buf)
   end, { buffer = buf, noremap = true, desc = 'Insert AI instruction' })
 end

@@ -544,6 +544,26 @@ require("lazy").setup({
     end
   },
   {
+    "Allaman/emoji.nvim",
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
+    dependencies = {
+      "nvim-telescope/telescope.nvim",
+    },
+    keys = {
+      {
+        "<C-e>",
+        "<cmd>Telescope emoji<cr>",
+        mode = "i",
+        desc = "browse emojis",
+      },
+    },
+    opts = {},
+    config = function(_, opts)
+      require("emoji").setup(opts)
+      require("telescope").load_extension("emoji")
+    end,
+  },
+  {
     "nvim-telescope/telescope-live-grep-args.nvim",
     keys = {
       {
@@ -682,7 +702,8 @@ require("lazy").setup({
       keymap = {
         preset = "super-tab",
         ['<C-space>'] = { 'show', 'show_documentation', 'hide_documentation' },
-        ['<C-e>'] = { 'hide', 'fallback' },
+        ['<C-e>'] = false,
+        ['<C-p>'] = false,
         ["<Tab>"] = {
           "accept",
           function() -- if you are using Neovim's native inline completions
@@ -1081,8 +1102,8 @@ require("lazy").setup({
     "searleser97/sessions.nvim",
     lazy = false,
     keys = {
-      { "<c-o>s", function() require('session_utils').open_session_action() end, noremap = true, desc = "open session" },
-      { "<c-s>S", ":SessionsSave ", noremap = true, desc = "Save new Session" }
+      { "<c-s>O", function() require('session_utils').open_session_action() end, noremap = true, desc = "Session Open" },
+      { "<c-s>S", ":SessionsSave ", noremap = true, desc = "Session Save" }
     },
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     config = function()
