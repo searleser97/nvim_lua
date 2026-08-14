@@ -33,7 +33,11 @@ end
 
 utils.getPathToCurrentDir = function(ignore)
   local currentFile = vim.fn.expand('%:p')
-  local currentDir = vim.fn.fnamemodify(currentFile, ":h")
+  local currentDir = currentFile ~= "" and vim.fn.fnamemodify(currentFile, ":h") or vim.loop.cwd()
+  currentDir = vim.fs.normalize(currentDir)
+  if utils.Is_Windows() then
+    currentDir = currentDir:gsub("/", "\\")
+  end
   local path_sep = package.config:sub(1,1)
   -- Default ignore patterns if none provided
   ignore = ignore or {}

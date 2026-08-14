@@ -708,6 +708,38 @@ require("lazy").setup({
             opts = {
               show_hidden_files_by_default = true,
             },
+            override = {
+              get_completions = function(source, context, callback)
+                if not Is_Windows() then
+                  return source:get_completions(context, callback)
+                end
+
+                local normalized_context = vim.tbl_extend("force", {}, context, {
+                  line = context.line:gsub("\\", "/"),
+                })
+                return source:get_completions(normalized_context, callback)
+              end,
+            },
+            transform_items = function(_, items)
+              if not Is_Windows() then return items end
+
+              for _, item in ipairs(items) do
+                if item.label then
+                  item.label = item.label:gsub("/", "\\")
+                end
+                if item.insertText then
+                  item.insertText = item.insertText:gsub("/", "\\")
+                end
+                if item.textEdit and item.textEdit.newText then
+                  item.textEdit.newText = item.textEdit.newText:gsub("/", "\\")
+                end
+                if item.data and item.data.full_path then
+                  item.data.full_path = item.data.full_path:gsub("/", "\\")
+                end
+              end
+
+              return items
+            end,
           },
         },
       },
