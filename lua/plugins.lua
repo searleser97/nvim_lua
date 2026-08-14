@@ -505,10 +505,19 @@ require("lazy").setup({
             hijack_netrw = false,
             mappings = {
               ["i"] = {
-                ["<C-o>"] = Is_Windows() and require("myutils").my_open or nil
+                ["<C-o>"] = Is_Windows() and require("myutils").my_open or nil,
+                ["<C-g>"] = false,
+                ["<C-p>"] = Is_Windows() and require("telescope_utils").file_browser_parent or nil,
+                ["<C-n>"] = Is_Windows() and require("telescope_utils").file_browser_forward or nil,
+                ["<bs>"] = Is_Windows() and require("telescope_utils").file_browser_backspace or nil,
+                ["<CR>"] = Is_Windows() and require("telescope_utils").file_browser_select_default or nil,
+                ["<2-LeftMouse>"] = Is_Windows() and require("telescope_utils").file_browser_double_click or nil,
               },
               ["n"] = {
-                ["o"] = Is_Windows() and require("myutils").my_open or nil
+                ["o"] = Is_Windows() and require("myutils").my_open or nil,
+                ["g"] = false,
+                ["<CR>"] = Is_Windows() and require("telescope_utils").file_browser_select_default or nil,
+                ["<2-LeftMouse>"] = Is_Windows() and require("telescope_utils").file_browser_double_click or nil,
               }
             }
           },
@@ -698,6 +707,13 @@ require("lazy").setup({
       signature = { enabled = true },
       sources = {
         default = { 'lsp', 'buffer', 'snippets', 'path' },
+        providers = {
+          path = {
+            opts = {
+              show_hidden_files_by_default = true,
+            },
+          },
+        },
       },
       keymap = {
         preset = "super-tab",
@@ -1371,6 +1387,14 @@ require("lazy").setup({
         desc = "File Browser here"
       },
       {
+        "<c-f>ba",
+        function()
+          require("telescope_utils").open_file_browser_anywhere()
+        end,
+        noremap = true,
+        desc = "File Browser anywhere"
+      },
+      {
         "<c-r>j",
         function()
           require("telescope.builtin").jumplist();
@@ -1379,18 +1403,51 @@ require("lazy").setup({
       }
     },
     config = function()
+      local telescope = require("telescope")
       if Is_Windows() then
         local fb_utils = require("telescope._extensions.file_browser.utils")
         if not fb_utils.windows_paths_normalized then
+          local function absolute_title(path)
+            path = vim.fs.normalize(path):gsub("/", "\\")
+            return path:match("\\$") and path or path .. "\\"
+          end
+
           local to_absolute_path = fb_utils.to_absolute_path
           fb_utils.to_absolute_path = function(path)
             local absolute_path = to_absolute_path(path)
             return absolute_path and absolute_path:gsub("/", "\\") or nil
           end
+
+          local redraw_border_title = fb_utils.redraw_border_title
+          fb_utils.redraw_border_title = function(current_picker)
+            redraw_border_title(current_picker)
+
+            local finder = current_picker.finder
+            if current_picker.results_border then
+              local path = (finder.files or finder.cwd_to_path) and finder.path or finder.cwd
+              current_picker.results_border:change_title(absolute_title(path))
+            end
+          end
+
           fb_utils.windows_paths_normalized = true
         end
       end
-      require("telescope").load_extension("file_browser")
+      telescope.load_extension("file_browser")
+
+      if Is_Windows() then
+        local file_browser = telescope.extensions.file_browser
+        if not file_browser.absolute_titles then
+          local open_file_browser = file_browser.file_browser
+          file_browser.file_browser = function(opts)
+            opts = vim.tbl_extend("force", {}, opts or {})
+            local path = opts.path or opts.cwd or vim.loop.cwd()
+            path = vim.fs.normalize(path):gsub("/", "\\")
+            opts.results_title = path:match("\\$") and path or path .. "\\"
+            return open_file_browser(opts)
+          end
+          file_browser.absolute_titles = true
+        end
+      end
     end,
     dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }
   },
