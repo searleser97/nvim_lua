@@ -20,27 +20,6 @@ local javascriptFiletypes = {
   "typescriptreact",
 }
 
-local codeFileTypes = {
-  "csharp",
-  "lua",
-  "rust",
-  "cpp",
-  "c",
-  "cs",
-  "ps1",
-  "cmd",
-  "json",
-  "vim",
-  "zsh",
-  "markdown",
-  "text"
-}
-
--- Add all javascript filetypes
-for _, v in ipairs(javascriptFiletypes) do
-  table.insert(codeFileTypes, v)
-end
-
 local gitFilePatterns = { "COMMIT_EDITMSG", "git-rebase-todo", "MERGE_MSG" }
 local isNeovimOpenedWithGitFile = function()
   if vim.fn.argc() == 0 then
@@ -48,7 +27,7 @@ local isNeovimOpenedWithGitFile = function()
   else
     local arg = vim.fn.argv(0)
     for _, pattern in ipairs(gitFilePatterns) do
-      if type(arg) == "string" and string.match(arg, pattern) then
+      if type(arg) == "string" and string.find(arg, pattern, 1, true) then
         return true
       end
     end
@@ -768,7 +747,8 @@ require("lazy").setup({
   {
     "folke/tokyonight.nvim",
     name = "tokyonight",
-    ft = codeFileTypes,
+    lazy = false,
+    priority = 1000,
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     config = function()
       require("tokyonight").setup({
@@ -874,8 +854,8 @@ require("lazy").setup({
         rooter_patterns = { '*_root.txt', '.git', '.hg', '.svn' }
       })
     end,
-    cond = not vim.g.vscode,
-    ft = codeFileTypes
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
+    event = { 'BufNewFile', 'BufReadPost' }
   },
   {
     "nvim-treesitter/nvim-treesitter-context",
@@ -1147,7 +1127,12 @@ require("lazy").setup({
     lazy = false,
     keys = {
       { "<c-s>O", function() require('session_utils').open_session_action() end, noremap = true, desc = "Session Open" },
-      { "<c-s>S", ":SessionsSave ", noremap = true, desc = "Session Save" }
+      {
+        "<c-s>S",
+        function() require('session_utils').open_current_directory_session() end,
+        noremap = true,
+        desc = "Session New Here"
+      }
     },
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     config = function()
@@ -1161,52 +1146,15 @@ require("lazy").setup({
         vim.schedule(require('session_utils').open_session_action)
       elseif (vim.fn.argc() > 0) then
         local arg = vim.fn.fnamemodify(vim.fn.argv(0), ":p")
-        if type(arg) == "string" and arg ~= "" then
-          local is_directory = vim.fn.isdirectory(arg) == 1
-          local session_name = require('session_utils').normalize_session_name(
-            require('myutils').getPathToGitDirOr(vim.loop.cwd())
-          )
-          if session_name == "" or session_name == "_" then
-            session_name = "root"
-          end
+        if type(arg) == "string" and arg ~= "" and vim.fn.isdirectory(arg) == 1 then
           vim.schedule(function()
-            vim.g.session_name = session_name
-            local original_notify = vim.notify
-            ---@diagnostic disable-next-line: duplicate-set-field
-            vim.notify = function() end  -- suppress notifications
-            local path = require("sessions").get_session_path(session_name, false)
-            if is_directory then
-              local directory_buf = vim.api.nvim_get_current_buf()
-              if vim.fn.isdirectory(vim.api.nvim_buf_get_name(directory_buf)) == 1 then
-                vim.api.nvim_set_current_buf(vim.api.nvim_create_buf(true, false))
-                vim.api.nvim_buf_delete(directory_buf, { force = true })
-              end
+            vim.api.nvim_set_current_dir(arg)
+            local directory_buf = vim.api.nvim_get_current_buf()
+            if vim.fn.isdirectory(vim.api.nvim_buf_get_name(directory_buf)) == 1 then
+              vim.api.nvim_set_current_buf(vim.api.nvim_create_buf(true, false))
+              vim.api.nvim_buf_delete(directory_buf, { force = true })
             end
-            if not path or vim.fn.filereadable(path) == 0 then
-              require("sessions").save(session_name, {})
-              if is_directory then
-                require("session_utils").open_file_browser({
-                  cwd = arg,
-                })
-              else
-                vim.cmd("edit " .. vim.fn.fnameescape(arg))
-              end
-            else
-              require("sessions").load(session_name, {})
-              vim.cmd('redraw!')
-              if is_directory then
-                -- Session loaded but opened with a directory, still show file browser
-                vim.schedule(function()
-                  require("session_utils").open_file_browser({
-                    cwd = arg,
-                  })
-                end)
-              else
-                -- If opened with a file (not directory), open that file after loading session
-                vim.schedule(function() vim.cmd("silent! only | edit " .. vim.fn.fnameescape(arg)) end)
-              end
-            end
-            vim.notify = original_notify  -- restore notifications
+            require("session_utils").open_file_browser({ cwd = arg })
           end)
         end
       end
@@ -1227,7 +1175,7 @@ require("lazy").setup({
   },
   {
     "nvim-lualine/lualine.nvim",
-    ft = codeFileTypes,
+    event = { 'VeryLazy' },
     dependencies = {
       'nvim-tree/nvim-web-devicons',
       'folke/tokyonight.nvim',

@@ -126,7 +126,7 @@ session_utils.open_file_browser = function(opts)
   require("telescope").extensions.file_browser.file_browser(opts)
 end
 
-local function open_current_directory_session()
+session_utils.open_current_directory_session = function()
   local sessions = require("sessions")
 
   if vim.g.session_name then
@@ -227,7 +227,7 @@ session_utils.open_session_action = function()
         local entry = action_state.get_selected_entry()
         actions.close(prompt_bufnr)
         if entry.is_new_session then
-          open_current_directory_session()
+          session_utils.open_current_directory_session()
           return
         end
         if vim.g.session_name then
