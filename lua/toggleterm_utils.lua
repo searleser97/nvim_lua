@@ -41,6 +41,66 @@ local execGitCommand = function(command)
   end
 end
 
+local function git_output(args)
+  local command = { 'git', '-C', vim.loop.cwd() }
+  vim.list_extend(command, args)
+
+  local output = vim.fn.system(command)
+  if vim.v.shell_error ~= 0 then
+    return nil
+  end
+
+  output = vim.trim(output)
+  return output ~= '' and output or nil
+end
+
+local function get_principal_branch()
+  local remotes = vim.split(git_output({ 'remote' }) or '', '\n', { trimempty = true })
+  for index, remote in ipairs(remotes) do
+    remotes[index] = vim.trim(remote)
+  end
+  table.sort(remotes, function(left, right)
+    return left == 'origin' and right ~= 'origin'
+  end)
+
+  for _, remote in ipairs(remotes) do
+    local default_branch = git_output({
+      'symbolic-ref',
+      '--quiet',
+      '--short',
+      'refs/remotes/' .. remote .. '/HEAD',
+    })
+    if default_branch then
+      return default_branch
+    end
+  end
+
+  local candidates = { 'main', 'master', 'dev', 'develop', 'trunk' }
+  local configured_default = git_output({ 'config', '--get', 'init.defaultBranch' })
+  if configured_default then
+    table.insert(candidates, 1, configured_default)
+  end
+
+  for _, branch in ipairs(candidates) do
+    if branch and git_output({ 'rev-parse', '--verify', '--quiet', 'refs/heads/' .. branch }) then
+      return branch
+    end
+  end
+
+  for _, branch in ipairs(candidates) do
+    if branch then
+      for _, remote in ipairs(remotes) do
+        local remote_branch = remote .. '/' .. branch
+        if git_output({ 'rev-parse', '--verify', '--quiet', 'refs/remotes/' .. remote_branch }) then
+          return remote_branch
+        end
+      end
+    end
+  end
+
+  return git_output({ 'symbolic-ref', '--quiet', '--short', 'HEAD' })
+end
+
 
 function OpenToggleTerms(ids_to_ignore)
   local maxBufferIndex = vim.fn.bufnr("$")
@@ -154,7 +214,11 @@ return {
     },
     {
       "<c-g>g",
-      function() execGitCommand('log --pretty=format:"' .. gitPrettyFormat .. '" HEAD main --graph') end,
+      function()
+        local principal_branch = get_principal_branch()
+        local revisions = principal_branch and ('HEAD ' .. vim.fn.shellescape(principal_branch)) or 'HEAD'
+        execGitCommand('log --pretty=format:"' .. gitPrettyFormat .. '" ' .. revisions .. ' --graph')
+      end,
       noremap = true, silent = true, desc = "git graph", mode = { 'n', 't' }
     },
     {
