@@ -36,13 +36,13 @@ local execGitCommand = function(command)
     gitTerm:send(gitCommandFull)
   else
     gitTerm:open()
-    gitTerm:change_dir(vim.loop.cwd())
+    gitTerm:change_dir(vim.uv.cwd())
     gitTerm:send(gitCommandFull)
   end
 end
 
 local function git_output(args)
-  local command = { 'git', '-C', vim.loop.cwd() }
+  local command = { 'git', '-C', vim.uv.cwd() }
   vim.list_extend(command, args)
 
   local output = vim.fn.system(command)
@@ -76,10 +76,6 @@ local function get_principal_branch()
   end
 
   local candidates = { 'main', 'master', 'dev', 'develop', 'trunk' }
-  local configured_default = git_output({ 'config', '--get', 'init.defaultBranch' })
-  if configured_default then
-    table.insert(candidates, 1, configured_default)
-  end
 
   for _, branch in ipairs(candidates) do
     if branch and git_output({ 'rev-parse', '--verify', '--quiet', 'refs/heads/' .. branch }) then
