@@ -25,7 +25,7 @@ local function find_files_utils()
 
     local current_picker = require("telescope.actions.state").get_current_picker(prompt_bufnr)
     local finder = require("telescope.finders").new_oneshot_job(get_find_files_command(), {
-      cwd = current_picker.finder.cwd,
+      cwd = current_picker.cwd,
       entry_maker = current_picker.finder.entry_maker,
     })
     current_picker:refresh(finder, {
@@ -34,7 +34,8 @@ local function find_files_utils()
     })
   end
 
-  local launch_find_files_in_cwd = function(cwd)
+  local launch_find_files_in_cwd = function(cwd, show_hidden)
+    show_all_hidden = show_hidden == true
     require('telescope.builtin').find_files({
       cwd = cwd
     })
