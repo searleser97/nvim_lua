@@ -94,11 +94,22 @@ end
 require("plugins")
 require("mappings")
 
-if vim.g.copilot_mode then
-  vim.schedule(function()
+local start_modes = {
+  ai = function()
     require('cli_chat').open_chat()
     vim.cmd('tabclose 1')
-  end)
+  end,
+}
+
+if vim.g.start_mode then
+  local start_mode = start_modes[vim.g.start_mode]
+  if start_mode then
+    vim.schedule(start_mode)
+  else
+    vim.schedule(function()
+      vim.notify("Unknown Neovim start mode: " .. tostring(vim.g.start_mode), vim.log.levels.WARN)
+    end)
+  end
 end
 
 -- vim.api.nvim_create_autocmd({ 'CursorMoved' }, {

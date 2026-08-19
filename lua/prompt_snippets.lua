@@ -20,7 +20,9 @@ local default_prompts = {
 }
 
 function M.get_file_path()
-  local configured_path = vim.g.my_ai_prompts_file or vim.env.MY_AI_PROMPTS_FILE
+  local configured_path = vim.env.NVIM_AI_PROMPTS_PATH
+    or vim.g.my_ai_prompts_file
+    or vim.env.MY_AI_PROMPTS_FILE
   if configured_path and configured_path ~= "" then
     return vim.fs.normalize(vim.fn.expand(configured_path))
   end

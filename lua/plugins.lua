@@ -1142,7 +1142,7 @@ require("lazy").setup({
         absolute = true,
       })
       local first_launch_marker = vim.fn.stdpath('data') .. (require('myutils').Is_Windows() and '\\' or '/') .. 'first_launch_done'
-      if (vim.fn.argc() == 0) and not vim.g.copilot_mode and vim.fn.filereadable(first_launch_marker) == 1 then
+      if (vim.fn.argc() == 0) and not vim.g.start_mode and vim.fn.filereadable(first_launch_marker) == 1 then
         vim.schedule(require('session_utils').open_session_action)
       elseif (vim.fn.argc() > 0) then
         local arg = vim.fn.fnamemodify(vim.fn.argv(0), ":p")
