@@ -33,6 +33,7 @@ end
 
 utils.getPathToCurrentDir = function(ignore)
   local currentFile = vim.fn.expand('%:p')
+  currentFile = currentFile:gsub("^markdown%-view://", "")
   local currentDir = currentFile ~= "" and vim.fn.fnamemodify(currentFile, ":h") or vim.loop.cwd()
   currentDir = vim.fs.normalize(currentDir)
   if utils.Is_Windows() then

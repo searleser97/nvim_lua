@@ -34,8 +34,7 @@ local function find_files_utils()
     })
   end
 
-  local launch_find_files_in_cwd = function(cwd, show_hidden)
-    show_all_hidden = show_hidden == true
+  local launch_find_files_in_cwd = function(cwd)
     require('telescope.builtin').find_files({
       cwd = cwd
     })

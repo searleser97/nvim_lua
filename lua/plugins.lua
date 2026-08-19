@@ -398,8 +398,7 @@ require("lazy").setup({
         '<leader>fsh',
         function()
           require("telescope_utils").find_files_utils.launch_find_files_in_cwd(
-            require('myutils').getPathToCurrentDir({ "__tests?__" }),
-            true
+            require('myutils').getPathToCurrentDir({ "__tests?__" })
           )
         end,
         noremap = true,
@@ -1360,9 +1359,6 @@ require("lazy").setup({
           require("telescope").extensions.file_browser.file_browser({
             cwd = current_dir,
             path = current_dir,
-            hidden = true,
-            no_ignore = true,
-            respect_gitignore = false,
           })
         end,
         noremap = true,
