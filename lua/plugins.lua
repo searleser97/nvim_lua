@@ -37,6 +37,25 @@ end
 
 require("lazy").setup({
   {
+    dir = "E:\\copilot-fleet.nvim",
+    name = "copilot-fleet.nvim",
+    lazy = false,
+    cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
+    dependencies = {
+      "nvim-telescope/telescope.nvim",
+      "MeanderingProgrammer/render-markdown.nvim",
+    },
+    config = function()
+      require("copilot_fleet").setup({
+        mappings = {
+          toggle = "<leader>ait",
+          fleet = "<leader>aif",
+          select = "<leader>ais",
+        },
+      })
+    end,
+  },
+  {
     url = "https://codeberg.org/andyg/leap.nvim",
     dependencies = {
       "tpope/vim-repeat"
@@ -1880,7 +1899,7 @@ require("lazy").setup({
       })
 
       local function configure_markdown_buffer(buf)
-        if vim.b[buf].ai_prompt then
+        if vim.b[buf].ai_prompt or vim.b[buf].copilot_fleet then
           return
         end
         if vim.b[buf].markdown_view_user_configured then

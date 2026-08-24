@@ -96,7 +96,7 @@ require("mappings")
 
 local start_modes = {
   ai = function()
-    require('cli_chat').open_chat()
+    require('copilot_fleet').open()
     vim.cmd('tabclose 1')
   end,
 }
