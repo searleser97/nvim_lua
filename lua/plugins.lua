@@ -47,8 +47,9 @@ require("lazy").setup({
     },
     config = function()
       require("copilot_fleet").setup({
-        completion = {
-          frontend = "blink",
+        frontend = {
+          completion = "blink",
+          picker = "telescope",
         },
         mappings = {
           toggle = "<leader>ait",
