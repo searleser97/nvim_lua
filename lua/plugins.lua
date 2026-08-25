@@ -1879,6 +1879,9 @@ require("lazy").setup({
         },
         opts = {
           enabled = false,
+          anti_conceal = {
+            enabled = false,
+          },
           code = {
             disable = { 'mermaid' },
           },
@@ -1911,6 +1914,13 @@ require("lazy").setup({
         },
       })
 
+      local function open_markdown_link()
+        if not markdown_view.open_link_at_cursor() then
+          local enter = vim.api.nvim_replace_termcodes('<CR>', true, false, true)
+          vim.api.nvim_feedkeys(enter, 'nx', false)
+        end
+      end
+
       local function configure_markdown_buffer(buf)
         if vim.b[buf].ai_prompt or vim.b[buf].copilot_fleet then
           return
@@ -1919,6 +1929,11 @@ require("lazy").setup({
           return
         end
         vim.b[buf].markdown_view_user_configured = true
+
+        vim.keymap.set('n', '<CR>', open_markdown_link, {
+          buffer = buf,
+          desc = 'Open Markdown link',
+        })
 
         if vim.b[buf].markdown_view then
           vim.keymap.set('n', '<leader>e', function()
