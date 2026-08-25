@@ -39,6 +39,7 @@ require("lazy").setup({
   {
     "searleser97/copilot-fleet.nvim",
     lazy = false,
+    build = "npm install --no-audit --no-fund && npm run build",
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     dependencies = {
       "nvim-telescope/telescope.nvim",
