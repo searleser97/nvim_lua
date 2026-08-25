@@ -37,8 +37,7 @@ end
 
 require("lazy").setup({
   {
-    dir = "E:\\copilot-fleet.nvim",
-    name = "copilot-fleet.nvim",
+    "searleser97/copilot-fleet.nvim",
     lazy = false,
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
     dependencies = {
