@@ -51,6 +51,7 @@ require("lazy").setup({
           toggle = "<leader>ait",
           fleet = "<leader>aif",
           select = "<leader>ais",
+          reasoning = "<leader>air",
         },
       })
     end,
