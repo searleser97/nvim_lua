@@ -47,6 +47,9 @@ require("lazy").setup({
     },
     config = function()
       require("copilot_fleet").setup({
+        completion = {
+          frontend = "blink",
+        },
         mappings = {
           toggle = "<leader>ait",
           fleet = "<leader>aif",
@@ -700,8 +703,17 @@ require("lazy").setup({
       },
       signature = { enabled = true },
       sources = {
-        default = { 'lsp', 'buffer', 'snippets', 'path' },
+        default = function()
+          if vim.b.copilot_fleet_prompt then return { 'copilot_fleet' } end
+          return { 'lsp', 'buffer', 'snippets', 'path' }
+        end,
         providers = {
+          copilot_fleet = {
+            name = 'Copilot',
+            module = 'copilot_fleet.blink',
+            enabled = function() return vim.b.copilot_fleet_prompt == true end,
+            score_offset = 100,
+          },
           path = {
             opts = {
               show_hidden_files_by_default = true,
