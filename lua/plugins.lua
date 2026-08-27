@@ -37,7 +37,7 @@ end
 
 require("lazy").setup({
   {
-    "searleser97/copilot-fleet.nvim",
+    "searleser97/native-copilot.nvim",
     lazy = false,
     build = "npm install --no-audit --no-fund && npm run build",
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
@@ -46,7 +46,7 @@ require("lazy").setup({
       "MeanderingProgrammer/render-markdown.nvim",
     },
     config = function()
-      require("copilot_fleet").setup({
+      require("native_copilot").setup({
         frontend = {
           completion = "blink",
           picker = "telescope",
@@ -705,14 +705,14 @@ require("lazy").setup({
       signature = { enabled = true },
       sources = {
         default = function()
-          if vim.b.copilot_fleet_prompt then return { 'copilot_fleet' } end
+          if vim.b.native_copilot_prompt then return { 'native_copilot' } end
           return { 'lsp', 'buffer', 'snippets', 'path' }
         end,
         providers = {
-          copilot_fleet = {
+          native_copilot = {
             name = 'Copilot',
-            module = 'copilot_fleet.blink',
-            enabled = function() return vim.b.copilot_fleet_prompt == true end,
+            module = 'native_copilot.blink',
+            enabled = function() return vim.b.native_copilot_prompt == true end,
             score_offset = 100,
           },
           path = {
@@ -1922,7 +1922,7 @@ require("lazy").setup({
       end
 
       local function configure_markdown_buffer(buf)
-        if vim.b[buf].ai_prompt or vim.b[buf].copilot_fleet then
+        if vim.b[buf].ai_prompt or vim.b[buf].native_copilot then
           return
         end
         if vim.b[buf].markdown_view_user_configured then
