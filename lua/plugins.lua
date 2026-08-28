@@ -693,6 +693,7 @@ require("lazy").setup({
     cond = not vim.g.vscode,
     version = "1.*",
     event = "InsertEnter",
+    ft = "native-copilot",
     dependencies = {},
     ---@module 'blink.cmp'
     ---@type blink.cmp.Config
@@ -713,6 +714,7 @@ require("lazy").setup({
             name = 'Copilot',
             module = 'native_copilot.blink',
             enabled = function() return vim.b.native_copilot_prompt == true end,
+            async = true,
             score_offset = 100,
           },
           path = {
