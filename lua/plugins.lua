@@ -718,6 +718,10 @@ require("lazy").setup({
           path = {
             opts = {
               show_hidden_files_by_default = true,
+              get_cwd = function(context)
+                if vim.b[context.bufnr].native_copilot_prompt then return vim.uv.cwd() end
+                return vim.fn.expand(('#%d:p:h'):format(context.bufnr))
+              end,
             },
             override = {
               get_completions = function(source, context, callback)
