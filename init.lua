@@ -99,6 +99,10 @@ local start_modes = {
     require('native_copilot').open()
     vim.cmd('tabclose 1')
   end,
+  copilot = function()
+    require('cli_chat').open_chat()
+    vim.cmd('tabclose 1')
+  end,
 }
 
 if vim.g.start_mode then
