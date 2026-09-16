@@ -1778,13 +1778,6 @@ require("lazy").setup({
       end
     end,
   },
-  {
-    "sphamba/smear-cursor.nvim",
-    event = { "CursorMoved", "CursorMovedI" },
-    opts = {
-      smear_insert_mode = false,
-    }
-  },
   --[[{
     "dmtrKovalenko/fff.nvim",
     build = "cargo build --release",
