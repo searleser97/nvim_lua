@@ -43,7 +43,7 @@ local clipboard_image_probe = (os.getenv('USERPROFILE') or '')
 local ctrl_v_action = wezterm.action_callback(function(window, pane)
   local success, stdout, stderr = wezterm.run_child_process { clipboard_image_probe }
   if success and stdout:match('^%s*image%s*$') then
-    window:perform_action(act.SendKey { key = 'F24', mods = 'NONE' }, pane)
+    window:perform_action(act.SendString '\x1b[24;2~', pane)
     return
   end
   if not success then
