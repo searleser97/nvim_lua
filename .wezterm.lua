@@ -38,6 +38,20 @@ local ctrl_c_action = wezterm.action_callback(function(window, pane)
   end
 end)
 
+local clipboard_image_probe = (os.getenv('USERPROFILE') or '')
+  .. '\\.local\\bin\\clipboard-image-probe.exe'
+local ctrl_v_action = wezterm.action_callback(function(window, pane)
+  local success, stdout, stderr = wezterm.run_child_process { clipboard_image_probe }
+  if success and stdout:match('^%s*image%s*$') then
+    window:perform_action(act.SendKey { key = 'F24', mods = 'NONE' }, pane)
+    return
+  end
+  if not success then
+    wezterm.log_error('Clipboard image probe failed: ' .. (stderr or 'unknown error'))
+  end
+  window:perform_action(act.PasteFrom 'Clipboard', pane)
+end)
+
 local ignoreKeys = { "v", "c" }
 
 for c = string.byte("a"), string.byte("z") do
@@ -57,7 +71,7 @@ for _, key in ipairs(otherKeys) do
   table.insert(globalConfig.keys, { key = key, mods = 'SUPER', action = wezterm.action.SendKey { key = key, mods = 'CTRL' } })
 end
 
-table.insert(globalConfig.keys, { key = 'v', mods = 'CTRL', action = act.PasteFrom 'Clipboard' })
+table.insert(globalConfig.keys, { key = 'v', mods = 'CTRL', action = ctrl_v_action })
 table.insert(globalConfig.keys, { key = 'v', mods = 'SUPER', action = act.PasteFrom 'Clipboard' })
 table.insert(globalConfig.keys, { key = 'c', mods = 'CTRL', action = ctrl_c_action })
 table.insert(globalConfig.keys, { key = 'c', mods = 'SUPER', action = ctrl_c_action })
@@ -134,4 +148,3 @@ end)
 
 
 return globalConfig
-
