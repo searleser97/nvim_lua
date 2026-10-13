@@ -96,7 +96,7 @@ require("mappings")
 
 local start_modes = {
   ai = function()
-    require('native_copilot').open()
+    require('copilot_mesh').open()
     vim.cmd('tabclose 1')
   end,
   copilot = function()

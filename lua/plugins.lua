@@ -37,7 +37,9 @@ end
 
 require("lazy").setup({
   {
-    "searleser97/native-copilot.nvim",
+    "searleser97/copilot-mesh.nvim",
+    -- Keep Lazy's installation identity so active hosts retain their checkout.
+    name = "native-copilot.nvim",
     lazy = false,
     build = "npm install --no-audit --no-fund && npm run build",
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
@@ -46,7 +48,7 @@ require("lazy").setup({
       "MeanderingProgrammer/render-markdown.nvim",
     },
     config = function()
-      require("native_copilot").setup({
+      require("copilot_mesh").setup({
         frontend = {
           completion = "blink",
           picker = "telescope",
@@ -706,13 +708,13 @@ require("lazy").setup({
       signature = { enabled = true },
       sources = {
         default = function()
-          if vim.b.native_copilot_prompt then return { 'native_copilot', 'path' } end
+          if vim.b.native_copilot_prompt then return { 'copilot_mesh', 'path' } end
           return { 'lsp', 'buffer', 'snippets', 'path' }
         end,
         providers = {
-          native_copilot = {
+          copilot_mesh = {
             name = 'Copilot',
-            module = 'native_copilot.blink',
+            module = 'copilot_mesh.blink',
             enabled = function() return vim.b.native_copilot_prompt == true end,
             async = true,
             score_offset = 100,
