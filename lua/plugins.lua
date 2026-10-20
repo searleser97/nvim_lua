@@ -35,7 +35,7 @@ local isNeovimOpenedWithGitFile = function()
   end
 end
 
-local shared_mesh = vim.g.start_mode == "ai" and vim.fn.has("win32") == 1
+local shared_mesh = vim.fn.has("win32") == 1
   and vim.env.COPILOT_MESH_EMBEDDED ~= "1"
   and dofile([[E:\WorkUtils\.copilot\mesh-host\client.lua]]) or nil
 
