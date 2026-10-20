@@ -35,11 +35,16 @@ local isNeovimOpenedWithGitFile = function()
   end
 end
 
+local shared_mesh = vim.g.start_mode == "ai" and vim.fn.has("win32") == 1
+  and vim.env.COPILOT_MESH_EMBEDDED ~= "1"
+  and dofile([[E:\WorkUtils\.copilot\mesh-host\client.lua]]) or nil
+
 require("lazy").setup({
   {
     "searleser97/copilot-mesh.nvim",
     -- Keep Lazy's installation identity so active hosts retain their checkout.
     name = "native-copilot.nvim",
+    dir = shared_mesh and shared_mesh.plugin_dir or nil,
     lazy = false,
     build = "npm install --no-audit --no-fund && npm run build",
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
@@ -49,6 +54,8 @@ require("lazy").setup({
     },
     config = function()
       require("copilot_mesh").setup({
+        shared_host = shared_mesh and shared_mesh.host_options or nil,
+        workspace = shared_mesh and shared_mesh.workspace or nil,
         frontend = {
           completion = "blink",
           picker = "telescope",
