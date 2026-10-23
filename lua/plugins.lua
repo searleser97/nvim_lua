@@ -41,10 +41,13 @@ local shared_mesh = vim.fn.has("win32") == 1
 
 require("lazy").setup({
   {
-    "searleser97/copilot-mesh.nvim",
+    "sergiosanc_microsoft/copilot-mesh-clients",
+    branch = "nvim-package",
+    commit = "7d0e1f9b7365c8673558d82fe1cec5ffcfbd5f72",
     -- Keep Lazy's installation identity so active hosts retain their checkout.
     name = "native-copilot.nvim",
-    dir = shared_mesh and shared_mesh.plugin_dir or nil,
+    dir = vim.fn.has("win32") == 1
+      and [[E:\WorkUtils\.copilot\mesh-host\node_modules\copilot-mesh.nvim]] or nil,
     lazy = false,
     build = "npm install --no-audit --no-fund && npm run build",
     cond = not vim.g.vscode and not isNeovimOpenedWithGitFile(),
